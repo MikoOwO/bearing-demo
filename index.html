@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bearing — Plan vs actual for founders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#f6f7f9;
+  --surface:#ffffff;
+  --surface-2:#f1f3f6;
+  --ink:#182033;
+  --ink-2:#3d475b;
+  --muted:#697489;
+  --line:#dfe3e9;
+  --line-strong:#cfd5de;
+  --brand:#e4572e;
+  --brand-dark:#bd4321;
+  --brand-soft:#fff1ea;
+  --green:#1f7a50;
+  --green-soft:#e8f5ee;
+  --amber:#9a6505;
+  --amber-soft:#fff3d4;
+  --red:#b72c2c;
+  --red-soft:#fde8e8;
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+body{overflow:hidden}
+button,input{font:inherit}
+a{color:inherit}
+button{cursor:pointer}
+#app{height:100%;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;overscroll-behavior:contain}
+.wrap{width:min(1160px,calc(100% - 40px));margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.kicker{font-size:12px;line-height:1;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--brand-dark)}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:rgba(246,247,249,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(207,213,222,.7)}
+.nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-size:20px;font-weight:800;letter-spacing:-.03em}
+.logo-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line-strong);border-radius:4px;background:var(--surface)}
+.logo-mark svg{width:21px;height:21px}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a{font-size:14px;font-weight:700;text-decoration:none;color:var(--ink-2);padding:9px 12px;border-radius:4px}
+.nav-links a:hover{background:#eceff3;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:4px;border:1px solid transparent;padding:11px 16px;font-weight:800;font-size:14px;text-decoration:none;transition:transform .15s ease,background .15s ease,border-color .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--brand);color:white;border-color:var(--brand);box-shadow:0 8px 20px rgba(228,87,46,.18)}
+.btn-primary:hover{background:var(--brand-dark);border-color:var(--brand-dark)}
+.btn-secondary{background:var(--surface);border-color:var(--line-strong);color:var(--ink)}
+.btn-secondary:hover{background:#f8f9fb}
+
+/* hero */
+.hero{padding:78px 0 66px;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:58px;align-items:center}
+.hero h1{font-size:clamp(42px,5vw,68px);line-height:1.02;letter-spacing:-.052em;margin:0;max-width:12ch}
+.hero .accent{color:var(--brand)}
+.hero .lead{font-size:18px;line-height:1.65;color:var(--ink-2);max-width:34em;margin:24px 0 0}
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:30px}
+.hero-note{font-size:13px;color:var(--muted);font-weight:600}
+.trust-row{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:25px;color:var(--muted);font-size:13.5px;font-weight:700}
+.trust-row span{display:flex;align-items:center;gap:7px}
+.trust-row svg{width:15px;height:15px;stroke:var(--green);fill:none;stroke-width:2.3}
+
+/* product mock */
+.product-shell{background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;box-shadow:0 10px 24px rgba(24,32,51,.06);overflow:hidden}
+.product-top{height:48px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#fafbfc}
+.product-top .left{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:var(--ink-2)}
+.window-dots{display:flex;gap:5px}.window-dots i{display:block;width:8px;height:8px;border-radius:50%;background:#d7dce3}
+.product-top .status{font-size:11px;font-weight:800;color:var(--green);background:var(--green-soft);padding:5px 8px;border-radius:4px}
+.product-body{padding:20px}
+.product-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px}
+.product-head h3{font-size:18px;margin:0;letter-spacing:-.02em}
+.product-head p{margin:4px 0 0;font-size:12.5px;color:var(--muted)}
+.month-chip{font-size:11px;font-weight:800;color:var(--ink-2);background:var(--surface-2);padding:7px 9px;border-radius:3px;border:1px solid var(--line)}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.metric{padding:14px;border:1px solid var(--line);border-radius:4px;background:#fff}
+.metric .label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.metric .value{font-size:25px;line-height:1.1;margin-top:8px;font-weight:800;letter-spacing:-.03em}
+.metric .delta{margin-top:6px;font-size:11.5px;font-weight:700;color:var(--muted)}
+.metric .bad{color:var(--red)}
+.chart-card{margin-top:10px;border:1px solid var(--line);border-radius:4px;padding:14px;background:#fff}
+.chart-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.chart-head b{font-size:13px}.chart-head span{font-size:11.5px;color:var(--muted);font-weight:700}
+.chart{height:180px;margin-top:10px;position:relative;overflow:hidden}
+.chart svg{width:100%;height:100%;display:block}
+.insight{margin-top:10px;padding:13px 14px;border-radius:4px;background:#fbf4f1;border:1px solid #f2d6cb;display:grid;grid-template-columns:auto 1fr;gap:10px}
+.insight-icon{width:26px;height:26px;border-radius:5px;background:var(--brand);display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px}
+.insight b{display:block;font-size:12.5px;line-height:1.35}.insight p{font-size:11.5px;line-height:1.5;color:var(--ink-2);margin:4px 0 0}
+
+
+/* dark evidence band */
+.evidence{background:#141c2b;color:#fff;padding:84px 0;border-top:1px solid #222d41;border-bottom:1px solid #222d41}
+.evidence .kicker{color:#ff9b73}
+.evidence h2{font-size:clamp(30px,3.5vw,46px);line-height:1.08;letter-spacing:-.04em;margin:12px 0 0;max-width:760px}
+.evidence .sub{color:#b9c3d2;font-size:17px;max-width:690px;margin:15px 0 0}
+.evidence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:44px;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12)}
+.evidence-stat{padding:28px 28px 26px 0;min-width:0}
+.evidence-stat + .evidence-stat{border-left:1px solid rgba(255,255,255,.12);padding-left:28px}
+.evidence-stat .big{font:600 clamp(42px,5vw,62px)/1 var(--mono);letter-spacing:-.05em;color:#fff}
+.evidence-stat p{margin:12px 0 0;color:#d4dbe5;font-size:14px;line-height:1.55;max-width:280px}
+.evidence-stat small{display:block;margin-top:8px;color:#8995a8;font-size:11px}
+.evidence-track{height:3px;background:rgba(255,255,255,.12);margin-top:20px;overflow:hidden}
+.evidence-fill{height:100%;background:#ff7a45;transform-origin:left center;transform:scaleX(0);transition:transform 1.1s cubic-bezier(.2,.8,.2,1)}
+.evidence.in .evidence-fill{transform:scaleX(var(--fill))}
+
+/* sections */
+section{scroll-margin-top:88px}
+.section{padding:86px 0}
+.section.alt{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.section-head{max-width:720px}
+.section-head.center{text-align:center;margin:0 auto}
+.section-head h2{font-size:clamp(30px,3.5vw,46px);line-height:1.08;letter-spacing:-.04em;margin:12px 0 0}
+.section-head p{font-size:17px;color:var(--ink-2);margin:15px 0 0}
+
+.problem-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:start;margin-top:44px}
+.problem-copy{display:grid;gap:20px}
+.problem-copy article{padding-bottom:20px;border-bottom:1px solid var(--line)}
+.problem-copy article:last-child{border-bottom:0}
+.problem-copy h3{font-size:18px;margin:0 0 7px}.problem-copy p{margin:0;color:var(--ink-2);font-size:15px}
+.stat-stack{display:grid;gap:10px}
+.stat-row{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid var(--line)}
+.stat-row:first-child{padding-top:0}.stat-row:last-child{border-bottom:0}
+.stat-row .num{font-size:34px;font-weight:800;letter-spacing:-.04em}.stat-row .desc{max-width:270px;font-size:13px;color:var(--muted);text-align:right}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:24px}
+.step .n{font:600 12px var(--mono);color:var(--brand-dark)}
+.step h3{margin:18px 0 8px;font-size:18px}.step p{margin:0;color:var(--ink-2);font-size:14.5px}
+
+.feature-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:40px}
+.feature{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:22px}
+.feature h3{margin:0;font-size:18px}.feature p{margin:7px 0 0;color:var(--ink-2);font-size:14.5px}
+.feature.big{grid-row:span 2}
+.scenario-table{margin-top:18px;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.scenario-row{display:grid;grid-template-columns:1.25fr .75fr .75fr;gap:10px;padding:12px 14px;background:#fff;font-size:12.5px;font-weight:700}
+.scenario-row + .scenario-row{border-top:1px solid var(--line)}
+.scenario-row.head{background:#f6f7f9;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.scenario-row .neg{color:var(--red)}.scenario-row .pos{color:var(--green)}
+.mini-list{margin-top:16px;display:grid;gap:9px}
+.mini-list div{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;font-weight:700}
+.mini-list div:last-child{border-bottom:0}
+.badge{padding:5px 8px;border-radius:4px;font-size:10.5px;font-weight:800}
+.badge.red{background:var(--red-soft);color:var(--red)}.badge.amber{background:var(--amber-soft);color:var(--amber)}.badge.green{background:var(--green-soft);color:var(--green)}
+
+.security-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:38px}
+.security-card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:20px}
+.security-icon{width:34px;height:34px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center}
+.security-icon svg{width:18px;height:18px;fill:none;stroke:var(--brand-dark);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.security-card h3{font-size:15px;margin:15px 0 6px}.security-card p{font-size:13.5px;color:var(--ink-2);margin:0}
+
+.access-section{padding:70px 0 92px}
+.access-card{display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center;background:#172033;color:white;border-radius:6px;padding:34px;border:1px solid #253047}
+.access-card h2{font-size:32px;line-height:1.1;letter-spacing:-.035em;margin:0}.access-card p{color:#c8d0dc;margin:11px 0 0;max-width:620px}
+.access-card .sub{font-size:12px;color:#8f9aac;margin-top:10px}
+.access-card .btn-secondary{background:white;border-color:white;color:#172033}
+
+.access-modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(9,15,27,.48);backdrop-filter:blur(6px)}
+.access-modal.open{display:flex}
+.access-dialog{width:min(520px,100%);background:#fff;border:1px solid #d9dee7;border-radius:8px;box-shadow:0 24px 80px rgba(18,32,51,.24);padding:28px;position:relative}
+.access-dialog h2{font-size:28px;line-height:1.1;letter-spacing:-.035em;margin:0}
+.access-dialog .lead{margin:10px 0 22px;color:var(--muted);font-size:15px}
+.access-close{position:absolute;right:14px;top:14px;width:34px;height:34px;border:1px solid #d9dee7;border-radius:6px;background:#fff;font-size:22px;line-height:1;color:#5b677d}
+.access-form{display:grid;gap:14px}
+.access-form label{display:grid;gap:7px;font-size:13px;font-weight:700;color:#39445a}
+.access-form input,.access-form select{width:100%;border:1px solid #cfd6e1;border-radius:6px;background:#fff;color:#182033;padding:12px 13px;font:inherit;outline:none}
+.access-form input:focus,.access-form select:focus{border-color:#e4572e;box-shadow:0 0 0 3px rgba(228,87,46,.10)}
+.access-form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.access-actions{display:flex;align-items:center;gap:12px;margin-top:4px}
+.access-note{font-size:12px;color:#7c8798;line-height:1.45;margin-top:2px}
+.access-success{display:none}
+.access-success.show{display:block}
+.access-success h3{font-size:24px;margin:0 0 8px}
+@media (max-width:620px){.access-form .row{grid-template-columns:1fr}.access-dialog{padding:22px}}
+
+footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);font-size:12.5px}
+.footer-inner{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+
+@media(max-width:960px){
+  .hero-grid,.problem-grid,.feature-grid{grid-template-columns:1fr}
+  .evidence-grid{grid-template-columns:1fr}
+  .evidence-stat + .evidence-stat{border-left:0;border-top:1px solid rgba(255,255,255,.12);padding-left:0}
+  .evidence-stat{padding:24px 0}
+  .hero h1{max-width:14ch}
+  .product-shell{max-width:680px}
+  .steps{grid-template-columns:1fr}
+  .security-grid{grid-template-columns:1fr 1fr}
+  .access-card{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .wrap{width:min(100% - 28px,1160px)}
+  .nav-links a{display:none}
+  .nav-inner{height:64px}
+  .hero{padding:50px 0 44px}
+  .hero-grid{gap:36px}
+  .hero h1{font-size:42px}
+  .hero .lead{font-size:16px}
+  .metric-grid{grid-template-columns:1fr}
+  .section{padding:62px 0}
+  .security-grid{grid-template-columns:1fr}
+  .stat-row{display:block}.stat-row .desc{text-align:left;margin-top:3px;max-width:none}
+  .scenario-row{grid-template-columns:1fr .65fr .65fr;font-size:11.5px;padding:10px}
+  .product-body{padding:14px}
+  .access-card{padding:24px}
+}
+@media(prefers-reduced-motion:reduce){#app{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+
+
+/* ===== post-signup dashboard ===== */
+.dash-app{height:100%;display:grid;grid-template-columns:228px 1fr;grid-template-rows:64px 1fr;grid-template-areas:"top top" "side main";background:#f4f6f8;overflow:hidden}
+.dash-app[hidden]{display:none!important}
+.dash-global-top{grid-area:top;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 20px;background:#fff;border-bottom:1px solid #dce2e9;z-index:45}
+.dash-global-left,.dash-global-actions{display:flex;align-items:center;gap:12px;min-width:0}
+.dash-global-brand{display:inline-flex;align-items:center;gap:9px;font-size:17px;font-weight:800;letter-spacing:-.03em;white-space:nowrap}
+.dash-global-brand .logo-mark{width:30px;height:30px;background:#fff;border-color:#cfd6df}
+.workspace-sep{width:1px;height:24px;background:#e0e5eb;margin:0 2px}
+.dash-company{display:flex;align-items:center;gap:9px;font-weight:800;font-size:13px;min-width:0}
+.dash-company #dashCompany{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
+.demo-badge{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:#755000;background:#fff3cf;border:1px solid #ebd99c;border-radius:3px;padding:4px 7px;font-weight:800;white-space:nowrap}
+.dash-user{width:31px;height:31px;border-radius:50%;background:#edf1f5;border:1px solid #d5dbe3;display:grid;place-items:center;font-size:11px;font-weight:800;color:#4c5668}
+.tour-restart{border:1px solid #cfd6df;background:#fff;border-radius:4px;padding:8px 11px;font-size:11.5px;font-weight:800;color:#465064}
+.tour-restart:hover{background:#f5f7fa}
+
+.dash-sidebar{grid-area:side;background:#111a2a;color:#d8dee8;border-right:1px solid #253047;padding:18px 12px 14px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+.dash-nav{display:grid;gap:2px}
+.dash-nav-group{display:grid;gap:3px;margin-bottom:18px}
+.dash-nav-label{padding:0 10px 7px;color:#65738a;font:700 9.5px/1 var(--sans);letter-spacing:.11em;text-transform:uppercase}
+.dash-nav button{position:relative;display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:#9eabba;text-align:left;padding:9px 10px;border-radius:4px;font-weight:700;font-size:12.5px}
+.dash-nav button:before{content:"";position:absolute;left:-12px;top:7px;bottom:7px;width:3px;border-radius:0 3px 3px 0;background:transparent}
+.dash-nav button.active,.dash-nav button:hover{background:#18263b;color:#fff}
+.dash-nav button.active:before{background:#6fa2ff}
+.nav-icon{width:17px;height:17px;flex:none;color:#708099}
+.dash-nav button.active .nav-icon,.dash-nav button:hover .nav-icon{color:#9fc0ff}
+.nav-icon svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dash-side-bottom{margin-top:auto;padding:12px 9px 4px}
+.demo-note{border-top:1px solid #29354a;padding-top:13px;color:#8794a8;font-size:10.5px;line-height:1.55}
+.demo-note b{display:block;color:#cfd7e3;margin-bottom:3px;font-size:9.5px;letter-spacing:.07em}
+
+.dash-main{grid-area:main;min-width:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:#f4f6f8}
+.dash-content{width:min(1180px,calc(100% - 48px));margin:0 auto;padding:32px 0 62px}
+.dash-title-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:22px}
+.dash-title-row h1{margin:0;font-size:29px;letter-spacing:-.04em;line-height:1.1}
+.dash-title-row p{margin:6px 0 0;color:#6c7688;font-size:13px}
+.dash-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.dkpi{background:#fff;border:1px solid #dce1e7;border-radius:4px;padding:17px 18px}
+.dkpi .k{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#788396;font-weight:800}
+.dkpi .v{margin-top:8px;font:600 26px/1.05 var(--mono);letter-spacing:-.04em}
+.dkpi .d{margin-top:6px;font-size:11.5px;font-weight:700;color:#788396}
+.dkpi .bad{color:#b72c2c}.dkpi .good{color:#1f7a50}
+.dash-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:14px;margin-top:14px}
+.dash-panel{background:#fff;border:1px solid #dce1e7;border-radius:4px;padding:20px;min-width:0}
+.dash-panel h2{margin:0;font-size:16px;letter-spacing:-.02em}.dash-panel .sub{margin:4px 0 0;color:#798397;font-size:12.5px}
+.dash-chart{height:260px;margin-top:17px;border-top:1px solid #edf0f3;padding-top:10px}
+.dash-chart svg{width:100%;height:100%;display:block}
+.assumption-list{margin-top:14px;display:grid}
+.assumption-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #edf0f3}
+.assumption-row:last-child{border-bottom:0}.assumption-row b{font-size:12.5px}.assumption-row small{display:block;color:#8892a3;font-size:10.5px;margin-top:2px}
+.signal{font-size:10px;font-weight:800;padding:5px 7px;border-radius:3px}.signal.red{background:#fde8e8;color:#aa2d2d}.signal.amber{background:#fff2d5;color:#8a5d05}.signal.green{background:#e8f5ee;color:#1f7a50}
+.dash-bottom-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
+
+.assistant-panel{position:relative;overflow:hidden;background:#fff}
+.assistant-head{display:flex;align-items:center;gap:11px;padding-bottom:15px;border-bottom:1px solid #edf0f3}
+.assistant-orb{width:34px;height:34px;border-radius:50%;background:#17233a;display:grid;place-items:center;box-shadow:0 0 0 4px #eef3fb;flex:none}
+.assistant-orb svg{width:20px;height:20px}
+.assistant-head-copy{min-width:0;flex:1}.assistant-head-copy h2{font-size:15px}.assistant-head-copy .sub{margin-top:2px}
+.risk-chip{display:inline-flex;align-items:center;gap:5px;background:#fff0e6;color:#a84a18;border:1px solid #f3ccb8;border-radius:3px;padding:5px 7px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.risk-chip svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2}
+.assistant-message{margin-top:15px;background:#f7f9fc;border-left:3px solid #5f8fdc;padding:14px 15px;min-height:102px}
+.assistant-message b{font-size:12.5px}.assistant-message p{margin:6px 0 0;color:#4e5a6d;font-size:12px;line-height:1.58}
+.assistant-cursor{display:inline-block;width:6px;height:13px;background:#567fbe;vertical-align:-2px;margin-left:2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.assistant-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.assistant-actions button{border:1px solid #d7dde5;background:#fff;border-radius:3px;padding:7px 9px;color:#556174;font-size:10.5px;font-weight:800}
+
+.data-card{margin-top:14px;background:#152238;color:#fff;border:1px solid #263a5c;border-radius:4px;padding:0;overflow:hidden;display:grid;grid-template-columns:1.15fr .85fr;align-items:stretch}
+.data-copy{padding:24px}
+.data-card h2{margin:0;font-size:21px;letter-spacing:-.025em}.data-card p{margin:8px 0 0;color:#c6cfdb;font-size:13px;max-width:650px}
+.upload-preview{margin-top:17px;border:1px dashed #58729b;background:#182942;padding:14px;display:flex;align-items:center;gap:12px;border-radius:3px}
+.upload-icon{width:34px;height:34px;border-radius:4px;background:#203655;display:grid;place-items:center;color:#a9c7f8;flex:none}.upload-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.upload-preview b{display:block;font-size:12.5px}.upload-preview small{display:block;color:#91a0b5;margin-top:2px;font-size:10.5px}
+.safe-points{margin-top:15px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;color:#d8e0e9;font-size:11px;font-weight:700}
+.safe-points span:before{content:'✓';color:#7bd6ad;margin-right:7px}
+.connect-box{background:#1a2b46;border-left:1px solid #30476a;padding:22px;display:flex;flex-direction:column;justify-content:center}
+.connect-box .safety-title{font-size:12px;font-weight:800;color:#fff;margin-bottom:9px}
+.connect-box .safety-copy{font-size:10.8px;color:#9faec2;line-height:1.5;margin-bottom:13px}
+.connect-box label{display:flex;gap:10px;align-items:flex-start;color:#e3e9f1;font-size:11.5px;line-height:1.5;font-weight:600}
+.connect-box input{margin-top:2px;width:16px;height:16px;accent-color:#e4572e;flex:none}
+.connect-box .btn{width:100%;margin-top:13px}
+.connect-box .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.connect-box small{display:block;margin-top:9px;color:#8e9bad;font-size:10px;line-height:1.45}
+
+@media(max-width:980px){
+  .dash-app{grid-template-columns:74px 1fr}.dash-nav-label{font-size:0;padding:0 0 6px}.dash-nav button{justify-content:center;font-size:0;padding:10px}.dash-nav button:before{left:-12px}.nav-icon{width:19px;height:19px}.demo-note{font-size:0}.demo-note b{font-size:8px;text-align:center}.dash-grid,.dash-bottom-grid,.data-card{grid-template-columns:1fr}.dash-kpis{grid-template-columns:repeat(2,1fr)}.connect-box{border-left:0;border-top:1px solid #30476a}.dash-company #dashCompany{max-width:150px}
+}
+@media(max-width:680px){
+  .dash-app{grid-template-columns:1fr;grid-template-rows:58px 1fr;grid-template-areas:"top" "main"}.dash-sidebar{display:none}.dash-global-top{padding:0 12px}.workspace-sep,.dash-company{display:none}.dash-content{width:calc(100% - 24px);padding-top:22px}.dash-title-row{align-items:flex-start}.dash-kpis{grid-template-columns:1fr 1fr;gap:8px}.dkpi{padding:14px}.dkpi .v{font-size:22px}.dash-grid,.dash-bottom-grid{grid-template-columns:1fr}.safe-points{grid-template-columns:1fr}.tour-restart{display:none}
+}
+/* walkthrough */
+.tour-target-active{position:relative;z-index:205!important;box-shadow:0 0 0 3px rgba(255,255,255,.96),0 0 0 7px rgba(228,87,46,.86),0 16px 44px rgba(9,15,27,.28)!important}
+.tour-shade{position:fixed;z-index:200;background:rgba(8,13,23,.66);pointer-events:none;display:none}
+.tour-shade.on{display:block}
+.tour-pop{position:fixed;z-index:220;width:min(360px,calc(100vw - 28px));background:#fff;border:1px solid #d9dee6;border-radius:6px;box-shadow:0 20px 60px rgba(5,12,24,.28);padding:18px;display:none}
+.tour-pop.on{display:block}
+.tour-count{font:600 10.5px var(--mono);color:#8a94a4;text-transform:uppercase;letter-spacing:.08em}
+.tour-pop h3{font-size:18px;margin:8px 0 0;letter-spacing:-.025em}.tour-pop p{margin:7px 0 0;color:#5d687a;font-size:13px;line-height:1.55}
+.tour-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:16px}
+.tour-skip{border:0;background:transparent;color:#7b8596;font-size:12px;font-weight:700;padding:7px 0}
+.tour-next{border:0;border-radius:4px;background:#e4572e;color:#fff;padding:9px 13px;font-weight:800;font-size:12px}
+
+.data-modal{position:fixed;inset:0;z-index:300;display:none;place-items:center;padding:24px;background:rgba(8,13,23,.56)}
+.data-modal.open{display:grid}.data-dialog{width:min(500px,100%);background:#fff;border:1px solid #dce1e7;border-radius:6px;padding:24px;box-shadow:0 22px 80px rgba(7,13,24,.30)}
+.data-dialog h2{margin:0;font-size:23px}.data-dialog p{color:#687386;font-size:13.5px;line-height:1.6}.data-dialog .btn{margin-top:5px}
+
+@media(max-width:980px){
+  .dash-app{grid-template-columns:72px 1fr}.dash-brand{font-size:0;justify-content:center;padding-inline:0}.dash-brand .logo-mark{margin:0}.dash-nav button{font-size:0;text-align:center;padding:11px}.dash-nav .nav-dot{margin:0;width:9px;height:9px}.demo-note{font-size:0}.demo-note b{font-size:9px;text-align:center}.dash-grid,.dash-bottom-grid,.data-card{grid-template-columns:1fr}.dash-kpis{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:680px){
+  .dash-app{grid-template-columns:1fr}.dash-sidebar{display:none}.dash-topbar{padding:0 14px}.dash-content{width:calc(100% - 24px);padding-top:22px}.dash-title-row{align-items:flex-start}.dash-kpis{grid-template-columns:1fr 1fr;gap:8px}.dkpi{padding:14px}.dkpi .v{font-size:22px}.dash-grid,.dash-bottom-grid{grid-template-columns:1fr}.safe-points{grid-template-columns:1fr}.tour-restart{display:none}
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="logo" href="#top" data-scroll="top" aria-label="Bearing home">
+        <span class="logo-mark">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12.5" fill="none" stroke="#182033" stroke-width="3"/><path d="M16 16 L24 8 L19 17 Z" fill="#E4572E"/><path d="M16 16 L8 24 L13 15 Z" fill="#182033"/></svg>
+        </span>
+        bearing
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#how" data-scroll="how">How it works</a>
+        <a href="#product" data-scroll="product">Product</a>
+        <a href="#security" data-scroll="security">Security</a>
+        <button class="btn btn-primary" data-access>Get early access</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <h1>Know when your plan is <span class="accent">starting to drift.</span></h1>
+          <p class="lead">Bearing compares the model you raised on with your actual cash, revenue, burn and hiring. Each month, it shows what moved, which assumption caused it, and what that change does to runway.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-access>Get early access</button>
+            <button class="btn btn-secondary" data-scroll="product">See how it works</button>
+          </div>
+          <div class="trust-row">
+            <span><svg viewBox="0 0 24 24"><path d="M5 12.5l4 4L19 7"/></svg>Read-only connections</span>
+            <span><svg viewBox="0 0 24 24"><path d="M5 12.5l4 4L19 7"/></svg>You control investor sharing</span>
+            <span><svg viewBox="0 0 24 24"><path d="M5 12.5l4 4L19 7"/></svg>Disconnect anytime</span>
+          </div>
+        </div>
+
+        <div class="product-shell" aria-label="Example Bearing dashboard">
+          <div class="product-top">
+            <div class="left"><span class="window-dots"><i></i><i></i><i></i></span>Monthly check</div>
+            <span class="status">Synced today</span>
+          </div>
+          <div class="product-body">
+            <div class="product-head">
+              <div><h3>Your plan vs actual</h3><p>September · example company</p></div>
+              <span class="month-chip">Month 9</span>
+            </div>
+            <div class="metric-grid">
+              <div class="metric"><div class="label">Runway</div><div class="value mono"><span data-count="7.7">7.7</span> mo</div><div class="delta bad">Plan: 11.0 mo · −3.3 mo</div></div>
+              <div class="metric"><div class="label">Monthly churn</div><div class="value mono"><span data-count="3.9">3.9</span>%</div><div class="delta bad">Plan: 1.5% · +2.4 pp</div></div>
+              <div class="metric"><div class="label">Cash vs plan</div><div class="value mono bad">−<span data-count="19">19</span>%</div><div class="delta">CHF 263k behind plan</div></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-head"><b>Cash runway</b><span>Actual vs fundraise plan</span></div>
+              <div class="chart">
+                <svg viewBox="0 0 620 180" role="img" aria-label="Example cash runway chart">
+                  <g stroke="#edf0f3" stroke-width="1"><line x1="0" y1="30" x2="620" y2="30"/><line x1="0" y1="75" x2="620" y2="75"/><line x1="0" y1="120" x2="620" y2="120"/><line x1="0" y1="165" x2="620" y2="165"/></g>
+                  <path d="M14 18 C150 35 285 63 420 108 S560 154 606 162" fill="none" stroke="#a5adba" stroke-width="2.4" stroke-dasharray="7 7"/>
+                  <path d="M14 18 C104 30 182 56 260 86 S338 124 380 166" fill="none" stroke="#e4572e" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="260" cy="86" r="5.5" fill="#e4572e" stroke="#fff" stroke-width="2"/>
+                  <text x="272" y="80" fill="#182033" font-size="11" font-weight="700">Today</text>
+                  <text x="604" y="154" text-anchor="end" fill="#697489" font-size="10.5" font-weight="700">Plan: month 20</text>
+                  <text x="374" y="158" text-anchor="end" fill="#b72c2c" font-size="10.5" font-weight="700">Actual: month 17</text>
+                </svg>
+              </div>
+            </div>
+            <div class="insight">
+              <div class="insight-icon">B</div>
+              <div><b>Churn is the largest driver of the runway gap.</b><p>If churn returns to plan while everything else stays unchanged, the model adds roughly 1.4 months of runway.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="problem">
+      <div class="wrap">
+        <div class="section-head"><h2>The model mattered during the raise. It should still matter after it.</h2><p>Your bank balance tells you what happened. Your plan tells you what was supposed to happen. Bearing keeps the two connected, month after month.</p></div>
+        <div class="problem-grid">
+          <div class="problem-copy">
+            <article><h3>Plan drift is hard to notice early</h3><p>Hiring, churn, sales velocity and pricing rarely miss all at once. Small deviations compound before they become obvious in the bank balance.</p></article>
+            <article><h3>Runway is an output, not an explanation</h3><p>Knowing that runway fell is useful. Knowing which assumption caused it — and what happens if you fix it — is more useful.</p></article>
+            <article><h3>Investor updates become a separate job</h3><p>The same monthly analysis can become the basis for an investor update, but the founder decides what is actually shared.</p></article>
+          </div>
+          <div class="feature" style="align-self:start">
+            <h3>One model. One monthly reality check.</h3>
+            <p>Bearing keeps the operating assumptions from your fundraise visible after the round closes, so a small miss in churn, hiring or sales does not disappear inside a single runway number.</p>
+            <div class="mini-list"><div><span>Plan assumptions</span><span class="badge green">Baseline</span></div><div><span>Actual operating data</span><span class="badge green">Current</span></div><div><span>Variance & scenarios</span><span class="badge amber">Monthly</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="evidence" aria-label="Startup operating statistics">
+      <div class="wrap">
+        <h2>Small misses compound faster than they look.</h2>
+        <p class="sub">The useful moment is before a runway problem is obvious — while there is still time to change the assumptions driving it.</p>
+        <div class="evidence-grid">
+          <div class="evidence-stat"><div class="big"><span data-evidence-count="70">0</span>%</div><p>of VC-backed startups that shut down since 2023 ran out of money.</p><small>CB Insights, 2026</small><div class="evidence-track"><div class="evidence-fill" style="--fill:.70"></div></div></div>
+          <div class="evidence-stat"><div class="big"><span data-evidence-count="22">0</span> mo</div><p>median time from the last funding round to shutting down.</p><small>CB Insights, 2026</small><div class="evidence-track"><div class="evidence-fill" style="--fill:.55"></div></div></div>
+          <div class="evidence-stat"><div class="big">&lt;<span data-evidence-count="30">0</span>%</div><p>of startups hit their own projections, by VCs’ estimate.</p><small>Gompers et al., 2020</small><div class="evidence-track"><div class="evidence-fill" style="--fill:.30"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="wrap">
+        <div class="section-head center"><h2>Connect once. Check the plan every month.</h2><p>Your forecast stays tied to the numbers the company is actually producing.</p></div>
+        <div class="steps">
+          <article class="step"><span class="n">01</span><h3>Connect the sources you choose</h3><p>Bring the model you raised on, plus read-only bank and accounting data. Each source can be added or removed independently.</p></article>
+          <article class="step"><span class="n">02</span><h3>Reconcile plan with actuals</h3><p>Bearing maps the model to actual cash, revenue, burn, hiring and other operating drivers, then checks the same assumptions every month.</p></article>
+          <article class="step"><span class="n">03</span><h3>Review the gap before it compounds</h3><p>See what moved, what it does to runway, and a small set of scenarios that help you decide what to investigate next.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="product">
+      <div class="wrap">
+        <div class="section-head"><h2>See the gap, the driver and the next scenario.</h2><p>Every result stays tied to the underlying numbers — not a black-box score.</p></div>
+        <div class="feature-grid">
+          <article class="feature big">
+            <h3>Forward scenarios from your own operating model</h3>
+            <p>Test the changes that matter — churn, hiring, revenue and burn — and see their effect on runway.</p>
+            <div class="scenario-table">
+              <div class="scenario-row head"><span>Scenario</span><span>Runway</span><span>Impact</span></div>
+              <div class="scenario-row"><span>Current trajectory</span><span class="mono">7.7 mo</span><span class="neg">−3.3 mo</span></div>
+              <div class="scenario-row"><span>Churn returns to 1.5%</span><span class="mono">9.1 mo</span><span class="pos">+1.4 mo</span></div>
+              <div class="scenario-row"><span>Delay 2 hires by 90 days</span><span class="mono">8.8 mo</span><span class="pos">+1.1 mo</span></div>
+              <div class="scenario-row"><span>Revenue stays 18% below plan</span><span class="mono">6.9 mo</span><span class="neg">−0.8 mo</span></div>
+            </div>
+          </article>
+          <article class="feature">
+            <h3>The assumptions behind the gap</h3><p>Each operating driver is visible, not hidden behind one score.</p>
+            <div class="mini-list"><div><span>Monthly churn</span><span class="badge red">Breaking</span></div><div><span>New customers</span><span class="badge red">Breaking</span></div><div><span>Team size</span><span class="badge amber">Drifting</span></div><div><span>Price per customer</span><span class="badge green">On plan</span></div></div>
+          </article>
+          <article class="feature">
+            <h3>Investor updates on your terms</h3><p>Use the same monthly analysis to prepare an update, then explicitly choose what leaves the founder workspace.</p>
+            <div class="mini-list"><div><span>Cash & runway</span><span class="badge green">Share</span></div><div><span>Burn</span><span class="badge green">Share</span></div><div><span>Customer churn</span><span class="badge amber">Private</span></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="security">
+      <div class="wrap">
+        <div class="section-head center"><h2>Your financial data stays under your control.</h2><p>Connect only what you choose. Nothing is shared with investors unless you approve it.</p></div>
+        <div class="security-grid">
+          <article class="security-card"><div class="security-icon"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"/></svg></div><h3>Read-only access</h3><p>Bearing reads balances and transactions. It cannot initiate payments or move funds.</p></article>
+          <article class="security-card"><div class="security-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="16" cy="12" r="2.5"/></svg></div><h3>Founder-controlled sharing</h3><p>No investor receives company data unless the founder explicitly approves what is shared.</p></article>
+          <article class="security-card"><div class="security-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><h3>You approve every action</h3><p>Bearing can surface variance and scenarios, but it never changes your plan or sends an investor update on its own.</p></article>
+          <article class="security-card"><div class="security-icon"><svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></div><h3>Clear data lifecycle</h3><p>You should always be able to see what is stored, what it is used for, and remove your connected sources.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="access-section" id="access">
+      <div class="wrap">
+        <div class="access-card">
+          <div><h2>See your company against the plan you raised on.</h2><p>Get a clearer monthly view of plan vs actual, runway, and the assumptions driving both.</p><div class="sub">Early access · EPFL student research project</div></div>
+          <button class="btn btn-secondary" id="interestBtn" data-access>Get early access</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner"><span>© 2026 Bearing</span><span>EPFL student research project</span></div>
+  </footer>
+</div>
+
+
+
+<div id="dashboard" class="dash-app" hidden>
+  <header class="dash-global-top">
+    <div class="dash-global-left">
+      <div class="dash-global-brand"><span class="logo-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12.5" fill="none" stroke="#182033" stroke-width="3"/><path d="M16 16 L24 8 L19 17 Z" fill="#E4572E"/><path d="M16 16 L8 24 L13 15 Z" fill="#182033"/></svg></span>bearing</div>
+      <span class="workspace-sep"></span>
+      <div class="dash-company"><span id="dashCompany">Example company</span><span class="demo-badge">Demo data</span></div>
+    </div>
+    <div class="dash-global-actions"><button class="tour-restart" id="restartTour">Guided tour</button><div class="dash-user" id="dashUser">F</div></div>
+  </header>
+
+  <aside class="dash-sidebar">
+    <nav class="dash-nav" aria-label="Dashboard navigation">
+      <div class="dash-nav-group"><div class="dash-nav-label">Workspace</div>
+        <button class="active" data-dash-target="tourOverview"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>Overview</button>
+        <button data-dash-target="cashPanel"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/></svg></span>Plan vs actual</button>
+        <button data-dash-target="tourAssumptions"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Assumptions</button>
+      </div>
+      <div class="dash-nav-group"><div class="dash-nav-label">Guidance</div>
+        <button data-dash-target="tourAssistant"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4z"/><path d="M9 9h6M9 12h4"/></svg></span>Bearing assistant</button>
+        <button data-dash-target="tourData"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><rect x="4" y="15" width="16" height="6" rx="2"/></svg></span>Data & privacy</button>
+      </div>
+      <div class="dash-nav-group"><div class="dash-nav-label">Share</div>
+        <button data-dash-target="tourAssistant"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 5l5 5-5 5"/><path d="M19 10H9a5 5 0 0 0-5 5v3"/></svg></span>Investor update</button>
+      </div>
+    </nav>
+    <div class="dash-side-bottom"><div class="demo-note"><b>DEMO WORKSPACE</b>All figures are made up. Explore freely before connecting anything.</div></div>
+  </aside>
+
+  <section class="dash-main" id="dashMain">
+    <div class="dash-content">
+      <div class="dash-title-row">
+        <div><h1>Overview</h1><p>September monthly check · all figures below are dummy data.</p></div>
+      </div>
+
+      <section class="dash-kpis" id="tourOverview">
+        <article class="dkpi"><div class="k">Runway</div><div class="v">7.7 mo</div><div class="d bad">3.3 months below plan</div></article>
+        <article class="dkpi"><div class="k">Cash</div><div class="v">CHF 1.12m</div><div class="d bad">19% below plan</div></article>
+        <article class="dkpi"><div class="k">MRR</div><div class="v">CHF 86k</div><div class="d bad">12% below plan</div></article>
+        <article class="dkpi"><div class="k">Net burn</div><div class="v">CHF 145k</div><div class="d good">4% better than plan</div></article>
+      </section>
+
+      <div class="dash-grid">
+        <section class="dash-panel" id="cashPanel">
+          <h2>Cash runway</h2><p class="sub">Actual cash against the plan used for the raise</p>
+          <div class="dash-chart"><svg viewBox="0 0 760 250" role="img" aria-label="Dummy cash runway chart">
+            <g stroke="#edf0f3"><line x1="0" y1="40" x2="760" y2="40"/><line x1="0" y1="100" x2="760" y2="100"/><line x1="0" y1="160" x2="760" y2="160"/><line x1="0" y1="220" x2="760" y2="220"/></g>
+            <path d="M16 26 C160 44 310 72 470 130 S650 198 740 212" fill="none" stroke="#a9b1bd" stroke-width="2.5" stroke-dasharray="8 7"/>
+            <path d="M16 26 C118 44 232 79 350 125 S450 181 492 220" fill="none" stroke="#e4572e" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="350" cy="125" r="6" fill="#e4572e" stroke="#fff" stroke-width="3"/>
+            <line x1="350" y1="18" x2="350" y2="224" stroke="#d9dee5" stroke-dasharray="4 5"/>
+            <text x="360" y="118" fill="#303a4d" font-size="12" font-weight="700">Today</text><text x="736" y="204" text-anchor="end" fill="#778196" font-size="11" font-weight="700">Plan: month 20</text><text x="486" y="210" text-anchor="end" fill="#b72c2c" font-size="11" font-weight="700">Actual: month 17</text>
+          </svg></div>
+        </section>
+
+        <section class="dash-panel" id="tourAssumptions">
+          <h2>What is driving the gap</h2><p class="sub">The assumptions from your plan, checked against actuals</p>
+          <div class="assumption-list">
+            <div class="assumption-row"><span><b>Monthly churn</b><small>3.9% actual · 1.5% plan</small></span><span class="signal red">Breaking</span></div>
+            <div class="assumption-row"><span><b>New customers</b><small>6 / month · 9 planned</small></span><span class="signal red">Breaking</span></div>
+            <div class="assumption-row"><span><b>Team size</b><small>18 actual · 17 planned</small></span><span class="signal amber">Drifting</span></div>
+            <div class="assumption-row"><span><b>Average price</b><small>CHF 1,840 · CHF 1,790 planned</small></span><span class="signal green">On plan</span></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="dash-bottom-grid">
+        <section class="dash-panel assistant-panel" id="tourAssistant">
+          <div class="assistant-head">
+            <div class="assistant-orb"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11.5" fill="none" stroke="#fff" stroke-width="3"/><path d="M16 16 L23 9 L18.5 17 Z" fill="#ff8b4e"/><path d="M16 16 L9 23 L13.5 15 Z" fill="#fff"/></svg></div>
+            <div class="assistant-head-copy"><h2>Bearing assistant</h2><p class="sub">A demo explanation generated from the sample numbers</p></div>
+            <span class="risk-chip"><svg viewBox="0 0 24 24"><path d="M12 3l9 17H3z"/><path d="M12 9v5M12 17h.01"/></svg>At risk</span>
+          </div>
+          <div class="assistant-message"><b>Runway is moving away from the plan.</b><p id="assistantText">Churn is 3.9% against 1.5% planned, while new customers are 33% below target. At the current trajectory, runway falls below 8 months. To move back toward the plan, you need either customer growth closer to 9 per month or roughly CHF 22k less monthly burn. Review churn before adding more headcount.</p></div>
+          <div class="assistant-actions"><button>Show the numbers</button><button>Test another scenario</button><button>Draft investor update</button></div>
+        </section>
+
+        <section class="dash-panel"><h2>Scenario check</h2><p class="sub">How the current plan changes under a few operating assumptions</p><div class="assumption-list"><div class="assumption-row"><span><b>Current trajectory</b><small>At current burn and churn</small></span><span class="mono">7.7 mo</span></div><div class="assumption-row"><span><b>Churn returns to plan</b><small>1.5% monthly churn</small></span><span class="mono" style="color:#1f7a50">9.1 mo</span></div><div class="assumption-row"><span><b>Delay two hires</b><small>90-day delay</small></span><span class="mono" style="color:#1f7a50">8.8 mo</span></div></div></section>
+      </div>
+
+      <section class="data-card" id="tourData">
+        <div class="data-copy">
+          <h2>Bring your own numbers</h2>
+          <p>Start with any Excel, CSV or Google Sheets export. Bearing is designed to map the file automatically, identify cash, burn, revenue and the assumptions behind your forecast, then ask you to confirm what it found.</p>
+          <div class="upload-preview"><span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 15v4h14v-4"/></svg></span><div><b>Spreadsheet, CSV or exported Google Sheet</b><small>No file is collected in this demo. This is the point where the real connection flow would begin.</small></div></div>
+          <div class="safe-points"><span>Review imported fields before analysis</span><span>No automatic investor sharing</span><span>Disconnect or remove a source</span><span>See exactly what Bearing uses</span></div>
+        </div>
+        <div class="connect-box">
+          <div class="safety-title">Your data stays under your control</div>
+          <div class="safety-copy">The connection flow is designed so you approve what is imported and what, if anything, is later shared with investors.</div>
+          <label><input type="checkbox" id="dataConsent"> <span>I’m comfortable proceeding to a connection step that would use my company’s financial data to generate a Bearing analysis.</span></label>
+          <button class="btn btn-primary" id="addDataBtn" disabled>Add my data</button>
+          <small>This demo stops before any spreadsheet, account credential or financial record is collected.</small>
+        </div>
+      </section>
+    </div>
+  </section>
+</div>
+
+<div class="tour-shade" id="shadeTop"></div><div class="tour-shade" id="shadeLeft"></div><div class="tour-shade" id="shadeRight"></div><div class="tour-shade" id="shadeBottom"></div>
+<div class="tour-pop" id="tourPop" role="dialog" aria-live="polite">
+  <div style="display:flex;align-items:center;gap:9px"><span class="assistant-orb" style="width:28px;height:28px;box-shadow:none"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11.5" fill="none" stroke="#fff" stroke-width="3"/><path d="M16 16 L23 9 L18.5 17 Z" fill="#ff8b4e"/><path d="M16 16 L9 23 L13.5 15 Z" fill="#fff"/></svg></span><div class="tour-count" id="tourCount">1 of 4</div></div><h3 id="tourTitle"></h3><p id="tourText"></p>
+  <div class="tour-actions"><button class="tour-skip" id="tourSkip">Skip walkthrough</button><button class="tour-next" id="tourNext">Next</button></div>
+</div>
+
+<div class="data-modal" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle">
+  <div class="data-dialog"><h2 id="dataModalTitle">Thank you.</h2><p>You’re on the early-access list. We’ll send you the connection details and next steps as soon as they’re ready. In the meantime, you can keep exploring the demo dashboard.</p><button class="btn btn-primary" id="closeDataModal">Back to dashboard</button></div>
+</div>
+
+<div class="access-modal" id="accessModal" role="dialog" aria-modal="true" aria-labelledby="accessTitle" aria-hidden="true">
+  <div class="access-dialog">
+    <button class="access-close" id="accessClose" aria-label="Close">×</button>
+    <div id="accessFormView">
+      <h2 id="accessTitle">Get early access</h2>
+      <p class="lead">Tell us who you are. We’ll keep the first step short.</p>
+      <form class="access-form" id="accessForm">
+        <label>Work email<input type="email" name="email" autocomplete="email" required placeholder="you@company.com"></label>
+        <label>Company name<input type="text" name="company" autocomplete="organization" required placeholder="Company"></label>
+        <div class="row">
+          <label>Your role<select name="role" required><option value="">Select</option><option>Founder</option><option>Co-founder</option><option>CFO / Finance</option><option>Other</option></select></label>
+          <label>Last raise<select name="raise" required><option value="">Select</option><option>&lt; 6 months ago</option><option>6–12 months ago</option><option>12–24 months ago</option><option>24+ months ago</option></select></label>
+        </div>
+        <div class="access-actions"><button class="btn btn-primary" type="submit">Continue</button><button class="btn btn-secondary" type="button" id="accessCancel">Cancel</button></div>
+        <p class="access-note">No payment details required.</p>
+      </form>
+    </div>
+    <div class="access-success" id="accessSuccess">
+      <h3>Account step complete.</h3>
+      <p class="lead">Next we’ll add the important part: choosing what company data you would be willing to connect.</p>
+      <div class="access-actions"><button class="btn btn-primary" type="button" id="accessDone">Done</button></div>
+    </div>
+  </div>
+</div>
+<script>
+(() => {
+  const scroller = document.getElementById('app');
+  const go = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 78;
+    scroller.scrollTo({top, behavior:'smooth'});
+  };
+  document.querySelectorAll('[data-scroll]').forEach(el => el.addEventListener('click', e => {
+    e.preventDefault();
+    go(el.dataset.scroll);
+  }));
+
+  const animateNumber = (el) => {
+    const target = Number(el.dataset.count);
+    const decimals = String(target).includes('.') ? 1 : 0;
+    const duration = 800;
+    const start = performance.now();
+    const from = target * .72;
+    const tick = now => {
+      const p = Math.min(1,(now-start)/duration);
+      const eased = 1 - Math.pow(1-p,3);
+      el.textContent = (from + (target-from)*eased).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+  document.querySelectorAll('[data-count]').forEach(animateNumber);
+
+  const evidence = document.querySelector('.evidence');
+  let evidenceRan = false;
+  if (evidence && 'IntersectionObserver' in window) {
+    const obs = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting || evidenceRan) return;
+      evidenceRan = true;
+      evidence.classList.add('in');
+      evidence.querySelectorAll('[data-evidence-count]').forEach(el => {
+        const target = Number(el.dataset.evidenceCount);
+        const start = performance.now();
+        const duration = 1100;
+        const tick = now => {
+          const p = Math.min(1, (now-start)/duration);
+          const eased = 1 - Math.pow(1-p, 3);
+          el.textContent = Math.round(target * eased);
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+      obs.disconnect();
+    }, {root: scroller, threshold:.25});
+    obs.observe(evidence);
+  } else if (evidence) {
+    evidence.querySelectorAll('[data-evidence-count]').forEach(el => el.textContent = el.dataset.evidenceCount);
+  }
+
+  const modal = document.getElementById('accessModal');
+  const formView = document.getElementById('accessFormView');
+  const successView = document.getElementById('accessSuccess');
+  const accessForm = document.getElementById('accessForm');
+  const openAccess = () => {
+    formView.style.display = 'block';
+    successView.classList.remove('show');
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    setTimeout(() => accessForm.querySelector('input')?.focus(), 0);
+  };
+  const closeAccess = () => {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+  };
+  document.querySelectorAll('[data-access]').forEach(btn => btn.addEventListener('click', e => { e.preventDefault(); openAccess(); }));
+  document.getElementById('accessClose').addEventListener('click', closeAccess);
+  document.getElementById('accessCancel').addEventListener('click', closeAccess);
+  document.getElementById('accessDone').addEventListener('click', closeAccess);
+  modal.addEventListener('click', e => { if (e.target === modal) closeAccess(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeAccess(); });
+  const dashboard = document.getElementById('dashboard');
+  const landing = document.getElementById('app');
+  const dashCompany = document.getElementById('dashCompany');
+  const dashUser = document.getElementById('dashUser');
+  const dashMain = document.getElementById('dashMain');
+
+  const tourSteps = [
+    {id:'tourOverview', title:'Your monthly operating snapshot', text:'Runway, cash, revenue and burn stay visible against the plan you raised on. The numbers here are demo data.'},
+    {id:'tourAssumptions', title:'See what is actually driving the gap', text:'Bearing breaks the model down into the assumptions behind it, so you can see exactly what is holding, drifting or breaking.'},
+    {id:'tourAssistant', title:'Bearing explains what needs attention', text:'The assistant turns the variance into a concrete operating readout. This example is hardcoded for the demo, but shows the kind of guidance Bearing would generate from your numbers.'},
+    {id:'tourData', title:'Then bring your own spreadsheet', text:'When you are ready, you can proceed with company financial data. You review what is imported first, and nothing is shared with investors automatically.'}
+  ];
+  let tourIndex = 0;
+  let activeTarget = null;
+  const pop = document.getElementById('tourPop');
+  const count = document.getElementById('tourCount');
+  const title = document.getElementById('tourTitle');
+  const ttext = document.getElementById('tourText');
+  const next = document.getElementById('tourNext');
+  const shades = ['shadeTop','shadeLeft','shadeRight','shadeBottom'].map(id=>document.getElementById(id));
+  const assistantTextEl = document.getElementById('assistantText');
+  const assistantFull = 'Churn is 3.9% against 1.5% planned, while new customers are 33% below target. At the current trajectory, runway falls below 8 months. To move back toward the plan, you need either customer growth closer to 9 per month or roughly CHF 22k less monthly burn. Review churn before adding more headcount.';
+  let assistantTimer = null;
+  function playAssistantDemo(){
+    if (!assistantTextEl) return;
+    clearInterval(assistantTimer);
+    assistantTextEl.textContent='';
+    const cursor=document.createElement('span'); cursor.className='assistant-cursor'; assistantTextEl.appendChild(cursor);
+    let i=0;
+    assistantTimer=setInterval(()=>{
+      if(i>=assistantFull.length){ clearInterval(assistantTimer); cursor.remove(); assistantTextEl.textContent=assistantFull; return; }
+      cursor.insertAdjacentText('beforebegin', assistantFull[i++]);
+    }, 8);
+  }
+
+  function positionTour(){
+    if (!activeTarget || !pop.classList.contains('on')) return;
+    const r = activeTarget.getBoundingClientRect();
+    const pad = 8;
+    const x1 = Math.max(0, r.left-pad), y1 = Math.max(0, r.top-pad), x2 = Math.min(innerWidth, r.right+pad), y2 = Math.min(innerHeight, r.bottom+pad);
+    const [topS,leftS,rightS,bottomS]=shades;
+    Object.assign(topS.style,{left:'0px',top:'0px',width:'100vw',height:y1+'px'});
+    Object.assign(bottomS.style,{left:'0px',top:y2+'px',width:'100vw',height:Math.max(0,innerHeight-y2)+'px'});
+    Object.assign(leftS.style,{left:'0px',top:y1+'px',width:x1+'px',height:Math.max(0,y2-y1)+'px'});
+    Object.assign(rightS.style,{left:x2+'px',top:y1+'px',width:Math.max(0,innerWidth-x2)+'px',height:Math.max(0,y2-y1)+'px'});
+    const pw = Math.min(360, innerWidth-28), ph = pop.offsetHeight || 210;
+    let left = Math.min(Math.max(14, r.left), innerWidth-pw-14);
+    let top = r.bottom + 18;
+    if (top + ph > innerHeight - 14) top = r.top - ph - 18;
+    if (top < 14) top = Math.min(innerHeight-ph-14, Math.max(14, r.top + 24));
+    pop.style.left = left+'px'; pop.style.top = top+'px';
+  }
+  function endTour(){
+    if(activeTarget) activeTarget.classList.remove('tour-target-active');
+    activeTarget=null; pop.classList.remove('on'); shades.forEach(s=>s.classList.remove('on'));
+  }
+  function showTourStep(i){
+    endTour(); tourIndex=i;
+    const step=tourSteps[i], target=document.getElementById(step.id);
+    if(!target) return;
+    target.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>{
+      activeTarget=target; target.classList.add('tour-target-active');
+      count.textContent=`${i+1} of ${tourSteps.length}`; title.textContent=step.title; ttext.textContent=step.text;
+      if(step.id==='tourAssistant') playAssistantDemo();
+      next.textContent=i===tourSteps.length-1?'Finish walkthrough':'Next';
+      shades.forEach(s=>s.classList.add('on')); pop.classList.add('on'); positionTour();
+    }, 360);
+  }
+  function startTour(){ dashMain.scrollTo({top:0,behavior:'auto'}); setTimeout(()=>showTourStep(0),120); }
+  next.addEventListener('click',()=> tourIndex < tourSteps.length-1 ? showTourStep(tourIndex+1) : endTour());
+  document.getElementById('tourSkip').addEventListener('click',endTour);
+  document.getElementById('restartTour').addEventListener('click',startTour);
+  window.addEventListener('resize',positionTour);
+  dashMain.addEventListener('scroll',positionTour,{passive:true});
+
+  document.querySelectorAll('[data-dash-target]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-dash-target]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const target=document.getElementById(btn.dataset.dashTarget);
+    if(target) target.scrollIntoView({behavior:'smooth',block:'center'});
+  }));
+
+  const consent=document.getElementById('dataConsent'), addData=document.getElementById('addDataBtn'), dataModal=document.getElementById('dataModal');
+  consent.addEventListener('change',()=>{addData.disabled=!consent.checked;});
+  addData.addEventListener('click',()=>{ if(!consent.checked) return; dataModal.classList.add('open'); });
+  document.getElementById('closeDataModal').addEventListener('click',()=>dataModal.classList.remove('open'));
+  dataModal.addEventListener('click',e=>{if(e.target===dataModal)dataModal.classList.remove('open')});
+
+  accessForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!accessForm.reportValidity()) return;
+    const fd=new FormData(accessForm);
+    const company=(fd.get('company')||'Example company').toString().trim();
+    const email=(fd.get('email')||'').toString();
+    dashCompany.textContent=company || 'Example company';
+    dashUser.textContent=(email[0]||'F').toUpperCase();
+    closeAccess();
+    landing.style.display='none';
+    dashboard.hidden=false;
+    dashboard.removeAttribute('hidden');
+    startTour();
+  });
+})();
+</script>
+<script src="track.js" defer></script>
+</body>
+</html>
