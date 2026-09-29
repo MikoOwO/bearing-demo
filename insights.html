@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -114,13 +114,25 @@ tr.row.sel td{background:var(--accent-soft)}
 </style>
 </head>
 <body>
+<style>
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.danger:not([disabled]){border-color:var(--bad);color:var(--bad)}
+td.cb,th.cb{width:28px;padding-right:0}
+td.cb input,th.cb input{width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
+tr.excluded td{opacity:.55}
+.lang button{min-width:38px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:9px;font-size:13px;opacity:0;transition:opacity .2s;z-index:60;pointer-events:none}
+.toast.on{opacity:1}
+</style>
 <div id="tip" role="tooltip"></div>
+<div id="toast" class="toast" role="status"></div>
 
 <div id="gate" class="gate" hidden>
   <div class="card">
     <h1 style="font-size:18px">Bearing Insights</h1>
-    <p class="muted">Accès réservé à l'équipe. Colle la clé d'accès, ou ouvre le lien secret complet.</p>
-    <form id="gateForm"><input id="gateKey" type="password" autocomplete="off" placeholder="Clé d'accès"><button class="btn" type="submit">Ouvrir</button></form>
+    <p class="muted" data-i18n="gate.text"></p>
+    <form id="gateForm"><input id="gateKey" type="password" autocomplete="off" data-i18n-ph="gate.ph"><button class="btn" type="submit" data-i18n="gate.open"></button></form>
     <div id="gateErr" class="err"></div>
   </div>
 </div>
@@ -130,57 +142,63 @@ tr.row.sel td{background:var(--accent-soft)}
     <div class="brand"><span class="dot"></span>Bearing Insights <small id="stamp" style="font-weight:400"></small></div>
     <div class="ctrl">
       <div class="seg" id="period">
-        <button data-p="1">24 h</button><button data-p="7">7 j</button><button data-p="30">30 j</button><button data-p="0" class="on">Tout</button>
+        <button data-p="1">24 h</button><button data-p="7" data-i18n="p.7"></button><button data-p="30" data-i18n="p.30"></button><button data-p="0" class="on" data-i18n="p.all"></button>
       </div>
-      <label class="chk"><input type="checkbox" id="showTests"> Inclure les tests</label>
-      <button class="btn" id="refresh">Rafraîchir</button>
-      <button class="btn" id="csv">Export CSV</button>
+      <button class="btn" id="refresh" data-i18n="refresh"></button>
+      <button class="btn" id="csv" data-i18n="csv"></button>
+      <div class="seg lang" id="lang"><button data-l="en">EN</button><button data-l="fr">FR</button></div>
     </div>
   </div></header>
 
   <main class="wrap">
-    <div class="section-title">Vue d'ensemble</div>
+    <div class="section-title" data-i18n="s.overview"></div>
     <div class="grid g-kpi" id="kpis"></div>
 
-    <div class="section-title">Ce que disent les données</div>
+    <div class="section-title" data-i18n="s.insights"></div>
     <div class="card"><div class="insights" id="insights"></div>
-      <div class="note">Observations calculées automatiquement à partir des événements, sans IA. Avec peu de sessions, lis-les comme des pistes, pas comme des conclusions.</div></div>
+      <div class="note" data-i18n="insights.note"></div></div>
 
-    <div class="section-title">Entonnoir</div>
-    <div class="card"><div class="card-h"><h2>De la visite à l'intention de connecter ses données</h2><small>% des sessions</small></div><div class="bars funnel" id="funnel"></div></div>
+    <div class="section-title" data-i18n="s.funnel"></div>
+    <div class="card"><div class="card-h"><h2 data-i18n="funnel.title"></h2><small data-i18n="pctSessions"></small></div><div class="bars funnel" id="funnel"></div></div>
 
-    <div class="section-title">Attention</div>
+    <div class="section-title" data-i18n="s.attention"></div>
     <div class="grid g-2">
-      <div class="card"><div class="card-h"><h2>Landing : temps par section</h2><small>moyenne des sessions qui l'ont vue · % atteinte</small></div><div class="bars" id="landingTime"></div></div>
-      <div class="card"><div class="card-h"><h2>Dashboard : temps par zone</h2><small>moyenne des sessions qui l'ont vue · % atteinte</small></div><div class="bars" id="dashTime"></div></div>
-      <div class="card"><div class="card-h"><h2>Tour guidé</h2><small>% des sessions arrivées au dashboard · temps moyen</small></div><div class="bars" id="tour"></div></div>
-      <div class="card"><div class="card-h"><h2>Profondeur de scroll</h2><small>% des sessions</small></div><div class="bars" id="scroll"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="landingTime.title"></h2><small data-i18n="avgReach"></small></div><div class="bars" id="landingTime"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="dashTime.title"></h2><small data-i18n="avgReach"></small></div><div class="bars" id="dashTime"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="tour.title"></h2><small data-i18n="tour.sub"></small></div><div class="bars" id="tour"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="scroll.title"></h2><small data-i18n="pctSessions"></small></div><div class="bars" id="scroll"></div></div>
     </div>
 
-    <div class="section-title">Interactions</div>
+    <div class="section-title" data-i18n="s.interactions"></div>
     <div class="grid g-2">
-      <div class="card"><div class="card-h"><h2>Éléments cliqués</h2><small>clics · sessions</small></div><div class="tbl-wrap"><table id="clicks"></table></div></div>
-      <div class="card"><div class="card-h"><h2>Frictions</h2><small>clics sans effet, répétés ou sur bouton désactivé</small></div><div class="tbl-wrap"><table id="friction"></table></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="clicks.title"></h2><small data-i18n="clicks.sub"></small></div><div class="tbl-wrap"><table id="clicks"></table></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="friction.title"></h2><small data-i18n="friction.sub"></small></div><div class="tbl-wrap"><table id="friction"></table></div></div>
     </div>
 
-    <div class="section-title">Formulaire d'accès & audience</div>
+    <div class="section-title" data-i18n="s.form"></div>
     <div class="grid g-3">
-      <div class="card"><div class="card-h"><h2>CTA qui ouvre le formulaire</h2></div><div class="bars" id="ctaSrc"></div></div>
-      <div class="card"><div class="card-h"><h2>Rôle déclaré</h2></div><div class="bars" id="roles"></div></div>
-      <div class="card"><div class="card-h"><h2>Dernière levée</h2></div><div class="bars" id="raises"></div></div>
-      <div class="card"><div class="card-h"><h2>Formulaire : champs</h2><small>sessions ayant ouvert le formulaire</small></div><div class="bars" id="fields"></div></div>
-      <div class="card"><div class="card-h"><h2>Appareils</h2></div><div class="bars" id="devices"></div></div>
-      <div class="card"><div class="card-h"><h2>Provenance</h2></div><div class="bars" id="refs"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="cta.title"></h2></div><div class="bars" id="ctaSrc"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="roles.title"></h2></div><div class="bars" id="roles"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="raises.title"></h2></div><div class="bars" id="raises"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="fields.title"></h2><small data-i18n="fields.sub"></small></div><div class="bars" id="fields"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="devices.title"></h2></div><div class="bars" id="devices"></div></div>
+      <div class="card"><div class="card-h"><h2 data-i18n="refs.title"></h2></div><div class="bars" id="refs"></div></div>
     </div>
 
-    <div class="section-title">Founders</div>
-    <div class="card"><div class="card-h"><h2>Une ligne par personne</h2><small>clic sur une ligne → parcours détaillé</small></div>
+    <div class="section-title" data-i18n="s.people"></div>
+    <div class="card"><div class="card-h"><h2 data-i18n="people.title"></h2><small data-i18n="people.sub"></small></div>
+      <div class="toolbar"><button class="btn danger" id="excludeSel" disabled></button><small class="muted" data-i18n="people.excludeHint"></small></div>
       <div class="tbl-wrap"><table id="people"></table></div>
-      <div class="note">Score d'intérêt (0–9) : formulaire +2, consentement +2, « Add my data » +2, tour terminé +1, action de l'assistant +1, retour +1, plus de 3 min actives +1.</div>
+      <div class="note" data-i18n="people.scoreNote"></div>
     </div>
 
-    <div class="section-title" id="journeyAnchor">Parcours</div>
-    <div class="card" id="journeyCard"><div class="empty">Sélectionne une personne dans le tableau ci-dessus.</div></div>
+    <div class="card" style="margin-top:14px"><div class="card-h"><h2 data-i18n="excl.title"></h2><small data-i18n="excl.sub"></small></div>
+      <div class="toolbar"><button class="btn" id="includeSel" disabled></button></div>
+      <div class="tbl-wrap"><table id="excluded"></table></div>
+    </div>
+
+    <div class="section-title" id="journeyAnchor" data-i18n="s.journey"></div>
+    <div class="card" id="journeyCard"></div>
   </main>
 </div>
 
@@ -189,20 +207,185 @@ tr.row.sel td{background:var(--accent-soft)}
   const SUPABASE_URL = 'https://nrjgyqistgulfpeycoyp.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_VTf9Z88VdCHhZWjosj0I_Q_ibTjvLj5';
 
-  // ---------- Libellés lisibles ----------
-  const AREA = {
-    landing:'Landing (page)', dashboard:'Dashboard (page)',
-    hero:'Hero · accroche', problem:'Le problème', evidence:'Chiffres clés', how:'Comment ça marche',
-    product:'Produit', security:'Sécurité', access:'Bloc « early access » (bas)', footer:'Pied de page',
-    nav:'Barre de navigation', 'nav-links':'Barre de navigation',
-    tourOverview:'KPIs (runway, cash, MRR, burn)', cashPanel:'Graphique cash runway', tourAssumptions:'Hypothèses qui dérivent',
-    tourAssistant:'Assistant Bearing', scenarioPanel:'Scénarios', tourData:'« Bring your own numbers »',
-    access_form:'Formulaire d’accès', add_data_thanks:'Modale « Merci » (Add data)', accessModal:'Formulaire d’accès',
-    dataModal:'Modale « Merci »', tourPop:'Bulle du tour', 'dash-global-top':'En-tête dashboard', 'dash-sidebar':'Menu latéral',
+  // ---------- Traductions (anglais par défaut) ----------
+  const I18N = {
+    en: {
+      'gate.text': 'Team access only. Paste the access key, or open the full secret link.', 'gate.ph': 'Access key', 'gate.open': 'Open',
+      'gate.bad': 'Invalid key.', 'gate.fail': 'Could not load data ({0}).',
+      'p.7': '7 d', 'p.30': '30 d', 'p.all': 'All', refresh: 'Refresh', csv: 'Export CSV', updated: '· updated {0}',
+      's.overview': 'Overview', 's.insights': 'What the data says', 's.funnel': 'Funnel', 's.attention': 'Attention',
+      's.interactions': 'Interactions', 's.form': 'Access form & audience', 's.people': 'Founders', 's.journey': 'Journey',
+      'insights.note': 'Observations computed automatically from the events, no AI involved. With few sessions, treat them as leads, not conclusions.',
+      'funnel.title': 'From visit to intent to connect their data', pctSessions: '% of sessions',
+      avgReach: 'average across sessions that saw it · % reached',
+      'landingTime.title': 'Landing: time per section', 'dashTime.title': 'Dashboard: time per area',
+      'tour.title': 'Guided tour', 'tour.sub': '% of sessions that reached the dashboard · avg time', 'scroll.title': 'Scroll depth',
+      'clicks.title': 'Clicked elements', 'clicks.sub': 'clicks · sessions', 'friction.title': 'Friction', 'friction.sub': 'clicks with no effect, repeated, or on a disabled button',
+      'cta.title': 'CTA that opened the form', 'roles.title': 'Declared role', 'raises.title': 'Last raise',
+      'fields.title': 'Form: fields', 'fields.sub': 'sessions that opened the form', 'devices.title': 'Devices', 'refs.title': 'Source',
+      'people.title': 'One row per person', 'people.sub': 'click a row → detailed journey',
+      'people.excludeHint': 'Excluded profiles (tests, team) are removed from every figure. The list is shared by everyone with the link.',
+      'people.scoreNote': 'Interest score (0–9): form +2, consent +2, “Add my data” +2, tour completed +1, assistant action +1, returning +1, more than 3 active min +1.',
+      'excl.title': 'Excluded profiles', 'excl.sub': 'not counted anywhere', 'excl.none': 'No excluded profile.',
+      excludeSel: 'Exclude selected ({0})', includeSel: 'Include again ({0})', excludeOne: 'Exclude from analysis', includeOne: 'Include again',
+      'toast.excluded': '{0} profile(s) excluded', 'toast.included': '{0} profile(s) included again', 'toast.err': 'Could not save: {0}',
+      'journey.pick': 'Pick a person in the table above.', 'journey.gone': 'This person is not in the current period.',
+      noData: 'No data yet', noClicks: 'No clicks', noFriction: 'No friction detected', noPeople: 'No one in this period',
+      noSessions: 'No sessions in this period yet.',
+      'k.people': 'People', 'k.peopleSub': '{0} came back at least once', 'k.sessions': 'Sessions', 'k.sessionsSub': '{0} via personal link',
+      'k.active': 'Median active time', 'k.activeSub': 'total {0}', 'k.activeTip': 'Time with the tab visible and an interaction in the last minute',
+      'k.form': 'Form submitted', 'k.formSub': '{0} / {1} sessions', 'k.tour': 'Tour completed', 'k.tourSub': 'of the {0} that reached the dashboard',
+      'k.add': '“Add my data”', 'k.addSub': '{0} person(s)', 'k.addTip': 'Strongest intent signal in the demo',
+      'f.visit': 'Visit', 'f.scroll': 'Landing scrolled ≥ 50%', 'f.open': 'Form opened', 'f.submit': 'Form submitted → dashboard',
+      'f.tour': 'Guided tour completed', 'f.asst': 'Assistant action clicked', 'f.consent': 'Data consent checked', 'f.add': '“Add my data” clicked',
+      'f.tip': '{0}: {1} sessions ({2}% of visits)', 'f.tipDrop': ' · {0}% lost since the previous step',
+      'a.tip': '{0}: {1} on average · seen in {2} session(s)',
+      'tour.step': 'Step {0} seen by {1} / {2} · {3} on average · {4} drop-off(s) here', 'tour.done': 'Tour completed', 'tour.doneTip': 'Sessions that clicked “Finish walkthrough”',
+      'sc.landing': 'Landing ≥ {0}%', 'sc.dash': 'Dashboard ≥ {0}%',
+      th: { el: 'Element', zone: 'Area', clicks: 'Clicks', sessions: 'Sessions', type: 'Type', where: 'Where', times: 'Times',
+        person: 'Person', company: 'Company · role', score: 'Score', active: 'Active time', signals: 'Signals', last: 'Last activity', action: '' },
+      fr: { dead_click: 'No-effect click', rage_click: 'Repeated clicks', disabled_click: 'Disabled button' },
+      fld: { email: 'Email filled', company: 'Company filled', role: 'Role picked', raise: 'Last raise picked', invalid: 'Validation error', abandon: 'Abandoned after typing' },
+      'fld.abandonTip': '{0} session(s) filled then closed', direct: 'Direct / link',
+      b: { form: 'Form', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consent', add: 'Add my data', visits: '{0} visits', excluded: 'excluded' },
+      anon: 'Anonymous', anonVisitor: 'Anonymous visitor', raise: 'raise {0}', landing: 'Landing', dashboard: 'Dashboard',
+      j: { sessions: '{0} session(s)', session: 'Session {0}', sessSub: '{0} active · {1} clicks · {2}', dash: 'dashboard', landOnly: 'landing only',
+        active: 'active time', total: 'total duration', onLanding: 'on the landing', onDash: 'on the dashboard', steps: 'tour steps', clicks: 'clicks',
+        attention: 'Where attention went', timeline: 'Timeline', modal: ' (modal)' },
+      area: { landing: 'Landing (page)', dashboard: 'Dashboard (page)', hero: 'Hero · headline', problem: 'The problem', evidence: 'Key figures',
+        how: 'How it works', product: 'Product', security: 'Security', access: '“Early access” block (bottom)', footer: 'Footer', nav: 'Navigation bar',
+        'nav-links': 'Navigation bar', tourOverview: 'KPIs (runway, cash, MRR, burn)', cashPanel: 'Cash runway chart', tourAssumptions: 'Drifting assumptions',
+        tourAssistant: 'Bearing assistant', scenarioPanel: 'Scenarios', tourData: '“Bring your own numbers”', access_form: 'Access form',
+        add_data_thanks: '“Thank you” modal (Add data)', accessModal: 'Access form', dataModal: '“Thank you” modal', tourPop: 'Tour bubble',
+        'dash-global-top': 'Dashboard header', 'dash-sidebar': 'Side menu', step: 'Tour · step {0}' },
+      tourTitles: { 1: 'Monthly snapshot', 2: 'What drives the gap', 3: 'The assistant explains', 4: 'Bring your own file' },
+      consentBox: 'Consent checkbox ({0})', checked: 'checked', unchecked: 'unchecked',
+      ev: {
+        session_start: ['Lands on the demo{0}', ' from {0}'], returning: ' · returning visitor (visit #{0})',
+        page_view: 'Views <b>{0}</b>', pv_dash: 'the dashboard', pv_land: 'the landing', page_reload: 'Reloads the page',
+        click: 'Clicks <b>“{0}”</b>', dead_click: 'Clicks an element that is not clickable', rage_click: '<b>Repeated clicks</b> on “{0}”',
+        disabled_click: 'Clicks “Add my data” <b>before checking the consent box</b>', scroll: 'Scrolls {0} of {1}', of_dash: 'the dashboard', of_land: 'the landing',
+        modal_open: 'Opens {0}', from: 'from {0}', modal_close: 'Closes {0}', after: 'after {0}', field_focus: 'Enters the “{0}” field',
+        field_change: 'Fills “{0}”', form_invalid: 'Validation error on “{0}”', form_abandon: '<b>Abandons the form</b> after filling {0}',
+        form_submit: '<b>Submits the form</b>', tour_step: 'Guided tour · step {0}/4', tour_complete: '<b>Completes the guided tour</b>',
+        tour_skip: '<b>Leaves the tour</b> at step {0}/4', tour_restart: 'Restarts the guided tour', consent_on: '<b>Checks the data consent</b>',
+        consent_off: 'Unchecks the data consent', add_data: '<b>Clicks “Add my data”</b>', add_data_sub: 'intent to connect their data',
+        copy_text: 'Copies text', idle: 'Idle for 1 min (timer paused)', tab_hidden: 'Leaves the tab', tab_visible: 'Comes back to the tab', page_leave: 'Closes the page',
+      },
+      ins: {
+        count: '<b>{0} session(s)</b> from <b>{1} person(s)</b>.', small: ' Very small sample: a single session can move a percentage by 10 points or more.',
+        drop: 'Biggest drop-off: <b>{0} → {1}</b>, {2}% of sessions stop there ({3}).',
+        topSection: 'Landing section that holds attention best: <b>{0}</b> ({1} on average).',
+        lowReach: 'Fewer than half of sessions see: {0}. Content placed there is rarely seen.',
+        toForm: 'Median time before submitting the form: <b>{0}</b>.',
+        tour: '<b>{0}%</b> of sessions that reach the dashboard complete the guided tour.', tourSkip: ' Most frequent drop-off: <b>step {0}</b> ({1} times).',
+        asst: 'Most requested assistant action: <b>“{0}”</b> ({1} click(s)). It is a dummy button: this click measures real demand.',
+        data: '<b>{0}</b> session(s) check the consent and <b>{1}</b> click “Add my data”, i.e. {2}% of those who see the dashboard.',
+        disabled: '<b>{0} session(s)</b> clicked “Add my data” before checking the consent box: the checkbox goes unnoticed.',
+        dead: 'Clicks on an element that does not react: <b>{0}</b> ({1} times). Visitors may expect to explore it.',
+        rage: 'Repeated clicks (frustration) on <b>“{0}”</b> in {1}.',
+        abandon: '{0} of {1} session(s) started filling the form and then closed it.',
+        back: '<b>{0} person(s)</b> came back on their own: {1}.', hot: 'Most engaged profiles (score ≥ 6): {0}.',
+      },
+    },
+    fr: {
+      'gate.text': 'Accès réservé à l’équipe. Colle la clé d’accès, ou ouvre le lien secret complet.', 'gate.ph': 'Clé d’accès', 'gate.open': 'Ouvrir',
+      'gate.bad': 'Clé invalide.', 'gate.fail': 'Chargement impossible ({0}).',
+      'p.7': '7 j', 'p.30': '30 j', 'p.all': 'Tout', refresh: 'Rafraîchir', csv: 'Export CSV', updated: '· mis à jour {0}',
+      's.overview': 'Vue d’ensemble', 's.insights': 'Ce que disent les données', 's.funnel': 'Entonnoir', 's.attention': 'Attention',
+      's.interactions': 'Interactions', 's.form': 'Formulaire d’accès & audience', 's.people': 'Founders', 's.journey': 'Parcours',
+      'insights.note': 'Observations calculées automatiquement à partir des événements, sans IA. Avec peu de sessions, lis-les comme des pistes, pas comme des conclusions.',
+      'funnel.title': 'De la visite à l’intention de connecter ses données', pctSessions: '% des sessions',
+      avgReach: 'moyenne des sessions qui l’ont vue · % atteinte',
+      'landingTime.title': 'Landing : temps par section', 'dashTime.title': 'Dashboard : temps par zone',
+      'tour.title': 'Tour guidé', 'tour.sub': '% des sessions arrivées au dashboard · temps moyen', 'scroll.title': 'Profondeur de scroll',
+      'clicks.title': 'Éléments cliqués', 'clicks.sub': 'clics · sessions', 'friction.title': 'Frictions', 'friction.sub': 'clics sans effet, répétés ou sur bouton désactivé',
+      'cta.title': 'CTA qui ouvre le formulaire', 'roles.title': 'Rôle déclaré', 'raises.title': 'Dernière levée',
+      'fields.title': 'Formulaire : champs', 'fields.sub': 'sessions ayant ouvert le formulaire', 'devices.title': 'Appareils', 'refs.title': 'Provenance',
+      'people.title': 'Une ligne par personne', 'people.sub': 'clic sur une ligne → parcours détaillé',
+      'people.excludeHint': 'Les profils exclus (tests, équipe) sont retirés de tous les chiffres. La liste est partagée par tous ceux qui ont le lien.',
+      'people.scoreNote': 'Score d’intérêt (0–9) : formulaire +2, consentement +2, « Add my data » +2, tour terminé +1, action de l’assistant +1, retour +1, plus de 3 min actives +1.',
+      'excl.title': 'Profils exclus', 'excl.sub': 'comptés nulle part', 'excl.none': 'Aucun profil exclu.',
+      excludeSel: 'Exclure la sélection ({0})', includeSel: 'Réintégrer ({0})', excludeOne: 'Exclure de l’analyse', includeOne: 'Réintégrer',
+      'toast.excluded': '{0} profil(s) exclu(s)', 'toast.included': '{0} profil(s) réintégré(s)', 'toast.err': 'Enregistrement impossible : {0}',
+      'journey.pick': 'Sélectionne une personne dans le tableau ci-dessus.', 'journey.gone': 'Cette personne n’est pas dans la période affichée.',
+      noData: 'Pas encore de données', noClicks: 'Aucun clic', noFriction: 'Aucune friction détectée', noPeople: 'Personne sur cette période',
+      noSessions: 'Pas encore de sessions sur cette période.',
+      'k.people': 'Personnes', 'k.peopleSub': '{0} revenue(s) au moins une fois', 'k.sessions': 'Sessions', 'k.sessionsSub': '{0} via lien perso',
+      'k.active': 'Temps actif médian', 'k.activeSub': 'total {0}', 'k.activeTip': 'Temps avec onglet visible et interaction dans la dernière minute',
+      'k.form': 'Formulaire envoyé', 'k.formSub': '{0} / {1} sessions', 'k.tour': 'Tour terminé', 'k.tourSub': 'des {0} arrivées au dashboard',
+      'k.add': '« Add my data »', 'k.addSub': '{0} personne(s)', 'k.addTip': 'Signal d’intention le plus fort de la démo',
+      'f.visit': 'Visite', 'f.scroll': 'Landing scrollée ≥ 50 %', 'f.open': 'Formulaire ouvert', 'f.submit': 'Formulaire envoyé → dashboard',
+      'f.tour': 'Tour guidé terminé', 'f.asst': 'Action de l’assistant cliquée', 'f.consent': 'Consentement données coché', 'f.add': '« Add my data » cliqué',
+      'f.tip': '{0} : {1} sessions ({2} % des visites)', 'f.tipDrop': ' · {0} % perdus depuis l’étape précédente',
+      'a.tip': '{0} : {1} en moyenne · vue par {2} session(s)',
+      'tour.step': 'Étape {0} vue par {1} / {2} · {3} en moyenne · {4} abandon(s) ici', 'tour.done': 'Tour terminé', 'tour.doneTip': 'Sessions ayant cliqué « Finish walkthrough »',
+      'sc.landing': 'Landing ≥ {0} %', 'sc.dash': 'Dashboard ≥ {0} %',
+      th: { el: 'Élément', zone: 'Zone', clicks: 'Clics', sessions: 'Sessions', type: 'Type', where: 'Où', times: 'Fois',
+        person: 'Personne', company: 'Société · rôle', score: 'Score', active: 'Temps actif', signals: 'Signaux', last: 'Dernière activité', action: '' },
+      fr: { dead_click: 'Clic sans effet', rage_click: 'Clics répétés', disabled_click: 'Bouton désactivé' },
+      fld: { email: 'Email rempli', company: 'Société remplie', role: 'Rôle choisi', raise: 'Dernière levée choisie', invalid: 'Erreur de validation', abandon: 'Abandon après saisie' },
+      'fld.abandonTip': '{0} session(s) ont rempli puis fermé', direct: 'Direct / lien',
+      b: { form: 'Formulaire', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consentement', add: 'Add my data', visits: '{0} visites', excluded: 'exclu' },
+      anon: 'Anonyme', anonVisitor: 'Visiteur anonyme', raise: 'levée {0}', landing: 'Landing', dashboard: 'Dashboard',
+      j: { sessions: '{0} session(s)', session: 'Session {0}', sessSub: '{0} actif · {1} clics · {2}', dash: 'dashboard', landOnly: 'landing seule',
+        active: 'temps actif', total: 'durée totale', onLanding: 'sur la landing', onDash: 'sur le dashboard', steps: 'étapes du tour', clicks: 'clics',
+        attention: 'Où l’attention est allée', timeline: 'Chronologie', modal: ' (modale)' },
+      area: { landing: 'Landing (page)', dashboard: 'Dashboard (page)', hero: 'Hero · accroche', problem: 'Le problème', evidence: 'Chiffres clés',
+        how: 'Comment ça marche', product: 'Produit', security: 'Sécurité', access: 'Bloc « early access » (bas)', footer: 'Pied de page', nav: 'Barre de navigation',
+        'nav-links': 'Barre de navigation', tourOverview: 'KPIs (runway, cash, MRR, burn)', cashPanel: 'Graphique cash runway', tourAssumptions: 'Hypothèses qui dérivent',
+        tourAssistant: 'Assistant Bearing', scenarioPanel: 'Scénarios', tourData: '« Bring your own numbers »', access_form: 'Formulaire d’accès',
+        add_data_thanks: 'Modale « Merci » (Add data)', accessModal: 'Formulaire d’accès', dataModal: 'Modale « Merci »', tourPop: 'Bulle du tour',
+        'dash-global-top': 'En-tête dashboard', 'dash-sidebar': 'Menu latéral', step: 'Tour · étape {0}' },
+      tourTitles: { 1: 'Snapshot mensuel', 2: 'Ce qui crée l’écart', 3: 'L’assistant explique', 4: 'Apporter son fichier' },
+      consentBox: 'Case de consentement ({0})', checked: 'cochée', unchecked: 'décochée',
+      ev: {
+        session_start: ['Arrivée sur la démo{0}', ' depuis {0}'], returning: ' · visiteur de retour (visite n°{0})',
+        page_view: 'Affiche <b>{0}</b>', pv_dash: 'le dashboard', pv_land: 'la landing', page_reload: 'Recharge la page',
+        click: 'Clique <b>« {0} »</b>', dead_click: 'Clique sur un élément non cliquable', rage_click: '<b>Clics répétés</b> sur « {0} »',
+        disabled_click: 'Clique « Add my data » <b>avant d’avoir coché le consentement</b>', scroll: 'Scroll {0} de {1}', of_dash: 'du dashboard', of_land: 'la landing',
+        modal_open: 'Ouvre {0}', from: 'depuis {0}', modal_close: 'Ferme {0}', after: 'après {0}', field_focus: 'Entre dans le champ « {0} »',
+        field_change: 'Remplit « {0} »', form_invalid: 'Erreur de validation sur « {0} »', form_abandon: '<b>Abandonne le formulaire</b> après avoir rempli {0}',
+        form_submit: '<b>Envoie le formulaire</b>', tour_step: 'Tour guidé · étape {0}/4', tour_complete: '<b>Termine le tour guidé</b>',
+        tour_skip: '<b>Quitte le tour</b> à l’étape {0}/4', tour_restart: 'Relance le tour guidé', consent_on: '<b>Coche le consentement données</b>',
+        consent_off: 'Décoche le consentement données', add_data: '<b>Clique « Add my data »</b>', add_data_sub: 'intention de connecter ses données',
+        copy_text: 'Copie du texte', idle: 'Inactif depuis 1 min (chrono en pause)', tab_hidden: 'Quitte l’onglet', tab_visible: 'Revient sur l’onglet', page_leave: 'Ferme la page',
+      },
+      ins: {
+        count: '<b>{0} session(s)</b> de <b>{1} personne(s)</b>.', small: ' Échantillon encore très faible : une seule session peut faire bouger un pourcentage de 10 points ou plus.',
+        drop: 'Plus gros décrochage : <b>{0} → {1}</b>, {2} % des sessions s’arrêtent là ({3}).',
+        topSection: 'Section de la landing qui retient le plus : <b>{0}</b> ({1} en moyenne).',
+        lowReach: 'Moins d’une session sur deux voit : {0}. Le contenu placé là est peu vu.',
+        toForm: 'Temps médian avant d’envoyer le formulaire : <b>{0}</b>.',
+        tour: '<b>{0} %</b> des sessions arrivées au dashboard terminent le tour guidé.', tourSkip: ' Abandon le plus fréquent : <b>étape {0}</b> ({1} fois).',
+        asst: 'Action de l’assistant la plus demandée : <b>« {0} »</b> ({1} clic(s)). C’est un bouton factice : ce clic mesure une attente réelle.',
+        data: '<b>{0}</b> session(s) cochent le consentement et <b>{1}</b> cliquent « Add my data », soit {2} % de celles qui voient le dashboard.',
+        disabled: '<b>{0} session(s)</b> ont cliqué « Add my data » avant de cocher le consentement : la case à cocher passe inaperçue.',
+        dead: 'Clics sur un élément qui ne réagit pas : <b>{0}</b> ({1} fois). Les visiteurs s’attendent peut-être à pouvoir l’explorer.',
+        rage: 'Clics répétés (frustration) sur <b>« {0} »</b> dans {1}.',
+        abandon: '{0} session(s) sur {1} ont commencé à remplir le formulaire puis l’ont fermé.',
+        back: '<b>{0} personne(s)</b> sont revenues d’elles-mêmes : {1}.', hot: 'Profils les plus engagés (score ≥ 6) : {0}.',
+      },
+    },
   };
-  const area = a => a == null ? '—' : (AREA[a] || (/^step_(\d)/.test(a) ? 'Tour · étape ' + a.slice(5) : a));
-  const TOUR_TITLES = {1:'Snapshot mensuel',2:'Ce qui crée l’écart',3:'L’assistant explique',4:'Apporter son fichier'};
-  const cleanTarget = t => /^dataConsent/.test(t || '') ? 'Case de consentement (' + (/unchecked/.test(t) ? 'décochée' : 'cochée') + ')' : (t || '').replace(/^[a-zA-Z]+ · /, '');
+  let LANG = (() => { try { return localStorage.getItem('insights_lang'); } catch (_) { return null; } })() || 'en';
+  if (!I18N[LANG]) LANG = 'en';
+  const fill = (s, a) => String(s).replace(/\{(\d)\}/g, (_, i) => a[i] ?? '');
+  const get = path => path.split('.').reduce((o, k) => (o == null ? o : o[k]), I18N[LANG]) ?? I18N[LANG][path];
+  const T = (key, ...a) => { const v = I18N[LANG][key] !== undefined ? I18N[LANG][key] : get(key); return v == null ? key : fill(v, a); };
+  const locale = () => (LANG === 'fr' ? 'fr-FR' : 'en-GB');
+  const pc = v => LANG === 'fr' ? v + ' %' : v + '%';
+
+  function applyStatic() {
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = T(el.dataset.i18nPh); });
+    document.querySelectorAll('#lang button').forEach(b => b.classList.toggle('on', b.dataset.l === LANG));
+  }
+
+  // ---------- Libellés ----------
+  const area = a => a == null ? '—' : (/^step_(\d)/.test(a) ? T('area.step', a.slice(5)) : (get('area')[a] || a));
+  const cleanTarget = t => /^dataConsent/.test(t || '') ? T('consentBox', T(/unchecked/.test(t) ? 'unchecked' : 'checked')) : (t || '').replace(/^[a-zA-Z]+ · /, '');
 
   // ---------- Utilitaires ----------
   const $ = s => document.querySelector(s);
@@ -217,10 +400,11 @@ tr.row.sel td{background:var(--accent-soft)}
     return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0');
   };
   const fmtOff = ms => { const s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
-  const fmtDate = d => new Date(d).toLocaleString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+  const fmtDate = d => new Date(d).toLocaleString(locale(), { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
   const sum = a => a.reduce((x, y) => x + (y || 0), 0);
   const countBy = (arr, f) => { const m = new Map(); arr.forEach(x => { const k = f(x); if (k == null || k === '') return; m.set(k, (m.get(k) || 0) + 1); }); return [...m.entries()].sort((a, b) => b[1] - a[1]); };
+  const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 2200); };
 
   // ---------- Tooltip ----------
   const tip = $('#tip');
@@ -233,24 +417,22 @@ tr.row.sel td{background:var(--accent-soft)}
   });
 
   function bars(el, rows, opts = {}) {
-    if (!rows.length) { el.innerHTML = '<div class="empty">Pas encore de données</div>'; return; }
+    if (!rows.length) { el.innerHTML = `<div class="empty">${T('noData')}</div>`; return; }
     const max = opts.max || Math.max(...rows.map(r => r.value), 1);
     el.innerHTML = rows.map(r => `<div class="bar" data-tip="${esc(r.tip || (r.label + ' : ' + r.text))}">
       <span class="lbl">${esc(r.label)}</span>
       <span class="track"><span class="fill" style="width:${Math.max(0.5, 100 * r.value / max)}%"></span></span>
       <span class="val">${r.html || esc(r.text)}</span></div>`).join('');
   }
-  const distBars = (el, entries, total) => bars(el, entries.slice(0, 8).map(([k, n]) => ({ label: k, value: n, text: n + '', html: `${n} <small>${pct(n, total)} %</small>`, tip: `${k} : ${n} (${pct(n, total)} %)` })));
+  const distBars = (el, entries, total) => bars(el, entries.slice(0, 8).map(([k, n]) => ({ label: k, value: n, text: n + '', html: `${n} <small>${pc(pct(n, total))}</small>`, tip: `${k}: ${n} (${pc(pct(n, total))})` })));
 
-  // ---------- Accès ----------
+  // ---------- Accès Supabase ----------
   const hashKey = new URLSearchParams(location.hash.slice(1)).get('k');
   let KEY = hashKey || (() => { try { return sessionStorage.getItem('insights_k'); } catch (_) { return null; } })();
 
-  async function fetchEvents(key) {
-    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/insights_events', {
-      method: 'POST',
-      headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_key: key }),
+  async function rpc(fn, body) {
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, {
+      method: 'POST', headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     });
     if (r.status === 401 || r.status === 403) throw new Error('forbidden');
     if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -259,30 +441,49 @@ tr.row.sel td{background:var(--accent-soft)}
 
   $('#gateForm').addEventListener('submit', e => { e.preventDefault(); KEY = $('#gateKey').value.trim(); load(); });
 
-  let RAW = [], periodDays = 0, showTests = false, selectedPerson = null, selectedSession = null;
+  let RAW = [], EXCLUDED = new Set(), periodDays = 0, selectedPerson = null, selectedSession = null;
+  const selPeople = new Set(), selExcluded = new Set();
+  let lastErr = null;
 
   async function load() {
+    applyStatic();
     if (!KEY) { $('#gate').hidden = false; return; }
     try {
-      RAW = await fetchEvents(KEY);
+      const [events, excluded] = await Promise.all([rpc('insights_events', { p_key: KEY }), rpc('insights_excluded', { p_key: KEY })]);
+      RAW = events; EXCLUDED = new Set(excluded); lastErr = null;
       try { sessionStorage.setItem('insights_k', KEY); } catch (_) {}
       $('#gate').hidden = true; $('#app').hidden = false;
-      $('#stamp').textContent = '· mis à jour ' + new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+      $('#stamp').dataset.t = Date.now();
       render();
     } catch (err) {
+      lastErr = err;
       $('#app').hidden = true; $('#gate').hidden = false;
-      $('#gateErr').textContent = err.message === 'forbidden' ? 'Clé invalide.' : 'Chargement impossible (' + err.message + ').';
+      $('#gateErr').textContent = err.message === 'forbidden' ? T('gate.bad') : T('gate.fail', err.message);
+    }
+  }
+
+  async function setExcluded(keys, excluded) {
+    if (!keys.length) return;
+    const before = new Set(EXCLUDED);
+    keys.forEach(k => excluded ? EXCLUDED.add(k) : EXCLUDED.delete(k));
+    selPeople.clear(); selExcluded.clear();
+    if (excluded && keys.includes(selectedPerson)) selectedPerson = null;
+    render();
+    try {
+      let last = null;
+      for (const k of keys) last = await rpc('insights_set_excluded', { p_key: KEY, p_person: k, p_excluded: excluded });
+      if (last) EXCLUDED = new Set(last);
+      toast(T(excluded ? 'toast.excluded' : 'toast.included', keys.length));
+      render();
+    } catch (err) {
+      EXCLUDED = before; render(); toast(T('toast.err', err.message));
     }
   }
 
   // ---------- Modèle : sessions & personnes ----------
-  const isTestTag = t => !!t && /^(test|qa|dev|interne|internal)/i.test(t);
-
   function buildModel(events) {
     const bySession = new Map();
     events.forEach(e => { if (!bySession.has(e.s)) bySession.set(e.s, []); bySession.get(e.s).push(e); });
-
-    // Email connu par visiteur (pour rattacher les sessions anonymes d'un même navigateur).
     const visitorEmail = new Map(), visitorTag = new Map();
     events.forEach(e => {
       if (e.t === 'form_submit' && e.x && e.x.email) visitorEmail.set(e.v, e.x);
@@ -312,8 +513,6 @@ tr.row.sel td{background:var(--accent-soft)}
         dash: areaMs('page', 'dashboard', 'dashboard'),
         byArea, areaMs,
         clicks: evs.filter(e => e.t === 'click').length,
-        dead: evs.filter(e => e.t === 'dead_click').length,
-        rage: evs.filter(e => e.t === 'rage_click').length,
         scrollLanding: Math.max(0, ...evs.filter(e => e.t === 'scroll_depth' && e.p === 'landing').map(e => e.x.depth)),
         scrollDash: Math.max(0, ...evs.filter(e => e.t === 'scroll_depth' && e.p === 'dashboard').map(e => e.x.depth)),
         openedForm: evs.some(e => e.t === 'modal_open' && e.g === 'access_form'),
@@ -326,51 +525,55 @@ tr.row.sel td{background:var(--accent-soft)}
         consent: evs.some(e => e.t === 'consent_toggle' && e.x && e.x.checked),
         addData: evs.some(e => e.t === 'add_data_click'),
         formAbandon: evs.some(e => e.t === 'form_abandon'),
-        visit: +(start?.x?.visit_number || 1),
       };
+      // Clé stable d'une personne : lien perso > email > navigateur.
       s.person = s.tag || (s.knownForm && s.knownForm.email) || ('anon-' + v.slice(0, 6));
-      s.isTest = isTestTag(s.tag);
       return s;
     });
 
     const people = new Map();
-    sessions.forEach(s => {
-      if (!people.has(s.person)) people.set(s.person, []);
-      people.get(s.person).push(s);
-    });
-    const persons = [...people.entries()].map(([key, ss]) => {
-      ss.sort((a, b) => a.t0 - b.t0);
-      const f = ss.map(s => s.knownForm).find(Boolean) || {};
-      const any = k => ss.some(s => s[k]);
-      const p = {
-        key, sessions: ss, tag: ss.find(s => s.tag)?.tag || null,
-        email: f.email || null, company: f.company || null, role: f.role || null, raise: f.last_raise || null,
-        first: ss[0].t0, last: Math.max(...ss.map(s => s.tEnd)),
-        active: sum(ss.map(s => s.active)), clicks: sum(ss.map(s => s.clicks)),
-        submitted: any('submitted'), tourDone: any('tourDone'), consent: any('consent'), addData: any('addData'),
-        assistant: ss.some(s => s.assistant.length), maxStep: Math.max(...ss.map(s => s.maxStep)),
-        reachedDash: any('reachedDash'), isTest: ss.every(s => s.isTest),
-        device: ss[0].start.device || '—',
-      };
-      p.score = (p.submitted ? 2 : 0) + (p.consent ? 2 : 0) + (p.addData ? 2 : 0) + (p.tourDone ? 1 : 0)
-        + (p.assistant ? 1 : 0) + (ss.length > 1 ? 1 : 0) + (p.active >= 180000 ? 1 : 0);
-      return p;
-    }).sort((a, b) => b.score - a.score || b.last - a.last);
+    sessions.forEach(s => { if (!people.has(s.person)) people.set(s.person, []); people.get(s.person).push(s); });
+    const persons = [...people.entries()].map(([key, ss]) => personOf(key, ss));
     return { sessions, persons };
   }
+
+  function personOf(key, ss) {
+    ss.sort((a, b) => a.t0 - b.t0);
+    const f = ss.map(s => s.knownForm).find(Boolean) || {};
+    const any = k => ss.some(s => s[k]);
+    const p = {
+      key, sessions: ss, tag: ss.find(s => s.tag)?.tag || null,
+      email: f.email || null, company: f.company || null, role: f.role || null, raise: f.last_raise || null,
+      first: ss[0].t0, last: Math.max(...ss.map(s => s.tEnd)),
+      active: sum(ss.map(s => s.active)), clicks: sum(ss.map(s => s.clicks)),
+      submitted: any('submitted'), tourDone: any('tourDone'), consent: any('consent'), addData: any('addData'),
+      assistant: ss.some(s => s.assistant.length), maxStep: Math.max(...ss.map(s => s.maxStep)),
+      device: ss[0].start.device || '—', excluded: EXCLUDED.has(key),
+    };
+    p.score = (p.submitted ? 2 : 0) + (p.consent ? 2 : 0) + (p.addData ? 2 : 0) + (p.tourDone ? 1 : 0)
+      + (p.assistant ? 1 : 0) + (ss.length > 1 ? 1 : 0) + (p.active >= 180000 ? 1 : 0);
+    return p;
+  }
+  const byScore = (a, b) => b.score - a.score || b.last - a.last;
+  const personName = p => p.tag || p.email || T('anon');
 
   // ---------- Rendu ----------
   let MODEL = null;
   function filtered() {
     const since = periodDays ? Date.now() - periodDays * 864e5 : 0;
     const m = buildModel(RAW);
-    const keepS = s => (showTests || !s.isTest) && s.tEnd >= since;
-    const sessions = m.sessions.filter(keepS);
-    const persons = m.persons.map(p => ({ ...p, sessions: p.sessions.filter(keepS) })).filter(p => p.sessions.length);
-    return { sessions, persons };
+    const inPeriod = s => s.tEnd >= since;
+    const all = m.persons.map(p => ({ ...p, sessions: p.sessions.filter(inPeriod) })).filter(p => p.sessions.length)
+      .map(p => personOf(p.key, p.sessions)).sort(byScore);
+    const persons = all.filter(p => !p.excluded);
+    const excludedPersons = m.persons.filter(p => p.excluded).sort(byScore);
+    const sessions = persons.flatMap(p => p.sessions);
+    return { sessions, persons, excludedPersons };
   }
 
   function render() {
+    applyStatic();
+    if ($('#stamp').dataset.t) $('#stamp').textContent = T('updated', new Date(+$('#stamp').dataset.t).toLocaleTimeString(locale(), { hour:'2-digit', minute:'2-digit' }));
     MODEL = filtered();
     const { sessions: S, persons: P } = MODEL;
     const n = S.length;
@@ -380,30 +583,30 @@ tr.row.sel td{background:var(--accent-soft)}
     const k = (label, v, sub, tipTxt) => `<div class="card kpi" data-tip="${esc(tipTxt || label)}"><div class="k">${label}</div><div class="v">${v}</div><div class="s">${sub || ''}</div></div>`;
     const dashS = S.filter(s => s.reachedDash);
     $('#kpis').innerHTML = [
-      k('Personnes', P.length, `${P.filter(p => p.sessions.length > 1).length} revenues au moins une fois`),
-      k('Sessions', n, `${S.filter(s => s.tag).length} via lien perso`),
-      k('Temps actif médian', fmtDur(med), `total ${fmtDur(sum(S.map(s => s.active)))}`, 'Temps avec onglet visible et interaction dans la dernière minute'),
-      k('Formulaire envoyé', pct(S.filter(s => s.submitted).length, n) + ' %', `${S.filter(s => s.submitted).length} / ${n} sessions`),
-      k('Tour terminé', pct(dashS.filter(s => s.tourDone).length, dashS.length) + ' %', `des ${dashS.length} arrivées au dashboard`),
-      k('« Add my data »', pct(S.filter(s => s.addData).length, n) + ' %', `${P.filter(p => p.addData).length} personne(s)`, 'Signal d’intention le plus fort de la démo'),
+      k(T('k.people'), P.length, T('k.peopleSub', P.filter(p => p.sessions.length > 1).length)),
+      k(T('k.sessions'), n, T('k.sessionsSub', S.filter(s => s.tag).length)),
+      k(T('k.active'), fmtDur(med), T('k.activeSub', fmtDur(sum(S.map(s => s.active)))), T('k.activeTip')),
+      k(T('k.form'), pc(pct(S.filter(s => s.submitted).length, n)), T('k.formSub', S.filter(s => s.submitted).length, n)),
+      k(T('k.tour'), pc(pct(dashS.filter(s => s.tourDone).length, dashS.length)), T('k.tourSub', dashS.length)),
+      k(T('k.add'), pc(pct(S.filter(s => s.addData).length, n)), T('k.addSub', P.filter(p => p.addData).length), T('k.addTip')),
     ].join('');
 
     // Entonnoir
     const steps = [
-      ['Visite', S.length],
-      ['Landing scrollée ≥ 50 %', S.filter(s => s.scrollLanding >= 50).length],
-      ['Formulaire ouvert', S.filter(s => s.openedForm).length],
-      ['Formulaire envoyé → dashboard', S.filter(s => s.submitted || s.reachedDash).length],
-      ['Tour guidé terminé', S.filter(s => s.tourDone).length],
-      ['Action de l’assistant cliquée', S.filter(s => s.assistant.length).length],
-      ['Consentement données coché', S.filter(s => s.consent).length],
-      ['« Add my data » cliqué', S.filter(s => s.addData).length],
+      [T('f.visit'), S.length],
+      [T('f.scroll'), S.filter(s => s.scrollLanding >= 50).length],
+      [T('f.open'), S.filter(s => s.openedForm).length],
+      [T('f.submit'), S.filter(s => s.submitted || s.reachedDash).length],
+      [T('f.tour'), S.filter(s => s.tourDone).length],
+      [T('f.asst'), S.filter(s => s.assistant.length).length],
+      [T('f.consent'), S.filter(s => s.consent).length],
+      [T('f.add'), S.filter(s => s.addData).length],
     ];
     bars($('#funnel'), steps.map(([l, c], i) => {
       const prev = i ? steps[i - 1][1] : c;
       const drop = i && prev ? 100 - pct(c, prev) : 0;
-      return { label: l, value: c, max: n, html: `${c} <small>${pct(c, n)} %</small>${drop > 0 ? `<span class="drop">−${drop} %</span>` : ''}`,
-        tip: `${l} : ${c} sessions (${pct(c, n)} % des visites)${i ? ` · ${drop} % perdus depuis l’étape précédente` : ''}` };
+      return { label: l, value: c, html: `${c} <small>${pc(pct(c, n))}</small>${drop > 0 ? `<span class="drop">−${pc(drop)}</span>` : ''}`,
+        tip: T('f.tip', l, c, pct(c, n)) + (i ? T('f.tipDrop', drop) : '') };
     }), { max: Math.max(n, 1) });
 
     // Temps par zone
@@ -411,26 +614,27 @@ tr.row.sel td{background:var(--accent-soft)}
       return list.map(a => {
         const seen = S.filter(s => s.areaMs('section', page, a) > 0);
         const avg = seen.length ? sum(seen.map(s => s.areaMs('section', page, a))) / seen.length : 0;
-        return { label: area(a), value: avg, html: `${fmtDur(avg)} <small>${pct(seen.length, page === 'landing' ? n : dashS.length)} %</small>`,
-          tip: `${area(a)} : ${fmtDur(avg)} en moyenne · vue par ${seen.length} session(s)` };
+        return { label: area(a), value: avg, html: `${fmtDur(avg)} <small>${pc(pct(seen.length, page === 'landing' ? n : dashS.length))}</small>`,
+          tip: T('a.tip', area(a), fmtDur(avg), seen.length) };
       });
     }
     bars($('#landingTime'), areaRows('landing', ['hero', 'problem', 'evidence', 'how', 'product', 'security', 'access', 'footer']));
     bars($('#dashTime'), areaRows('dashboard', ['tourOverview', 'cashPanel', 'tourAssumptions', 'tourAssistant', 'scenarioPanel', 'tourData']));
+    const titles = get('tourTitles');
     bars($('#tour'), [1, 2, 3, 4].map(i => {
       const reached = dashS.filter(s => s.maxStep >= i);
       const t = reached.length ? sum(reached.map(s => s.areaMs('tour_step', 'dashboard', 'step_' + i))) / reached.length : 0;
-      return { label: `${i}. ${TOUR_TITLES[i]}`, value: reached.length, max: dashS.length,
-        html: `${pct(reached.length, dashS.length)} % <small>${fmtDur(t)}</small>`,
-        tip: `Étape ${i} vue par ${reached.length} / ${dashS.length} · ${fmtDur(t)} en moyenne · ${dashS.filter(s => s.tourSkip === i).length} abandon(s) ici` };
-    }).concat([{ label: 'Tour terminé', value: dashS.filter(s => s.tourDone).length, html: `${pct(dashS.filter(s => s.tourDone).length, dashS.length)} %`, tip: 'Sessions ayant cliqué « Finish walkthrough »' }]),
+      return { label: `${i}. ${titles[i]}`, value: reached.length,
+        html: `${pc(pct(reached.length, dashS.length))} <small>${fmtDur(t)}</small>`,
+        tip: T('tour.step', i, reached.length, dashS.length, fmtDur(t), dashS.filter(s => s.tourSkip === i).length) };
+    }).concat([{ label: T('tour.done'), value: dashS.filter(s => s.tourDone).length, html: pc(pct(dashS.filter(s => s.tourDone).length, dashS.length)), tip: T('tour.doneTip') }]),
     { max: Math.max(dashS.length, 1) });
-    bars($('#scroll'), [25, 50, 75, 100].flatMap(d => [
-      { label: `Landing ≥ ${d} %`, value: S.filter(s => s.scrollLanding >= d).length, html: pct(S.filter(s => s.scrollLanding >= d).length, n) + ' %' },
-    ]).concat([25, 50, 75, 100].map(d => ({ label: `Dashboard ≥ ${d} %`, value: dashS.filter(s => s.scrollDash >= d).length, html: pct(dashS.filter(s => s.scrollDash >= d).length, dashS.length) + ' %' }))),
+    bars($('#scroll'), [25, 50, 75, 100].map(d => ({ label: T('sc.landing', d), value: S.filter(s => s.scrollLanding >= d).length, html: pc(pct(S.filter(s => s.scrollLanding >= d).length, n)) }))
+      .concat([25, 50, 75, 100].map(d => ({ label: T('sc.dash', d), value: dashS.filter(s => s.scrollDash >= d).length, html: pc(pct(dashS.filter(s => s.scrollDash >= d).length, dashS.length)) }))),
     { max: Math.max(n, 1) });
 
     // Clics
+    const th = get('th');
     const allE = S.flatMap(s => s.evs);
     const clickAgg = new Map();
     allE.filter(e => e.t === 'click').forEach(e => {
@@ -439,122 +643,161 @@ tr.row.sel td{background:var(--accent-soft)}
       c.n++; c.s.add(e.s); clickAgg.set(key, c);
     });
     const clickRows = [...clickAgg.values()].sort((a, b) => b.s.size - a.s.size || b.n - a.n);
-    $('#clicks').innerHTML = clickRows.length ? `<tr><th>Élément</th><th>Zone</th><th class="n">Clics</th><th class="n">Sessions</th></tr>` +
-      clickRows.slice(0, 25).map(c => `<tr><td>${esc(c.label)}</td><td class="muted">${esc(c.page === 'landing' ? 'Landing' : 'Dashboard')} · ${esc(area(c.area))}</td><td class="n">${c.n}</td><td class="n">${c.s.size} <small>${pct(c.s.size, n)} %</small></td></tr>`).join('')
-      : '<tr><td class="empty">Aucun clic</td></tr>';
+    $('#clicks').innerHTML = clickRows.length ? `<tr><th>${th.el}</th><th>${th.zone}</th><th class="n">${th.clicks}</th><th class="n">${th.sessions}</th></tr>` +
+      clickRows.slice(0, 25).map(c => `<tr><td>${esc(c.label)}</td><td class="muted">${esc(T(c.page === 'landing' ? 'landing' : 'dashboard'))} · ${esc(area(c.area))}</td><td class="n">${c.n}</td><td class="n">${c.s.size} <small>${pc(pct(c.s.size, n))}</small></td></tr>`).join('')
+      : `<tr><td class="empty">${T('noClicks')}</td></tr>`;
 
+    const FR_LABEL = get('fr');
     const fr = new Map();
-    const FR_LABEL = { dead_click: 'Clic sans effet', rage_click: 'Clics répétés', disabled_click: 'Bouton désactivé' };
     allE.filter(e => FR_LABEL[e.t]).forEach(e => {
       const key = e.t + '|' + (e.x?.area || '') + '|' + e.g;
       const c = fr.get(key) || { t: e.t, area: e.x?.area, label: cleanTarget(e.g), n: 0, s: new Set() };
       c.n++; c.s.add(e.s); fr.set(key, c);
     });
     const frRows = [...fr.values()].sort((a, b) => b.n - a.n);
-    $('#friction').innerHTML = frRows.length ? `<tr><th>Type</th><th>Où</th><th class="n">Fois</th><th class="n">Sessions</th></tr>` +
+    $('#friction').innerHTML = frRows.length ? `<tr><th>${th.type}</th><th>${th.where}</th><th class="n">${th.times}</th><th class="n">${th.sessions}</th></tr>` +
       frRows.slice(0, 20).map(c => `<tr><td><span class="badge ${c.t === 'rage_click' ? 'b-bad' : 'b-warn'}">${FR_LABEL[c.t]}</span></td><td>${esc(area(c.area))} <small>${esc(c.label)}</small></td><td class="n">${c.n}</td><td class="n">${c.s.size}</td></tr>`).join('')
-      : '<tr><td class="empty">Aucune friction détectée</td></tr>';
+      : `<tr><td class="empty">${T('noFriction')}</td></tr>`;
 
     // Formulaire & audience
     const opens = allE.filter(e => e.t === 'modal_open' && e.g === 'access_form');
-    distBars($('#ctaSrc'), countBy(opens, e => area(e.x?.source) ), opens.length);
+    distBars($('#ctaSrc'), countBy(opens, e => area(e.x?.source)), opens.length);
     const forms = S.filter(s => s.form).map(s => s.form);
     distBars($('#roles'), countBy(forms, f => f.role), forms.length);
     distBars($('#raises'), countBy(forms, f => f.last_raise), forms.length);
     const opened = S.filter(s => s.openedForm);
+    const fld = get('fld');
     const fieldRows = ['email', 'company', 'role', 'raise'].map(f => {
       const c = opened.filter(s => s.evs.some(e => e.t === 'field_change' && e.g === f)).length;
-      return { label: { email: 'Email rempli', company: 'Société remplie', role: 'Rôle choisi', raise: 'Dernière levée choisie' }[f], value: c, html: `${pct(c, opened.length)} %`, tip: `${c} / ${opened.length}` };
+      return { label: fld[f], value: c, html: pc(pct(c, opened.length)), tip: `${c} / ${opened.length}` };
     });
     const inval = opened.filter(s => s.evs.some(e => e.t === 'form_invalid')).length;
     const aband = opened.filter(s => s.formAbandon).length;
-    fieldRows.push({ label: 'Erreur de validation', value: inval, html: `${pct(inval, opened.length)} %`, tip: `${inval} session(s)` });
-    fieldRows.push({ label: 'Abandon après saisie', value: aband, html: `${pct(aband, opened.length)} %`, tip: `${aband} session(s) ont rempli puis fermé` });
+    fieldRows.push({ label: fld.invalid, value: inval, html: pc(pct(inval, opened.length)), tip: `${inval} / ${opened.length}` });
+    fieldRows.push({ label: fld.abandon, value: aband, html: pc(pct(aband, opened.length)), tip: T('fld.abandonTip', aband) });
     bars($('#fields'), opened.length ? fieldRows : [], { max: Math.max(opened.length, 1) });
     distBars($('#devices'), countBy(S, s => s.start.device), n);
-    distBars($('#refs'), countBy(S, s => { const r = s.start.referrer; if (!r) return 'Direct / lien'; try { return new URL(r).hostname; } catch (_) { return r; } }), n);
+    distBars($('#refs'), countBy(S, s => { const r = s.start.referrer; if (!r) return T('direct'); try { return new URL(r).hostname; } catch (_) { return r; } }), n);
 
     renderPeople(P);
-    renderInsights(S, P, { steps, clickRows, frRows, dashS, opened, aband });
+    renderExcluded(MODEL.excludedPersons);
+    renderInsights(S, P, { steps, frRows, dashS, opened, aband });
     if (selectedPerson && P.some(p => p.key === selectedPerson)) renderJourney(selectedPerson);
+    else { selectedPerson = null; $('#journeyCard').innerHTML = `<div class="empty">${T('journey.pick')}</div>`; }
   }
 
   function badges(p) {
-    const b = [];
-    if (p.submitted) b.push('<span class="badge b-info">Formulaire</span>');
-    if (p.tourDone) b.push('<span class="badge b-info">Tour ✓</span>');
-    else if (p.maxStep) b.push(`<span class="badge b-mute">Tour ${p.maxStep}/4</span>`);
-    if (p.assistant) b.push('<span class="badge b-info">Assistant</span>');
-    if (p.consent) b.push('<span class="badge b-good">Consentement</span>');
-    if (p.addData) b.push('<span class="badge b-good">Add my data</span>');
-    if (p.sessions.length > 1) b.push(`<span class="badge b-warn">${p.sessions.length} visites</span>`);
-    if (p.isTest) b.push('<span class="badge b-mute">test</span>');
+    const b = [], L = get('b');
+    if (p.submitted) b.push(`<span class="badge b-info">${L.form}</span>`);
+    if (p.tourDone) b.push(`<span class="badge b-info">${L.tour}</span>`);
+    else if (p.maxStep) b.push(`<span class="badge b-mute">${fill(L.tourN, [p.maxStep])}</span>`);
+    if (p.assistant) b.push(`<span class="badge b-info">${L.asst}</span>`);
+    if (p.consent) b.push(`<span class="badge b-good">${L.consent}</span>`);
+    if (p.addData) b.push(`<span class="badge b-good">${L.add}</span>`);
+    if (p.sessions.length > 1) b.push(`<span class="badge b-warn">${fill(L.visits, [p.sessions.length])}</span>`);
+    if (p.excluded) b.push(`<span class="badge b-mute">${L.excluded}</span>`);
     return b.join('');
   }
 
+  function personRow(p, sel) {
+    return `<td class="cb"><input type="checkbox" data-cb="${esc(p.key)}" ${sel.has(p.key) ? 'checked' : ''} aria-label="${esc(personName(p))}"></td>
+      <td><b>${esc(personName(p))}</b>${p.tag && p.email ? `<br><small>${esc(p.email)}</small>` : !p.tag && !p.email ? `<br><small>${esc(p.key)} · ${esc(p.device)}</small>` : ''}</td>
+      <td>${esc(p.company || '—')}${p.role ? `<br><small>${esc(p.role)} · ${esc(T('raise', p.raise || '?'))}</small>` : ''}</td>
+      <td><span class="score">${p.score}<i><b style="width:${p.score / 9 * 100}%"></b></i></span></td>
+      <td class="n">${fmtDur(p.active)}</td><td class="n">${p.clicks}</td>
+      <td>${badges(p)}</td><td class="muted">${fmtDate(p.last)}</td>`;
+  }
+  function headRow(id) {
+    const th = get('th');
+    return `<tr><th class="cb"><input type="checkbox" data-all="${id}" aria-label="all"></th><th>${th.person}</th><th>${th.company}</th><th>${th.score}</th><th class="n">${th.active}</th><th class="n">${th.clicks}</th><th>${th.signals}</th><th>${th.last}</th></tr>`;
+  }
+  function wireSelection(table, list, sel, btn, labelKey) {
+    const update = () => { btn.textContent = T(labelKey, sel.size); btn.disabled = !sel.size; };
+    table.querySelectorAll('input[data-cb]').forEach(cb => {
+      cb.addEventListener('click', e => e.stopPropagation());
+      cb.addEventListener('change', () => { cb.checked ? sel.add(cb.dataset.cb) : sel.delete(cb.dataset.cb); update(); });
+    });
+    const all = table.querySelector('input[data-all]');
+    if (all) {
+      all.checked = list.length > 0 && list.every(p => sel.has(p.key));
+      all.addEventListener('change', () => {
+        list.forEach(p => all.checked ? sel.add(p.key) : sel.delete(p.key));
+        table.querySelectorAll('input[data-cb]').forEach(cb => { cb.checked = all.checked; });
+        update();
+      });
+    }
+    [...sel].forEach(k => { if (!list.some(p => p.key === k)) sel.delete(k); });
+    update();
+  }
+
   function renderPeople(P) {
-    $('#people').innerHTML = P.length ? `<tr><th>Personne</th><th>Société · rôle</th><th>Score</th><th class="n">Temps actif</th><th class="n">Clics</th><th>Signaux</th><th>Dernière activité</th></tr>` +
-      P.map(p => `<tr class="row ${p.key === selectedPerson ? 'sel' : ''}" data-person="${esc(p.key)}">
-        <td><b>${esc(p.tag || p.email || 'Anonyme')}</b>${p.tag && p.email ? `<br><small>${esc(p.email)}</small>` : !p.tag && !p.email ? `<br><small>${esc(p.key)} · ${esc(p.device)}</small>` : ''}</td>
-        <td>${esc(p.company || '—')}${p.role ? `<br><small>${esc(p.role)} · levée ${esc(p.raise || '?')}</small>` : ''}</td>
-        <td><span class="score">${p.score}<i><b style="width:${p.score / 9 * 100}%"></b></i></span></td>
-        <td class="n">${fmtDur(p.active)}</td><td class="n">${p.clicks}</td>
-        <td>${badges(p)}</td><td class="muted">${fmtDate(p.last)}</td></tr>`).join('')
-      : '<tr><td class="empty">Aucune personne sur cette période</td></tr>';
-    document.querySelectorAll('#people tr.row').forEach(tr => tr.addEventListener('click', () => {
+    const t = $('#people');
+    t.innerHTML = P.length ? headRow('people') + P.map(p => `<tr class="row ${p.key === selectedPerson ? 'sel' : ''}" data-person="${esc(p.key)}">${personRow(p, selPeople)}</tr>`).join('')
+      : `<tr><td class="empty">${T('noPeople')}</td></tr>`;
+    t.querySelectorAll('tr.row').forEach(tr => tr.addEventListener('click', () => {
       selectedPerson = tr.dataset.person; selectedSession = null;
-      document.querySelectorAll('#people tr.row').forEach(r => r.classList.toggle('sel', r === tr));
+      t.querySelectorAll('tr.row').forEach(r => r.classList.toggle('sel', r === tr));
       renderJourney(selectedPerson);
       $('#journeyAnchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }));
+    wireSelection(t, P, selPeople, $('#excludeSel'), 'excludeSel');
   }
+
+  function renderExcluded(X) {
+    const t = $('#excluded');
+    t.innerHTML = X.length ? headRow('excluded') + X.map(p => `<tr class="excluded">${personRow(p, selExcluded)}</tr>`).join('')
+      : `<tr><td class="empty">${T('excl.none')}</td></tr>`;
+    wireSelection(t, X, selExcluded, $('#includeSel'), 'includeSel');
+  }
+
+  $('#excludeSel').addEventListener('click', () => setExcluded([...selPeople], true));
+  $('#includeSel').addEventListener('click', () => setExcluded([...selExcluded], false));
 
   // ---------- Parcours d'une personne ----------
   function describe(e) {
-    const x = e.x || {};
+    const x = e.x || {}, E = get('ev');
     switch (e.t) {
-      case 'session_start': return [`Arrivée sur la démo${x.referrer ? ' depuis ' + esc(x.referrer) : ''}`, `${esc(x.device || '')} ${esc(x.viewport || '')} · ${esc(x.lang || '')} · ${esc(x.tz || '')}${x.returning ? ' · visiteur de retour (visite n°' + x.visit_number + ')' : ''}`, 'key'];
-      case 'page_view': return [`Affiche <b>${e.p === 'dashboard' ? 'le dashboard' : 'la landing'}</b>`, '', 'key'];
-      case 'page_reload': return ['Recharge la page', '', ''];
-      case 'click': return [`Clique <b>« ${esc(cleanTarget(e.g))} »</b>`, esc(area(x.area)) + (x.nav_to ? ' → ' + esc(area(x.nav_to)) : '') + (x.scroll_to ? ' → ' + esc(area(x.scroll_to)) : ''), x.area === 'tourAssistant' || x.cta ? 'key' : ''];
-      case 'dead_click': return [`Clique sur un élément non cliquable`, esc(area(x.area)) + ' · ' + esc(e.g), 'warn'];
-      case 'rage_click': return [`<b>Clics répétés</b> sur « ${esc(cleanTarget(e.g))} »`, esc(area(x.area)), 'bad'];
-      case 'disabled_click': return [`Clique « Add my data » <b>avant d’avoir coché le consentement</b>`, '', 'warn'];
-      case 'scroll_depth': return [`Scroll ${esc(e.g)} de ${e.p === 'dashboard' ? 'du dashboard' : 'la landing'}`, '', ''];
-      case 'modal_open': return [`Ouvre ${esc(area(e.g))}`, x.source ? 'depuis ' + esc(area(x.source)) : '', 'key'];
-      case 'modal_close': return [`Ferme ${esc(area(e.g))}`, 'après ' + fmtDur(e.d), ''];
-      case 'field_focus': return [`Entre dans le champ « ${esc(e.g)} »`, '', ''];
-      case 'field_change': return [`Remplit « ${esc(e.g)} »`, x.value ? esc(x.value) : '', ''];
-      case 'form_invalid': return [`Erreur de validation sur « ${esc(e.g)} »`, '', 'warn'];
-      case 'form_abandon': return [`<b>Abandonne le formulaire</b> après avoir rempli ${esc((x.fields_filled || []).join(', '))}`, '', 'bad'];
-      case 'form_submit': return [`<b>Envoie le formulaire</b>`, `${esc(x.email)} · ${esc(x.company)} · ${esc(x.role)} · levée ${esc(x.last_raise)}`, 'good'];
-      case 'tour_step': return [`Tour guidé · étape ${x.step}/4`, esc(x.title || TOUR_TITLES[x.step] || ''), ''];
-      case 'tour_complete': return [`<b>Termine le tour guidé</b>`, '', 'good'];
-      case 'tour_skip': return [`<b>Quitte le tour</b> à l’étape ${x.step}/4`, '', 'bad'];
-      case 'tour_restart': return ['Relance le tour guidé', '', 'key'];
-      case 'consent_toggle': return [x.checked ? '<b>Coche le consentement données</b>' : 'Décoche le consentement données', '', x.checked ? 'good' : 'warn'];
-      case 'add_data_click': return ['<b>Clique « Add my data »</b>', 'intention de connecter ses données', 'good'];
-      case 'copy_text': return [`Copie du texte`, '« ' + esc(e.g) + ' »', 'key'];
-      case 'idle': return ['Inactif depuis 1 min (chrono en pause)', '', ''];
-      case 'tab_hidden': return ['Quitte l’onglet', '', ''];
-      case 'tab_visible': return ['Revient sur l’onglet', '', ''];
-      case 'page_leave': return ['Ferme la page', '', 'bad'];
+      case 'session_start': return [fill(E.session_start[0], [x.referrer ? fill(E.session_start[1], [esc(x.referrer)]) : '']), `${esc(x.device || '')} ${esc(x.viewport || '')} · ${esc(x.lang || '')} · ${esc(x.tz || '')}${x.returning ? fill(E.returning, [x.visit_number]) : ''}`, 'key'];
+      case 'page_view': return [fill(E.page_view, [e.p === 'dashboard' ? E.pv_dash : E.pv_land]), '', 'key'];
+      case 'page_reload': return [E.page_reload, '', ''];
+      case 'click': return [fill(E.click, [esc(cleanTarget(e.g))]), esc(area(x.area)) + (x.nav_to ? ' → ' + esc(area(x.nav_to)) : '') + (x.scroll_to ? ' → ' + esc(area(x.scroll_to)) : ''), x.area === 'tourAssistant' || x.cta ? 'key' : ''];
+      case 'dead_click': return [E.dead_click, esc(area(x.area)) + ' · ' + esc(e.g), 'warn'];
+      case 'rage_click': return [fill(E.rage_click, [esc(cleanTarget(e.g))]), esc(area(x.area)), 'bad'];
+      case 'disabled_click': return [E.disabled_click, '', 'warn'];
+      case 'scroll_depth': return [fill(E.scroll, [esc(e.g), e.p === 'dashboard' ? E.of_dash : E.of_land]), '', ''];
+      case 'modal_open': return [fill(E.modal_open, [esc(area(e.g))]), x.source ? fill(E.from, [esc(area(x.source))]) : '', 'key'];
+      case 'modal_close': return [fill(E.modal_close, [esc(area(e.g))]), fill(E.after, [fmtDur(e.d)]), ''];
+      case 'field_focus': return [fill(E.field_focus, [esc(e.g)]), '', ''];
+      case 'field_change': return [fill(E.field_change, [esc(e.g)]), x.value ? esc(x.value) : '', ''];
+      case 'form_invalid': return [fill(E.form_invalid, [esc(e.g)]), '', 'warn'];
+      case 'form_abandon': return [fill(E.form_abandon, [esc((x.fields_filled || []).join(', '))]), '', 'bad'];
+      case 'form_submit': return [E.form_submit, `${esc(x.email)} · ${esc(x.company)} · ${esc(x.role)} · ${esc(T('raise', x.last_raise))}`, 'good'];
+      case 'tour_step': return [fill(E.tour_step, [x.step]), esc(get('tourTitles')[x.step] || x.title || ''), ''];
+      case 'tour_complete': return [E.tour_complete, '', 'good'];
+      case 'tour_skip': return [fill(E.tour_skip, [x.step]), '', 'bad'];
+      case 'tour_restart': return [E.tour_restart, '', 'key'];
+      case 'consent_toggle': return [x.checked ? E.consent_on : E.consent_off, '', x.checked ? 'good' : 'warn'];
+      case 'add_data_click': return [E.add_data, E.add_data_sub, 'good'];
+      case 'copy_text': return [E.copy_text, '“' + esc(e.g) + '”', 'key'];
+      case 'idle': return [E.idle, '', ''];
+      case 'tab_hidden': return [E.tab_hidden, '', ''];
+      case 'tab_visible': return [E.tab_visible, '', ''];
+      case 'page_leave': return [E.page_leave, '', 'bad'];
       default: return [esc(e.t), esc(e.g || ''), ''];
     }
   }
 
   function renderJourney(key) {
     const p = MODEL.persons.find(x => x.key === key);
-    const card = $('#journeyCard');
-    if (!p) { card.innerHTML = '<div class="empty">Personne introuvable sur cette période.</div>'; return; }
+    const card = $('#journeyCard'), J = get('j');
+    if (!p) { card.innerHTML = `<div class="empty">${T('journey.gone')}</div>`; return; }
     if (!selectedSession || !p.sessions.some(s => s.id === selectedSession)) selectedSession = p.sessions[p.sessions.length - 1].id;
     const s = p.sessions.find(x => x.id === selectedSession);
 
     const list = p.sessions.map((x, i) => `<div class="sess ${x.id === s.id ? 'sel' : ''}" data-s="${x.id}">
-      <div class="t"><span>Session ${i + 1}</span><small>${fmtDate(x.t0)}</small></div>
-      <small>${fmtDur(x.active)} actif · ${x.clicks} clics · ${x.reachedDash ? 'dashboard' : 'landing seule'}</small></div>`).join('');
+      <div class="t"><span>${fill(J.session, [i + 1])}</span><small>${fmtDate(x.t0)}</small></div>
+      <small>${fill(J.sessSub, [fmtDur(x.active), x.clicks, x.reachedDash ? J.dash : J.landOnly])}</small></div>`).join('');
 
-    // Temps par zone pour la session
     const zones = Object.entries(s.byArea).map(([k, ms]) => { const [kind, page, a] = k.split('|'); return { kind, page, a, ms }; })
       .filter(z => z.kind !== 'page').sort((a, b) => b.ms - a.ms);
 
@@ -563,94 +806,85 @@ tr.row.sel td{background:var(--accent-soft)}
       const off = new Date(e.ct || e.at).getTime() - s.t0;
       const [title, sub, cls] = describe(e);
       let sep = '';
-      if (e.t === 'page_view' && e.p !== lastPage) { sep = `<div class="tl-page">${e.p === 'dashboard' ? 'Dashboard' : 'Landing'}</div>`; lastPage = e.p; }
+      if (e.t === 'page_view' && e.p !== lastPage) { sep = `<div class="tl-page">${T(e.p === 'dashboard' ? 'dashboard' : 'landing')}</div>`; lastPage = e.p; }
       return `${sep}<div class="tl-item ${cls ? 'k-' + cls : ''}"><span class="tl-time">+${fmtOff(off)}</span><span class="tl-dot"></span><span class="tl-body">${title}${sub ? `<small>${sub}</small>` : ''}</span></div>`;
     }).join('');
 
     card.innerHTML = `
-      <div class="card-h"><div><h2>${esc(p.tag || p.email || 'Visiteur anonyme')}</h2>
-        <small>${esc([p.company, p.role, p.raise && 'levée ' + p.raise, p.email && p.tag ? p.email : null].filter(Boolean).join(' · ') || p.key)}</small></div>
-        <div class="pill-row">${badges(p)}</div></div>
+      <div class="card-h"><div><h2>${esc(p.tag || p.email || T('anonVisitor'))}</h2>
+        <small>${esc([p.company, p.role, p.raise && T('raise', p.raise), p.email && p.tag ? p.email : null].filter(Boolean).join(' · ') || p.key)}</small></div>
+        <div class="pill-row">${badges(p)}<button class="btn danger" id="excludeOne" style="padding:3px 10px;font-size:12px">${T('excludeOne')}</button></div></div>
       <div class="journey">
-        <div><h3 style="margin-bottom:8px">${p.sessions.length} session(s)</h3><div class="sess-list">${list}</div></div>
+        <div><h3 style="margin-bottom:8px">${fill(J.sessions, [p.sessions.length])}</h3><div class="sess-list">${list}</div></div>
         <div>
           <div class="kv">
-            <div><b>${fmtDur(s.active)}</b><span>temps actif</span></div>
-            <div><b>${fmtDur(s.tEnd - s.t0)}</b><span>durée totale</span></div>
-            <div><b>${fmtDur(s.landing)}</b><span>sur la landing</span></div>
-            <div><b>${fmtDur(s.dash)}</b><span>sur le dashboard</span></div>
-            <div><b>${s.maxStep}/4</b><span>étapes du tour</span></div>
-            <div><b>${s.clicks}</b><span>clics</span></div>
+            <div><b>${fmtDur(s.active)}</b><span>${J.active}</span></div>
+            <div><b>${fmtDur(s.tEnd - s.t0)}</b><span>${J.total}</span></div>
+            <div><b>${fmtDur(s.landing)}</b><span>${J.onLanding}</span></div>
+            <div><b>${fmtDur(s.dash)}</b><span>${J.onDash}</span></div>
+            <div><b>${s.maxStep}/4</b><span>${J.steps}</span></div>
+            <div><b>${s.clicks}</b><span>${J.clicks}</span></div>
           </div>
-          <h3 style="margin:4px 0 8px">Où l’attention est allée</h3>
+          <h3 style="margin:4px 0 8px">${J.attention}</h3>
           <div class="bars" id="sessZones"></div>
-          <h3 style="margin:18px 0 4px">Chronologie</h3>
+          <h3 style="margin:18px 0 4px">${J.timeline}</h3>
           <div class="timeline">${items}</div>
         </div>
       </div>`;
-    bars($('#sessZones'), zones.slice(0, 12).map(z => ({ label: area(z.a) + (z.kind === 'modal' ? ' (modale)' : ''), value: z.ms, text: fmtDur(z.ms) })));
+    bars($('#sessZones'), zones.slice(0, 12).map(z => ({ label: area(z.a) + (z.kind === 'modal' ? J.modal : ''), value: z.ms, text: fmtDur(z.ms) })));
     card.querySelectorAll('.sess').forEach(el => el.addEventListener('click', () => { selectedSession = el.dataset.s; renderJourney(key); }));
+    $('#excludeOne').addEventListener('click', () => setExcluded([p.key], true));
   }
 
   // ---------- Insights automatiques ----------
   function renderInsights(S, P, ctx) {
-    const out = [];
+    const out = [], I = get('ins');
     const add = (cls, icon, html) => out.push(`<div class="ins ${cls}"><span class="ic">${icon}</span><div>${html}</div></div>`);
     const n = S.length;
-    if (!n) { $('#insights').innerHTML = '<div class="empty">Pas encore de sessions sur cette période.</div>'; return; }
+    if (!n) { $('#insights').innerHTML = `<div class="empty">${T('noSessions')}</div>`; return; }
 
-    add('info', 'n', `<b>${n} session(s)</b> de <b>${P.length} personne(s)</b>. ${n < 10 ? 'Échantillon encore très faible : une seule session peut faire bouger un pourcentage de 10 points ou plus.' : ''}`);
+    add('info', 'n', fill(I.count, [n, P.length]) + (n < 10 ? I.small : ''));
 
-    // Plus gros décrochage de l'entonnoir
     let worst = null;
     ctx.steps.forEach(([l, c], i) => { if (!i) return; const prev = ctx.steps[i - 1][1]; if (prev >= 1) { const loss = prev - c; if (!worst || loss / prev > worst.r) worst = { from: ctx.steps[i - 1][0], to: l, r: loss / prev, loss }; } });
-    if (worst && worst.loss > 0) add('bad', '↓', `Plus gros décrochage : <b>${esc(worst.from)} → ${esc(worst.to)}</b>, ${Math.round(worst.r * 100)} % des sessions s’arrêtent là (${worst.loss}).`);
+    if (worst && worst.loss > 0) add('bad', '↓', fill(I.drop, [esc(worst.from), esc(worst.to), Math.round(worst.r * 100), worst.loss]));
 
-    // Sections les plus / moins lues
     const secs = ['hero', 'problem', 'evidence', 'how', 'product', 'security', 'access'].map(a => {
       const seen = S.filter(s => s.areaMs('section', 'landing', a) > 0);
       return { a, reach: seen.length / n, avg: seen.length ? sum(seen.map(s => s.areaMs('section', 'landing', a))) / seen.length : 0 };
     });
     const top = [...secs].sort((x, y) => y.avg - x.avg)[0];
-    if (top && top.avg > 0) add('info', '◎', `Section de la landing qui retient le plus : <b>${esc(area(top.a))}</b> (${fmtDur(top.avg)} en moyenne).`);
+    if (top && top.avg > 0) add('info', '◎', fill(I.topSection, [esc(area(top.a)), fmtDur(top.avg)]));
     const low = secs.filter(x => x.reach < 0.5 && x.a !== 'hero');
-    if (low.length) add('warn', '!', `Moins d’une session sur deux voit : ${low.map(x => `<b>${esc(area(x.a))}</b> (${Math.round(x.reach * 100)} %)`).join(', ')}. Le contenu placé là est peu vu.`);
+    if (low.length) add('warn', '!', fill(I.lowReach, [low.map(x => `<b>${esc(area(x.a))}</b> (${pc(Math.round(x.reach * 100))})`).join(', ')]));
 
-    // Temps médian avant de passer au dashboard
     const toForm = S.filter(s => s.submitted).map(s => new Date(s.evs.find(e => e.t === 'form_submit').ct).getTime() - s.t0);
-    if (toForm.length) add('info', '⏱', `Temps médian avant d’envoyer le formulaire : <b>${fmtDur(median(toForm))}</b>.`);
+    if (toForm.length) add('info', '⏱', fill(I.toForm, [fmtDur(median(toForm))]));
 
-    // Tour
     if (ctx.dashS.length) {
       const done = ctx.dashS.filter(s => s.tourDone).length;
       const skips = countBy(ctx.dashS.filter(s => s.tourSkip), s => s.tourSkip);
-      add(done / ctx.dashS.length >= 0.6 ? 'good' : 'warn', '▶', `<b>${pct(done, ctx.dashS.length)} %</b> des sessions arrivées au dashboard terminent le tour guidé.${skips.length ? ` Abandon le plus fréquent : <b>étape ${skips[0][0]}</b> (${skips[0][1]} fois).` : ''}`);
+      add(done / ctx.dashS.length >= 0.6 ? 'good' : 'warn', '▶', fill(I.tour, [pct(done, ctx.dashS.length)]) + (skips.length ? fill(I.tourSkip, [skips[0][0], skips[0][1]]) : ''));
     }
 
-    // Assistant
     const asst = countBy(S.flatMap(s => s.assistant.map(a => ({ a }))), x => x.a);
-    if (asst.length) add('good', '★', `Action de l’assistant la plus demandée : <b>« ${esc(asst[0][0])} »</b> (${asst[0][1]} clic(s)). C’est un bouton factice : ce clic mesure une attente réelle.`);
+    if (asst.length) add('good', '★', fill(I.asst, [esc(asst[0][0]), asst[0][1]]));
 
-    // Intention données
-    const cons = S.filter(s => s.consent).length, add_ = S.filter(s => s.addData).length;
-    if (ctx.dashS.length) add(add_ ? 'good' : 'warn', '⬆', `<b>${cons}</b> session(s) cochent le consentement et <b>${add_}</b> cliquent « Add my data », soit ${pct(add_, ctx.dashS.length)} % de celles qui voient le dashboard.`);
+    const cons = S.filter(s => s.consent).length, addD = S.filter(s => s.addData).length;
+    if (ctx.dashS.length) add(addD ? 'good' : 'warn', '⬆', fill(I.data, [cons, addD, pct(addD, ctx.dashS.length)]));
 
-    // Frictions
     const dis = ctx.frRows.filter(r => r.t === 'disabled_click').reduce((a, r) => a + r.s.size, 0);
-    if (dis) add('warn', '⚠', `<b>${dis} session(s)</b> ont cliqué « Add my data » avant de cocher le consentement : la case à cocher passe inaperçue.`);
+    if (dis) add('warn', '⚠', fill(I.disabled, [dis]));
     const dead = ctx.frRows.filter(r => r.t === 'dead_click')[0];
-    if (dead) add('warn', '?', `Clics sur un élément qui ne réagit pas : <b>${esc(area(dead.area))}</b> (${dead.n} fois). Les visiteurs s’attendent peut-être à pouvoir l’explorer.`);
+    if (dead) add('warn', '?', fill(I.dead, [esc(area(dead.area)) + (dead.label ? ' · ' + esc(dead.label) : ''), dead.n]));
     const rage = ctx.frRows.filter(r => r.t === 'rage_click')[0];
-    if (rage) add('bad', '✕', `Clics répétés (frustration) sur <b>« ${esc(rage.label)} »</b> dans ${esc(area(rage.area))}.`);
-    if (ctx.opened.length && ctx.aband) add('bad', '✎', `${ctx.aband} session(s) sur ${ctx.opened.length} ont commencé à remplir le formulaire puis l’ont fermé.`);
+    if (rage) add('bad', '✕', fill(I.rage, [esc(rage.label), esc(area(rage.area))]));
+    if (ctx.opened.length && ctx.aband) add('bad', '✎', fill(I.abandon, [ctx.aband, ctx.opened.length]));
 
-    // Retours
     const back = P.filter(p => p.sessions.length > 1);
-    if (back.length) add('good', '↺', `<b>${back.length} personne(s)</b> sont revenues d’elles-mêmes : ${back.slice(0, 5).map(p => esc(p.tag || p.email || 'anonyme')).join(', ')}.`);
-
-    // Meilleurs profils
+    if (back.length) add('good', '↺', fill(I.back, [back.length, back.slice(0, 5).map(p => esc(personName(p))).join(', ')]));
     const hot = P.filter(p => p.score >= 6);
-    if (hot.length) add('good', '♥', `Profils les plus engagés (score ≥ 6) : ${hot.slice(0, 6).map(p => `<b>${esc(p.tag || p.email || 'anonyme')}</b> (${p.score})`).join(', ')}.`);
+    if (hot.length) add('good', '♥', fill(I.hot, [hot.slice(0, 6).map(p => `<b>${esc(personName(p))}</b> (${p.score})`).join(', ')]));
 
     $('#insights').innerHTML = out.join('');
   }
@@ -662,16 +896,23 @@ tr.row.sel td{background:var(--accent-soft)}
     document.querySelectorAll('#period button').forEach(x => x.classList.toggle('on', x === b));
     render();
   });
-  $('#showTests').addEventListener('change', e => { showTests = e.target.checked; render(); });
+  $('#lang').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    LANG = b.dataset.l;
+    try { localStorage.setItem('insights_lang', LANG); } catch (_) {}
+    if ($('#app').hidden) { applyStatic(); if (lastErr) $('#gateErr').textContent = lastErr.message === 'forbidden' ? T('gate.bad') : T('gate.fail', lastErr.message); }
+    else render();
+  });
   $('#refresh').addEventListener('click', load);
   $('#csv').addEventListener('click', () => {
     const cols = ['created_at', 'founder_tag', 'session_id', 'visitor_id', 'event_type', 'page', 'target', 'duration_ms', 'props'];
     const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
-    const rows = RAW.map(e => [e.ct || e.at, e.f, e.s, e.v, e.t, e.p, e.g, e.d, JSON.stringify(e.x)].map(q).join(','));
+    const keep = new Set(MODEL.sessions.map(s => s.id));
+    const rows = RAW.filter(e => keep.has(e.s)).map(e => [e.ct || e.at, e.f, e.s, e.v, e.t, e.p, e.g, e.d, JSON.stringify(e.x)].map(q).join(','));
     const blob = new Blob([cols.join(',') + '\n' + rows.join('\n')], { type: 'text/csv' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'bearing-events.csv'; a.click();
   });
-  setInterval(() => { if (!$('#app').hidden && document.visibilityState === 'visible') load(); }, 60000);
+  setInterval(() => { if (!$('#app').hidden && document.visibilityState === 'visible' && !selPeople.size && !selExcluded.size) load(); }, 60000);
 
   load();
 })();

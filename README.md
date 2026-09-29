@@ -53,9 +53,14 @@ détaillé de chaque founder, session par session** (chronologie, temps par zone
   la bonne clé. Elle est placée après `#`, donc elle n'est envoyée ni à Vercel ni dans les referrers.
 - Page en `noindex` et sans cache (`vercel.json`).
 - Changer de clé : `update private.insights_keys set key_hash = encode(extensions.digest('<nouvelle clé>', 'sha256'), 'hex');`
+- Page en anglais par défaut, bouton EN / FR en haut à droite (choix mémorisé par navigateur).
+- **Exclure des profils** (tests, équipe) : cocher les lignes du tableau *Founders* → « Exclude
+  selected », ou « Exclude from analysis » dans le parcours d'une personne. Les profils exclus
+  disparaissent de tous les chiffres et restent listés dans *Excluded profiles* pour les
+  réintégrer. La liste est stockée dans Supabase (`private.excluded_profiles`), donc partagée par
+  toute l'équipe.
 - Les robots (capture d'écran Vercel, navigateurs headless) sont ignorés par le tracker et exclus
-  des analyses. Les tags commençant par `test`, `qa` ou `dev` sont masqués par défaut
-  (case « Inclure les tests »).
+  des analyses.
 
 ## Lire les résultats (Supabase → SQL Editor)
 
