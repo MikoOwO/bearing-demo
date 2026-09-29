@@ -42,6 +42,21 @@ enregistrés.
 | `copy_text` | texte copié par le visiteur |
 | `idle`, `tab_hidden`, `tab_visible`, `page_leave`, `page_reload` | engagement réel |
 
+## Dashboard d'analyse (équipe uniquement)
+
+`https://<ton-site>.vercel.app/insights#k=<clé>` : vue d'ensemble, insights automatiques, entonnoir,
+temps par section et étape du tour, clics et frictions, formulaire, audience, puis le **parcours
+détaillé de chaque founder, session par session** (chronologie, temps par zone).
+
+- La clé n'est **jamais** dans le code. Supabase n'en stocke que le hash SHA-256
+  (`private.insights_keys`), et la fonction `public.insights_events(p_key)` refuse tout appel sans
+  la bonne clé. Elle est placée après `#`, donc elle n'est envoyée ni à Vercel ni dans les referrers.
+- Page en `noindex` et sans cache (`vercel.json`).
+- Changer de clé : `update private.insights_keys set key_hash = encode(extensions.digest('<nouvelle clé>', 'sha256'), 'hex');`
+- Les robots (capture d'écran Vercel, navigateurs headless) sont ignorés par le tracker et exclus
+  des analyses. Les tags commençant par `test`, `qa` ou `dev` sont masqués par défaut
+  (case « Inclure les tests »).
+
 ## Lire les résultats (Supabase → SQL Editor)
 
 Les vues du schéma `analytics` ne sont pas exposées à l'API publique.

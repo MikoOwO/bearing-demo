@@ -4,6 +4,9 @@
  * (écouteurs en phase de capture, MutationObserver, IntersectionObserver).
  */
 (() => {
+  // Robots (capture d'écran Vercel, navigateurs headless, crawlers) : aucun suivi.
+  if (navigator.webdriver || /headless|bot|crawl|spider|lighthouse|vercel|preview/i.test(navigator.userAgent)) return;
+
   const SUPABASE_URL = 'https://nrjgyqistgulfpeycoyp.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_VTf9Z88VdCHhZWjosj0I_Q_ibTjvLj5';
   const ENDPOINT = SUPABASE_URL + '/rest/v1/events';
@@ -71,6 +74,8 @@
   const running = new Map();  // key -> start (performance.now)
   let engaged = document.visibilityState === 'visible';
   let lastInput = performance.now();
+  let modalsOpen = 0;  // une modale couvre la page : les sections dessous ne sont pas lues
+  const canRun = kind => engaged && !(kind === 'section' && modalsOpen > 0);
 
   const keyOf = (kind, page, area) => kind + '|' + page + '|' + area;
   function emitChunk(key, now) {
@@ -83,7 +88,7 @@
     const key = keyOf(kind, page, area);
     if (wanted.has(key)) return;
     wanted.set(key, { kind, page, area });
-    if (engaged) running.set(key, performance.now());
+    if (canRun(kind)) running.set(key, performance.now());
   }
   function unwant(kind, page, area) {
     const key = keyOf(kind, page, area);
@@ -95,10 +100,19 @@
     [...wanted.values()].filter(w => w.kind === kind && (!page || w.page === page))
       .forEach(w => unwant(w.kind, w.page, w.area));
   }
+  function setModalOpen(delta) {
+    const now = performance.now();
+    modalsOpen = Math.max(0, modalsOpen + delta);
+    wanted.forEach((w, key) => {
+      if (w.kind !== 'section') return;
+      if (!canRun('section') && running.has(key)) { emitChunk(key, now); running.delete(key); }
+      else if (canRun('section') && !running.has(key)) running.set(key, now);
+    });
+  }
   function setEngaged(on) {
     if (on === engaged) return;
     const now = performance.now();
-    if (on) wanted.forEach((_, key) => running.set(key, now));
+    if (on) wanted.forEach((w, key) => { if (canRun(w.kind)) running.set(key, now); });
     else { running.forEach((_, key) => emitChunk(key, now)); running.clear(); }
     engaged = on;
   }
@@ -203,6 +217,11 @@
     if (!s) return null;
     return s.dataset.trackName || s.id || sectionName(s);
   };
+  const describeInert = t => {
+    const txt = (t.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40);
+    const cls = t.closest('[class]') ? String(t.closest('[class]').className).split(' ')[0] : t.tagName.toLowerCase();
+    return txt ? txt + ' (' + cls + ')' : cls;
+  };
   let lastClick = { key: '', t: 0, n: 0 };
   let lastAccessSource = null;
 
@@ -211,7 +230,7 @@
     if (!t) return;
     const el = t.closest(INTERACTIVE);
     const now = performance.now();
-    const key = el ? labelOf(el) : areaOf(t) + '/' + t.tagName;
+    const key = el ? labelOf(el) : describeInert(t);
     if (key === lastClick.key && now - lastClick.t < 800) lastClick.n++; else lastClick.n = 1;
     lastClick.key = key; lastClick.t = now;
     if (lastClick.n === 3) track('rage_click', { target: key, props: { area: areaOf(t) } });
@@ -233,7 +252,7 @@
       track('click', { target: labelOf(el), props });
     } else {
       // Clic sur un élément non cliquable (KPI, graphique…) : signal de curiosité ou de confusion.
-      track('dead_click', { target: (t.closest('[class]') ? String(t.closest('[class]').className).split(' ')[0] : t.tagName.toLowerCase()), props: { area: areaOf(t) } });
+      track('dead_click', { target: describeInert(t), props: { area: areaOf(t) } });
     }
   }, true);
 
@@ -281,8 +300,8 @@
       const now = m.classList.contains('open');
       if (now === open) return;
       open = now;
-      if (now) { openedAt = performance.now(); openedOn = currentPage(); track('modal_open', { page: openedOn, target: name, props: { source: name === 'access_form' ? lastAccessSource : null } }); want('modal', openedOn, name); }
-      else { unwant('modal', openedOn, name); track('modal_close', { page: openedOn, target: name, duration_ms: performance.now() - openedAt }); if (onClose) onClose(); }
+      if (now) { openedAt = performance.now(); openedOn = currentPage(); track('modal_open', { page: openedOn, target: name, props: { source: name === 'access_form' ? lastAccessSource : null } }); want('modal', openedOn, name); setModalOpen(1); }
+      else { unwant('modal', openedOn, name); setModalOpen(-1); track('modal_close', { page: openedOn, target: name, duration_ms: performance.now() - openedAt }); if (onClose) onClose(); }
     }).observe(m, { attributes: true, attributeFilter: ['class'] });
   }
   watchModal('accessModal', 'access_form', () => {

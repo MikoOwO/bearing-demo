@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Bearing Insights</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#f1f3f6; --line:#e3e7ec;
+  --ink:#172033; --ink-2:#4a5568; --muted:#7a8496;
+  --accent:#3b5bdb; --accent-soft:#e3e9ff; --accent-2:#91a7ff;
+  --good:#1f8a4c; --good-soft:#e2f4ea; --warn:#b26a00; --warn-soft:#fdf1dc; --bad:#c0392b; --bad-soft:#fbe5e2;
+  --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1420; --surface:#171d2b; --surface-2:#1e2536; --line:#2a3246;
+    --ink:#e8ecf4; --ink-2:#b4bdcf; --muted:#8490a6;
+    --accent:#7c93ff; --accent-soft:#252f52; --accent-2:#4c63c9;
+    --good:#4cc47f; --good-soft:#173326; --warn:#f0a93a; --warn-soft:#3a2c12; --bad:#ff7b6b; --bad-soft:#3b1d1a;
+    --shadow:none; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+h2{font-size:15px} h3{font-size:13px;color:var(--ink-2)}
+small,.muted{color:var(--muted)}
+button,select,input{font:inherit;color:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:12px;padding-bottom:12px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;margin-right:auto}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:2px}
+.seg button{border:0;background:none;padding:5px 10px;border-radius:7px;cursor:pointer;color:var(--ink-2)}
+.seg button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:9px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.chk{display:inline-flex;gap:6px;align-items:center;color:var(--ink-2);cursor:pointer}
+main{padding:20px 0 60px}
+.grid{display:grid;gap:14px}
+.g-kpi{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.g-2{grid-template-columns:repeat(auto-fit,minmax(360px,1fr))}
+.g-3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;min-width:0}
+.card-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
+.section-title{margin:28px 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.kpi .k{color:var(--muted);font-size:12px}
+.kpi .v{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--ink-2)}
+.insights{display:grid;gap:8px}
+.ins{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--surface-2)}
+.ins .ic{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:700}
+.ins.good .ic{background:var(--good-soft);color:var(--good)} .ins.warn .ic{background:var(--warn-soft);color:var(--warn)}
+.ins.bad .ic{background:var(--bad-soft);color:var(--bad)} .ins.info .ic{background:var(--accent-soft);color:var(--accent)}
+/* barres horizontales */
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:minmax(110px,38%) 1fr auto;gap:10px;align-items:center;font-size:13px}
+.bar .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-2)}
+.bar .track{height:14px;background:var(--surface-2);border-radius:4px;position:relative;overflow:hidden}
+.bar .fill{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:0 4px 4px 0;min-width:2px}
+.bar .val{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;min-width:64px;text-align:right}
+.bar .val small{font-weight:400}
+.bar:hover .fill{background:var(--accent-2)}
+.funnel .bar{grid-template-columns:minmax(150px,34%) 1fr auto}
+.drop{font-size:11px;color:var(--bad);font-weight:600;margin-left:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.row{cursor:pointer} tr.row:hover td{background:var(--surface-2)}
+tr.row.sel td{background:var(--accent-soft)}
+.tbl-wrap{overflow-x:auto}
+.badge{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:600;margin:1px 2px 1px 0;white-space:nowrap}
+.b-good{background:var(--good-soft);color:var(--good)} .b-warn{background:var(--warn-soft);color:var(--warn)}
+.b-bad{background:var(--bad-soft);color:var(--bad)} .b-info{background:var(--accent-soft);color:var(--accent)}
+.b-mute{background:var(--surface-2);color:var(--muted)}
+.score{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-variant-numeric:tabular-nums}
+.score i{display:inline-block;width:46px;height:6px;border-radius:3px;background:var(--surface-2);position:relative;overflow:hidden}
+.score i b{position:absolute;inset:0 auto 0 0;background:var(--accent)}
+/* parcours */
+.journey{display:grid;grid-template-columns:320px 1fr;gap:14px}
+@media (max-width:900px){.journey{grid-template-columns:1fr}.g-2{grid-template-columns:1fr}}
+.sess-list{display:grid;gap:6px;max-height:640px;overflow:auto}
+.sess{border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;background:var(--surface)}
+.sess:hover{border-color:var(--accent)} .sess.sel{border-color:var(--accent);background:var(--accent-soft)}
+.sess .t{font-weight:600;display:flex;justify-content:space-between;gap:6px}
+.timeline{position:relative;margin-top:6px}
+.tl-item{display:grid;grid-template-columns:64px 18px 1fr;gap:8px;align-items:start;padding:3px 0}
+.tl-time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;text-align:right;padding-top:1px}
+.tl-dot{width:10px;height:10px;border-radius:50%;margin:5px auto 0;background:var(--line)}
+.tl-item.k-key .tl-dot{background:var(--accent)} .tl-item.k-good .tl-dot{background:var(--good)}
+.tl-item.k-bad .tl-dot{background:var(--bad)} .tl-item.k-warn .tl-dot{background:var(--warn)}
+.tl-body{font-size:13px}
+.tl-body small{margin-left:6px}
+.tl-page{margin:10px 0 4px 90px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;border-top:1px dashed var(--line);padding-top:8px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
+.kv div{background:var(--surface-2);border-radius:9px;padding:8px 10px}
+.kv b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
+.kv span{font-size:11px;color:var(--muted)}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.gate{max-width:420px;margin:12vh auto;padding:0 16px}
+.gate .card{padding:24px}
+.gate input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);margin:12px 0}
+#tip{position:fixed;pointer-events:none;z-index:50;background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:7px;font-size:12px;max-width:280px;opacity:0;transition:opacity .08s}
+.err{color:var(--bad);margin-top:8px}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="tip" role="tooltip"></div>
+
+<div id="gate" class="gate" hidden>
+  <div class="card">
+    <h1 style="font-size:18px">Bearing Insights</h1>
+    <p class="muted">Accès réservé à l'équipe. Colle la clé d'accès, ou ouvre le lien secret complet.</p>
+    <form id="gateForm"><input id="gateKey" type="password" autocomplete="off" placeholder="Clé d'accès"><button class="btn" type="submit">Ouvrir</button></form>
+    <div id="gateErr" class="err"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="top"><div class="wrap">
+    <div class="brand"><span class="dot"></span>Bearing Insights <small id="stamp" style="font-weight:400"></small></div>
+    <div class="ctrl">
+      <div class="seg" id="period">
+        <button data-p="1">24 h</button><button data-p="7">7 j</button><button data-p="30">30 j</button><button data-p="0" class="on">Tout</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="showTests"> Inclure les tests</label>
+      <button class="btn" id="refresh">Rafraîchir</button>
+      <button class="btn" id="csv">Export CSV</button>
+    </div>
+  </div></header>
+
+  <main class="wrap">
+    <div class="section-title">Vue d'ensemble</div>
+    <div class="grid g-kpi" id="kpis"></div>
+
+    <div class="section-title">Ce que disent les données</div>
+    <div class="card"><div class="insights" id="insights"></div>
+      <div class="note">Observations calculées automatiquement à partir des événements, sans IA. Avec peu de sessions, lis-les comme des pistes, pas comme des conclusions.</div></div>
+
+    <div class="section-title">Entonnoir</div>
+    <div class="card"><div class="card-h"><h2>De la visite à l'intention de connecter ses données</h2><small>% des sessions</small></div><div class="bars funnel" id="funnel"></div></div>
+
+    <div class="section-title">Attention</div>
+    <div class="grid g-2">
+      <div class="card"><div class="card-h"><h2>Landing : temps par section</h2><small>moyenne des sessions qui l'ont vue · % atteinte</small></div><div class="bars" id="landingTime"></div></div>
+      <div class="card"><div class="card-h"><h2>Dashboard : temps par zone</h2><small>moyenne des sessions qui l'ont vue · % atteinte</small></div><div class="bars" id="dashTime"></div></div>
+      <div class="card"><div class="card-h"><h2>Tour guidé</h2><small>% des sessions arrivées au dashboard · temps moyen</small></div><div class="bars" id="tour"></div></div>
+      <div class="card"><div class="card-h"><h2>Profondeur de scroll</h2><small>% des sessions</small></div><div class="bars" id="scroll"></div></div>
+    </div>
+
+    <div class="section-title">Interactions</div>
+    <div class="grid g-2">
+      <div class="card"><div class="card-h"><h2>Éléments cliqués</h2><small>clics · sessions</small></div><div class="tbl-wrap"><table id="clicks"></table></div></div>
+      <div class="card"><div class="card-h"><h2>Frictions</h2><small>clics sans effet, répétés ou sur bouton désactivé</small></div><div class="tbl-wrap"><table id="friction"></table></div></div>
+    </div>
+
+    <div class="section-title">Formulaire d'accès & audience</div>
+    <div class="grid g-3">
+      <div class="card"><div class="card-h"><h2>CTA qui ouvre le formulaire</h2></div><div class="bars" id="ctaSrc"></div></div>
+      <div class="card"><div class="card-h"><h2>Rôle déclaré</h2></div><div class="bars" id="roles"></div></div>
+      <div class="card"><div class="card-h"><h2>Dernière levée</h2></div><div class="bars" id="raises"></div></div>
+      <div class="card"><div class="card-h"><h2>Formulaire : champs</h2><small>sessions ayant ouvert le formulaire</small></div><div class="bars" id="fields"></div></div>
+      <div class="card"><div class="card-h"><h2>Appareils</h2></div><div class="bars" id="devices"></div></div>
+      <div class="card"><div class="card-h"><h2>Provenance</h2></div><div class="bars" id="refs"></div></div>
+    </div>
+
+    <div class="section-title">Founders</div>
+    <div class="card"><div class="card-h"><h2>Une ligne par personne</h2><small>clic sur une ligne → parcours détaillé</small></div>
+      <div class="tbl-wrap"><table id="people"></table></div>
+      <div class="note">Score d'intérêt (0–9) : formulaire +2, consentement +2, « Add my data » +2, tour terminé +1, action de l'assistant +1, retour +1, plus de 3 min actives +1.</div>
+    </div>
+
+    <div class="section-title" id="journeyAnchor">Parcours</div>
+    <div class="card" id="journeyCard"><div class="empty">Sélectionne une personne dans le tableau ci-dessus.</div></div>
+  </main>
+</div>
+
+<script>
+(() => {
+  const SUPABASE_URL = 'https://nrjgyqistgulfpeycoyp.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_VTf9Z88VdCHhZWjosj0I_Q_ibTjvLj5';
+
+  // ---------- Libellés lisibles ----------
+  const AREA = {
+    landing:'Landing (page)', dashboard:'Dashboard (page)',
+    hero:'Hero · accroche', problem:'Le problème', evidence:'Chiffres clés', how:'Comment ça marche',
+    product:'Produit', security:'Sécurité', access:'Bloc « early access » (bas)', footer:'Pied de page',
+    nav:'Barre de navigation', 'nav-links':'Barre de navigation',
+    tourOverview:'KPIs (runway, cash, MRR, burn)', cashPanel:'Graphique cash runway', tourAssumptions:'Hypothèses qui dérivent',
+    tourAssistant:'Assistant Bearing', scenarioPanel:'Scénarios', tourData:'« Bring your own numbers »',
+    access_form:'Formulaire d’accès', add_data_thanks:'Modale « Merci » (Add data)', accessModal:'Formulaire d’accès',
+    dataModal:'Modale « Merci »', tourPop:'Bulle du tour', 'dash-global-top':'En-tête dashboard', 'dash-sidebar':'Menu latéral',
+  };
+  const area = a => a == null ? '—' : (AREA[a] || (/^step_(\d)/.test(a) ? 'Tour · étape ' + a.slice(5) : a));
+  const TOUR_TITLES = {1:'Snapshot mensuel',2:'Ce qui crée l’écart',3:'L’assistant explique',4:'Apporter son fichier'};
+  const cleanTarget = t => /^dataConsent/.test(t || '') ? 'Case de consentement (' + (/unchecked/.test(t) ? 'décochée' : 'cochée') + ')' : (t || '').replace(/^[a-zA-Z]+ · /, '');
+
+  // ---------- Utilitaires ----------
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+  const fmtDur = ms => {
+    if (ms == null || isNaN(ms)) return '—';
+    const s = Math.round(ms / 1000);
+    if (s < 60) return s + ' s';
+    const m = Math.floor(s / 60), r = s % 60;
+    if (m < 60) return m + ' min ' + String(r).padStart(2, '0');
+    return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0');
+  };
+  const fmtOff = ms => { const s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const fmtDate = d => new Date(d).toLocaleString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+  const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  const sum = a => a.reduce((x, y) => x + (y || 0), 0);
+  const countBy = (arr, f) => { const m = new Map(); arr.forEach(x => { const k = f(x); if (k == null || k === '') return; m.set(k, (m.get(k) || 0) + 1); }); return [...m.entries()].sort((a, b) => b[1] - a[1]); };
+
+  // ---------- Tooltip ----------
+  const tip = $('#tip');
+  document.addEventListener('mousemove', e => {
+    const el = e.target.closest && e.target.closest('[data-tip]');
+    if (!el) { tip.style.opacity = 0; return; }
+    tip.textContent = el.dataset.tip; tip.style.opacity = 1;
+    const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8), y = Math.min(e.clientY + 14, innerHeight - tip.offsetHeight - 8);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  });
+
+  function bars(el, rows, opts = {}) {
+    if (!rows.length) { el.innerHTML = '<div class="empty">Pas encore de données</div>'; return; }
+    const max = opts.max || Math.max(...rows.map(r => r.value), 1);
+    el.innerHTML = rows.map(r => `<div class="bar" data-tip="${esc(r.tip || (r.label + ' : ' + r.text))}">
+      <span class="lbl">${esc(r.label)}</span>
+      <span class="track"><span class="fill" style="width:${Math.max(0.5, 100 * r.value / max)}%"></span></span>
+      <span class="val">${r.html || esc(r.text)}</span></div>`).join('');
+  }
+  const distBars = (el, entries, total) => bars(el, entries.slice(0, 8).map(([k, n]) => ({ label: k, value: n, text: n + '', html: `${n} <small>${pct(n, total)} %</small>`, tip: `${k} : ${n} (${pct(n, total)} %)` })));
+
+  // ---------- Accès ----------
+  const hashKey = new URLSearchParams(location.hash.slice(1)).get('k');
+  let KEY = hashKey || (() => { try { return sessionStorage.getItem('insights_k'); } catch (_) { return null; } })();
+
+  async function fetchEvents(key) {
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/insights_events', {
+      method: 'POST',
+      headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_key: key }),
+    });
+    if (r.status === 401 || r.status === 403) throw new Error('forbidden');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+
+  $('#gateForm').addEventListener('submit', e => { e.preventDefault(); KEY = $('#gateKey').value.trim(); load(); });
+
+  let RAW = [], periodDays = 0, showTests = false, selectedPerson = null, selectedSession = null;
+
+  async function load() {
+    if (!KEY) { $('#gate').hidden = false; return; }
+    try {
+      RAW = await fetchEvents(KEY);
+      try { sessionStorage.setItem('insights_k', KEY); } catch (_) {}
+      $('#gate').hidden = true; $('#app').hidden = false;
+      $('#stamp').textContent = '· mis à jour ' + new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+      render();
+    } catch (err) {
+      $('#app').hidden = true; $('#gate').hidden = false;
+      $('#gateErr').textContent = err.message === 'forbidden' ? 'Clé invalide.' : 'Chargement impossible (' + err.message + ').';
+    }
+  }
+
+  // ---------- Modèle : sessions & personnes ----------
+  const isTestTag = t => !!t && /^(test|qa|dev|interne|internal)/i.test(t);
+
+  function buildModel(events) {
+    const bySession = new Map();
+    events.forEach(e => { if (!bySession.has(e.s)) bySession.set(e.s, []); bySession.get(e.s).push(e); });
+
+    // Email connu par visiteur (pour rattacher les sessions anonymes d'un même navigateur).
+    const visitorEmail = new Map(), visitorTag = new Map();
+    events.forEach(e => {
+      if (e.t === 'form_submit' && e.x && e.x.email) visitorEmail.set(e.v, e.x);
+      if (e.f) visitorTag.set(e.v, e.f);
+    });
+
+    const sessions = [...bySession.entries()].map(([id, evs]) => {
+      evs.sort((a, b) => new Date(a.ct || a.at) - new Date(b.ct || b.at) || a.id - b.id);
+      const start = evs.find(e => e.t === 'session_start');
+      const form = [...evs].reverse().find(e => e.t === 'form_submit');
+      const t0 = new Date(evs[0].ct || evs[0].at).getTime();
+      const tEnd = new Date(evs[evs.length - 1].ct || evs[evs.length - 1].at).getTime();
+      const time = evs.filter(e => e.t === 'time');
+      const byArea = {};
+      time.forEach(e => { const k = (e.x && e.x.kind) + '|' + e.p + '|' + e.g; byArea[k] = (byArea[k] || 0) + (e.d || 0); });
+      const areaMs = (kind, page, a) => byArea[kind + '|' + page + '|' + a] || 0;
+      const tourSteps = evs.filter(e => e.t === 'tour_step').map(e => e.x.step);
+      const v = evs[0].v;
+      const s = {
+        id, v, evs, t0, tEnd,
+        tag: evs.find(e => e.f)?.f || visitorTag.get(v) || null,
+        form: form ? form.x : null,
+        knownForm: form ? form.x : visitorEmail.get(v) || null,
+        start: start ? start.x : {},
+        active: sum(time.filter(e => e.x && e.x.kind === 'page').map(e => e.d)),
+        landing: areaMs('page', 'landing', 'landing'),
+        dash: areaMs('page', 'dashboard', 'dashboard'),
+        byArea, areaMs,
+        clicks: evs.filter(e => e.t === 'click').length,
+        dead: evs.filter(e => e.t === 'dead_click').length,
+        rage: evs.filter(e => e.t === 'rage_click').length,
+        scrollLanding: Math.max(0, ...evs.filter(e => e.t === 'scroll_depth' && e.p === 'landing').map(e => e.x.depth)),
+        scrollDash: Math.max(0, ...evs.filter(e => e.t === 'scroll_depth' && e.p === 'dashboard').map(e => e.x.depth)),
+        openedForm: evs.some(e => e.t === 'modal_open' && e.g === 'access_form'),
+        submitted: !!form,
+        reachedDash: evs.some(e => e.t === 'page_view' && e.p === 'dashboard'),
+        maxStep: tourSteps.length ? Math.max(...tourSteps) : 0,
+        tourDone: evs.some(e => e.t === 'tour_complete'),
+        tourSkip: evs.find(e => e.t === 'tour_skip')?.x?.step || null,
+        assistant: evs.filter(e => e.t === 'click' && e.x && e.x.area === 'tourAssistant').map(e => cleanTarget(e.g)),
+        consent: evs.some(e => e.t === 'consent_toggle' && e.x && e.x.checked),
+        addData: evs.some(e => e.t === 'add_data_click'),
+        formAbandon: evs.some(e => e.t === 'form_abandon'),
+        visit: +(start?.x?.visit_number || 1),
+      };
+      s.person = s.tag || (s.knownForm && s.knownForm.email) || ('anon-' + v.slice(0, 6));
+      s.isTest = isTestTag(s.tag);
+      return s;
+    });
+
+    const people = new Map();
+    sessions.forEach(s => {
+      if (!people.has(s.person)) people.set(s.person, []);
+      people.get(s.person).push(s);
+    });
+    const persons = [...people.entries()].map(([key, ss]) => {
+      ss.sort((a, b) => a.t0 - b.t0);
+      const f = ss.map(s => s.knownForm).find(Boolean) || {};
+      const any = k => ss.some(s => s[k]);
+      const p = {
+        key, sessions: ss, tag: ss.find(s => s.tag)?.tag || null,
+        email: f.email || null, company: f.company || null, role: f.role || null, raise: f.last_raise || null,
+        first: ss[0].t0, last: Math.max(...ss.map(s => s.tEnd)),
+        active: sum(ss.map(s => s.active)), clicks: sum(ss.map(s => s.clicks)),
+        submitted: any('submitted'), tourDone: any('tourDone'), consent: any('consent'), addData: any('addData'),
+        assistant: ss.some(s => s.assistant.length), maxStep: Math.max(...ss.map(s => s.maxStep)),
+        reachedDash: any('reachedDash'), isTest: ss.every(s => s.isTest),
+        device: ss[0].start.device || '—',
+      };
+      p.score = (p.submitted ? 2 : 0) + (p.consent ? 2 : 0) + (p.addData ? 2 : 0) + (p.tourDone ? 1 : 0)
+        + (p.assistant ? 1 : 0) + (ss.length > 1 ? 1 : 0) + (p.active >= 180000 ? 1 : 0);
+      return p;
+    }).sort((a, b) => b.score - a.score || b.last - a.last);
+    return { sessions, persons };
+  }
+
+  // ---------- Rendu ----------
+  let MODEL = null;
+  function filtered() {
+    const since = periodDays ? Date.now() - periodDays * 864e5 : 0;
+    const m = buildModel(RAW);
+    const keepS = s => (showTests || !s.isTest) && s.tEnd >= since;
+    const sessions = m.sessions.filter(keepS);
+    const persons = m.persons.map(p => ({ ...p, sessions: p.sessions.filter(keepS) })).filter(p => p.sessions.length);
+    return { sessions, persons };
+  }
+
+  function render() {
+    MODEL = filtered();
+    const { sessions: S, persons: P } = MODEL;
+    const n = S.length;
+
+    // KPIs
+    const med = median(S.map(s => s.active).filter(x => x > 0));
+    const k = (label, v, sub, tipTxt) => `<div class="card kpi" data-tip="${esc(tipTxt || label)}"><div class="k">${label}</div><div class="v">${v}</div><div class="s">${sub || ''}</div></div>`;
+    const dashS = S.filter(s => s.reachedDash);
+    $('#kpis').innerHTML = [
+      k('Personnes', P.length, `${P.filter(p => p.sessions.length > 1).length} revenues au moins une fois`),
+      k('Sessions', n, `${S.filter(s => s.tag).length} via lien perso`),
+      k('Temps actif médian', fmtDur(med), `total ${fmtDur(sum(S.map(s => s.active)))}`, 'Temps avec onglet visible et interaction dans la dernière minute'),
+      k('Formulaire envoyé', pct(S.filter(s => s.submitted).length, n) + ' %', `${S.filter(s => s.submitted).length} / ${n} sessions`),
+      k('Tour terminé', pct(dashS.filter(s => s.tourDone).length, dashS.length) + ' %', `des ${dashS.length} arrivées au dashboard`),
+      k('« Add my data »', pct(S.filter(s => s.addData).length, n) + ' %', `${P.filter(p => p.addData).length} personne(s)`, 'Signal d’intention le plus fort de la démo'),
+    ].join('');
+
+    // Entonnoir
+    const steps = [
+      ['Visite', S.length],
+      ['Landing scrollée ≥ 50 %', S.filter(s => s.scrollLanding >= 50).length],
+      ['Formulaire ouvert', S.filter(s => s.openedForm).length],
+      ['Formulaire envoyé → dashboard', S.filter(s => s.submitted || s.reachedDash).length],
+      ['Tour guidé terminé', S.filter(s => s.tourDone).length],
+      ['Action de l’assistant cliquée', S.filter(s => s.assistant.length).length],
+      ['Consentement données coché', S.filter(s => s.consent).length],
+      ['« Add my data » cliqué', S.filter(s => s.addData).length],
+    ];
+    bars($('#funnel'), steps.map(([l, c], i) => {
+      const prev = i ? steps[i - 1][1] : c;
+      const drop = i && prev ? 100 - pct(c, prev) : 0;
+      return { label: l, value: c, max: n, html: `${c} <small>${pct(c, n)} %</small>${drop > 0 ? `<span class="drop">−${drop} %</span>` : ''}`,
+        tip: `${l} : ${c} sessions (${pct(c, n)} % des visites)${i ? ` · ${drop} % perdus depuis l’étape précédente` : ''}` };
+    }), { max: Math.max(n, 1) });
+
+    // Temps par zone
+    function areaRows(page, list) {
+      return list.map(a => {
+        const seen = S.filter(s => s.areaMs('section', page, a) > 0);
+        const avg = seen.length ? sum(seen.map(s => s.areaMs('section', page, a))) / seen.length : 0;
+        return { label: area(a), value: avg, html: `${fmtDur(avg)} <small>${pct(seen.length, page === 'landing' ? n : dashS.length)} %</small>`,
+          tip: `${area(a)} : ${fmtDur(avg)} en moyenne · vue par ${seen.length} session(s)` };
+      });
+    }
+    bars($('#landingTime'), areaRows('landing', ['hero', 'problem', 'evidence', 'how', 'product', 'security', 'access', 'footer']));
+    bars($('#dashTime'), areaRows('dashboard', ['tourOverview', 'cashPanel', 'tourAssumptions', 'tourAssistant', 'scenarioPanel', 'tourData']));
+    bars($('#tour'), [1, 2, 3, 4].map(i => {
+      const reached = dashS.filter(s => s.maxStep >= i);
+      const t = reached.length ? sum(reached.map(s => s.areaMs('tour_step', 'dashboard', 'step_' + i))) / reached.length : 0;
+      return { label: `${i}. ${TOUR_TITLES[i]}`, value: reached.length, max: dashS.length,
+        html: `${pct(reached.length, dashS.length)} % <small>${fmtDur(t)}</small>`,
+        tip: `Étape ${i} vue par ${reached.length} / ${dashS.length} · ${fmtDur(t)} en moyenne · ${dashS.filter(s => s.tourSkip === i).length} abandon(s) ici` };
+    }).concat([{ label: 'Tour terminé', value: dashS.filter(s => s.tourDone).length, html: `${pct(dashS.filter(s => s.tourDone).length, dashS.length)} %`, tip: 'Sessions ayant cliqué « Finish walkthrough »' }]),
+    { max: Math.max(dashS.length, 1) });
+    bars($('#scroll'), [25, 50, 75, 100].flatMap(d => [
+      { label: `Landing ≥ ${d} %`, value: S.filter(s => s.scrollLanding >= d).length, html: pct(S.filter(s => s.scrollLanding >= d).length, n) + ' %' },
+    ]).concat([25, 50, 75, 100].map(d => ({ label: `Dashboard ≥ ${d} %`, value: dashS.filter(s => s.scrollDash >= d).length, html: pct(dashS.filter(s => s.scrollDash >= d).length, dashS.length) + ' %' }))),
+    { max: Math.max(n, 1) });
+
+    // Clics
+    const allE = S.flatMap(s => s.evs);
+    const clickAgg = new Map();
+    allE.filter(e => e.t === 'click').forEach(e => {
+      const key = e.p + '|' + (e.x?.area || '') + '|' + cleanTarget(e.g);
+      const c = clickAgg.get(key) || { page: e.p, area: e.x?.area, label: cleanTarget(e.g), n: 0, s: new Set() };
+      c.n++; c.s.add(e.s); clickAgg.set(key, c);
+    });
+    const clickRows = [...clickAgg.values()].sort((a, b) => b.s.size - a.s.size || b.n - a.n);
+    $('#clicks').innerHTML = clickRows.length ? `<tr><th>Élément</th><th>Zone</th><th class="n">Clics</th><th class="n">Sessions</th></tr>` +
+      clickRows.slice(0, 25).map(c => `<tr><td>${esc(c.label)}</td><td class="muted">${esc(c.page === 'landing' ? 'Landing' : 'Dashboard')} · ${esc(area(c.area))}</td><td class="n">${c.n}</td><td class="n">${c.s.size} <small>${pct(c.s.size, n)} %</small></td></tr>`).join('')
+      : '<tr><td class="empty">Aucun clic</td></tr>';
+
+    const fr = new Map();
+    const FR_LABEL = { dead_click: 'Clic sans effet', rage_click: 'Clics répétés', disabled_click: 'Bouton désactivé' };
+    allE.filter(e => FR_LABEL[e.t]).forEach(e => {
+      const key = e.t + '|' + (e.x?.area || '') + '|' + e.g;
+      const c = fr.get(key) || { t: e.t, area: e.x?.area, label: cleanTarget(e.g), n: 0, s: new Set() };
+      c.n++; c.s.add(e.s); fr.set(key, c);
+    });
+    const frRows = [...fr.values()].sort((a, b) => b.n - a.n);
+    $('#friction').innerHTML = frRows.length ? `<tr><th>Type</th><th>Où</th><th class="n">Fois</th><th class="n">Sessions</th></tr>` +
+      frRows.slice(0, 20).map(c => `<tr><td><span class="badge ${c.t === 'rage_click' ? 'b-bad' : 'b-warn'}">${FR_LABEL[c.t]}</span></td><td>${esc(area(c.area))} <small>${esc(c.label)}</small></td><td class="n">${c.n}</td><td class="n">${c.s.size}</td></tr>`).join('')
+      : '<tr><td class="empty">Aucune friction détectée</td></tr>';
+
+    // Formulaire & audience
+    const opens = allE.filter(e => e.t === 'modal_open' && e.g === 'access_form');
+    distBars($('#ctaSrc'), countBy(opens, e => area(e.x?.source) ), opens.length);
+    const forms = S.filter(s => s.form).map(s => s.form);
+    distBars($('#roles'), countBy(forms, f => f.role), forms.length);
+    distBars($('#raises'), countBy(forms, f => f.last_raise), forms.length);
+    const opened = S.filter(s => s.openedForm);
+    const fieldRows = ['email', 'company', 'role', 'raise'].map(f => {
+      const c = opened.filter(s => s.evs.some(e => e.t === 'field_change' && e.g === f)).length;
+      return { label: { email: 'Email rempli', company: 'Société remplie', role: 'Rôle choisi', raise: 'Dernière levée choisie' }[f], value: c, html: `${pct(c, opened.length)} %`, tip: `${c} / ${opened.length}` };
+    });
+    const inval = opened.filter(s => s.evs.some(e => e.t === 'form_invalid')).length;
+    const aband = opened.filter(s => s.formAbandon).length;
+    fieldRows.push({ label: 'Erreur de validation', value: inval, html: `${pct(inval, opened.length)} %`, tip: `${inval} session(s)` });
+    fieldRows.push({ label: 'Abandon après saisie', value: aband, html: `${pct(aband, opened.length)} %`, tip: `${aband} session(s) ont rempli puis fermé` });
+    bars($('#fields'), opened.length ? fieldRows : [], { max: Math.max(opened.length, 1) });
+    distBars($('#devices'), countBy(S, s => s.start.device), n);
+    distBars($('#refs'), countBy(S, s => { const r = s.start.referrer; if (!r) return 'Direct / lien'; try { return new URL(r).hostname; } catch (_) { return r; } }), n);
+
+    renderPeople(P);
+    renderInsights(S, P, { steps, clickRows, frRows, dashS, opened, aband });
+    if (selectedPerson && P.some(p => p.key === selectedPerson)) renderJourney(selectedPerson);
+  }
+
+  function badges(p) {
+    const b = [];
+    if (p.submitted) b.push('<span class="badge b-info">Formulaire</span>');
+    if (p.tourDone) b.push('<span class="badge b-info">Tour ✓</span>');
+    else if (p.maxStep) b.push(`<span class="badge b-mute">Tour ${p.maxStep}/4</span>`);
+    if (p.assistant) b.push('<span class="badge b-info">Assistant</span>');
+    if (p.consent) b.push('<span class="badge b-good">Consentement</span>');
+    if (p.addData) b.push('<span class="badge b-good">Add my data</span>');
+    if (p.sessions.length > 1) b.push(`<span class="badge b-warn">${p.sessions.length} visites</span>`);
+    if (p.isTest) b.push('<span class="badge b-mute">test</span>');
+    return b.join('');
+  }
+
+  function renderPeople(P) {
+    $('#people').innerHTML = P.length ? `<tr><th>Personne</th><th>Société · rôle</th><th>Score</th><th class="n">Temps actif</th><th class="n">Clics</th><th>Signaux</th><th>Dernière activité</th></tr>` +
+      P.map(p => `<tr class="row ${p.key === selectedPerson ? 'sel' : ''}" data-person="${esc(p.key)}">
+        <td><b>${esc(p.tag || p.email || 'Anonyme')}</b>${p.tag && p.email ? `<br><small>${esc(p.email)}</small>` : !p.tag && !p.email ? `<br><small>${esc(p.key)} · ${esc(p.device)}</small>` : ''}</td>
+        <td>${esc(p.company || '—')}${p.role ? `<br><small>${esc(p.role)} · levée ${esc(p.raise || '?')}</small>` : ''}</td>
+        <td><span class="score">${p.score}<i><b style="width:${p.score / 9 * 100}%"></b></i></span></td>
+        <td class="n">${fmtDur(p.active)}</td><td class="n">${p.clicks}</td>
+        <td>${badges(p)}</td><td class="muted">${fmtDate(p.last)}</td></tr>`).join('')
+      : '<tr><td class="empty">Aucune personne sur cette période</td></tr>';
+    document.querySelectorAll('#people tr.row').forEach(tr => tr.addEventListener('click', () => {
+      selectedPerson = tr.dataset.person; selectedSession = null;
+      document.querySelectorAll('#people tr.row').forEach(r => r.classList.toggle('sel', r === tr));
+      renderJourney(selectedPerson);
+      $('#journeyAnchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+  }
+
+  // ---------- Parcours d'une personne ----------
+  function describe(e) {
+    const x = e.x || {};
+    switch (e.t) {
+      case 'session_start': return [`Arrivée sur la démo${x.referrer ? ' depuis ' + esc(x.referrer) : ''}`, `${esc(x.device || '')} ${esc(x.viewport || '')} · ${esc(x.lang || '')} · ${esc(x.tz || '')}${x.returning ? ' · visiteur de retour (visite n°' + x.visit_number + ')' : ''}`, 'key'];
+      case 'page_view': return [`Affiche <b>${e.p === 'dashboard' ? 'le dashboard' : 'la landing'}</b>`, '', 'key'];
+      case 'page_reload': return ['Recharge la page', '', ''];
+      case 'click': return [`Clique <b>« ${esc(cleanTarget(e.g))} »</b>`, esc(area(x.area)) + (x.nav_to ? ' → ' + esc(area(x.nav_to)) : '') + (x.scroll_to ? ' → ' + esc(area(x.scroll_to)) : ''), x.area === 'tourAssistant' || x.cta ? 'key' : ''];
+      case 'dead_click': return [`Clique sur un élément non cliquable`, esc(area(x.area)) + ' · ' + esc(e.g), 'warn'];
+      case 'rage_click': return [`<b>Clics répétés</b> sur « ${esc(cleanTarget(e.g))} »`, esc(area(x.area)), 'bad'];
+      case 'disabled_click': return [`Clique « Add my data » <b>avant d’avoir coché le consentement</b>`, '', 'warn'];
+      case 'scroll_depth': return [`Scroll ${esc(e.g)} de ${e.p === 'dashboard' ? 'du dashboard' : 'la landing'}`, '', ''];
+      case 'modal_open': return [`Ouvre ${esc(area(e.g))}`, x.source ? 'depuis ' + esc(area(x.source)) : '', 'key'];
+      case 'modal_close': return [`Ferme ${esc(area(e.g))}`, 'après ' + fmtDur(e.d), ''];
+      case 'field_focus': return [`Entre dans le champ « ${esc(e.g)} »`, '', ''];
+      case 'field_change': return [`Remplit « ${esc(e.g)} »`, x.value ? esc(x.value) : '', ''];
+      case 'form_invalid': return [`Erreur de validation sur « ${esc(e.g)} »`, '', 'warn'];
+      case 'form_abandon': return [`<b>Abandonne le formulaire</b> après avoir rempli ${esc((x.fields_filled || []).join(', '))}`, '', 'bad'];
+      case 'form_submit': return [`<b>Envoie le formulaire</b>`, `${esc(x.email)} · ${esc(x.company)} · ${esc(x.role)} · levée ${esc(x.last_raise)}`, 'good'];
+      case 'tour_step': return [`Tour guidé · étape ${x.step}/4`, esc(x.title || TOUR_TITLES[x.step] || ''), ''];
+      case 'tour_complete': return [`<b>Termine le tour guidé</b>`, '', 'good'];
+      case 'tour_skip': return [`<b>Quitte le tour</b> à l’étape ${x.step}/4`, '', 'bad'];
+      case 'tour_restart': return ['Relance le tour guidé', '', 'key'];
+      case 'consent_toggle': return [x.checked ? '<b>Coche le consentement données</b>' : 'Décoche le consentement données', '', x.checked ? 'good' : 'warn'];
+      case 'add_data_click': return ['<b>Clique « Add my data »</b>', 'intention de connecter ses données', 'good'];
+      case 'copy_text': return [`Copie du texte`, '« ' + esc(e.g) + ' »', 'key'];
+      case 'idle': return ['Inactif depuis 1 min (chrono en pause)', '', ''];
+      case 'tab_hidden': return ['Quitte l’onglet', '', ''];
+      case 'tab_visible': return ['Revient sur l’onglet', '', ''];
+      case 'page_leave': return ['Ferme la page', '', 'bad'];
+      default: return [esc(e.t), esc(e.g || ''), ''];
+    }
+  }
+
+  function renderJourney(key) {
+    const p = MODEL.persons.find(x => x.key === key);
+    const card = $('#journeyCard');
+    if (!p) { card.innerHTML = '<div class="empty">Personne introuvable sur cette période.</div>'; return; }
+    if (!selectedSession || !p.sessions.some(s => s.id === selectedSession)) selectedSession = p.sessions[p.sessions.length - 1].id;
+    const s = p.sessions.find(x => x.id === selectedSession);
+
+    const list = p.sessions.map((x, i) => `<div class="sess ${x.id === s.id ? 'sel' : ''}" data-s="${x.id}">
+      <div class="t"><span>Session ${i + 1}</span><small>${fmtDate(x.t0)}</small></div>
+      <small>${fmtDur(x.active)} actif · ${x.clicks} clics · ${x.reachedDash ? 'dashboard' : 'landing seule'}</small></div>`).join('');
+
+    // Temps par zone pour la session
+    const zones = Object.entries(s.byArea).map(([k, ms]) => { const [kind, page, a] = k.split('|'); return { kind, page, a, ms }; })
+      .filter(z => z.kind !== 'page').sort((a, b) => b.ms - a.ms);
+
+    let lastPage = null;
+    const items = s.evs.filter(e => e.t !== 'time').map(e => {
+      const off = new Date(e.ct || e.at).getTime() - s.t0;
+      const [title, sub, cls] = describe(e);
+      let sep = '';
+      if (e.t === 'page_view' && e.p !== lastPage) { sep = `<div class="tl-page">${e.p === 'dashboard' ? 'Dashboard' : 'Landing'}</div>`; lastPage = e.p; }
+      return `${sep}<div class="tl-item ${cls ? 'k-' + cls : ''}"><span class="tl-time">+${fmtOff(off)}</span><span class="tl-dot"></span><span class="tl-body">${title}${sub ? `<small>${sub}</small>` : ''}</span></div>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="card-h"><div><h2>${esc(p.tag || p.email || 'Visiteur anonyme')}</h2>
+        <small>${esc([p.company, p.role, p.raise && 'levée ' + p.raise, p.email && p.tag ? p.email : null].filter(Boolean).join(' · ') || p.key)}</small></div>
+        <div class="pill-row">${badges(p)}</div></div>
+      <div class="journey">
+        <div><h3 style="margin-bottom:8px">${p.sessions.length} session(s)</h3><div class="sess-list">${list}</div></div>
+        <div>
+          <div class="kv">
+            <div><b>${fmtDur(s.active)}</b><span>temps actif</span></div>
+            <div><b>${fmtDur(s.tEnd - s.t0)}</b><span>durée totale</span></div>
+            <div><b>${fmtDur(s.landing)}</b><span>sur la landing</span></div>
+            <div><b>${fmtDur(s.dash)}</b><span>sur le dashboard</span></div>
+            <div><b>${s.maxStep}/4</b><span>étapes du tour</span></div>
+            <div><b>${s.clicks}</b><span>clics</span></div>
+          </div>
+          <h3 style="margin:4px 0 8px">Où l’attention est allée</h3>
+          <div class="bars" id="sessZones"></div>
+          <h3 style="margin:18px 0 4px">Chronologie</h3>
+          <div class="timeline">${items}</div>
+        </div>
+      </div>`;
+    bars($('#sessZones'), zones.slice(0, 12).map(z => ({ label: area(z.a) + (z.kind === 'modal' ? ' (modale)' : ''), value: z.ms, text: fmtDur(z.ms) })));
+    card.querySelectorAll('.sess').forEach(el => el.addEventListener('click', () => { selectedSession = el.dataset.s; renderJourney(key); }));
+  }
+
+  // ---------- Insights automatiques ----------
+  function renderInsights(S, P, ctx) {
+    const out = [];
+    const add = (cls, icon, html) => out.push(`<div class="ins ${cls}"><span class="ic">${icon}</span><div>${html}</div></div>`);
+    const n = S.length;
+    if (!n) { $('#insights').innerHTML = '<div class="empty">Pas encore de sessions sur cette période.</div>'; return; }
+
+    add('info', 'n', `<b>${n} session(s)</b> de <b>${P.length} personne(s)</b>. ${n < 10 ? 'Échantillon encore très faible : une seule session peut faire bouger un pourcentage de 10 points ou plus.' : ''}`);
+
+    // Plus gros décrochage de l'entonnoir
+    let worst = null;
+    ctx.steps.forEach(([l, c], i) => { if (!i) return; const prev = ctx.steps[i - 1][1]; if (prev >= 1) { const loss = prev - c; if (!worst || loss / prev > worst.r) worst = { from: ctx.steps[i - 1][0], to: l, r: loss / prev, loss }; } });
+    if (worst && worst.loss > 0) add('bad', '↓', `Plus gros décrochage : <b>${esc(worst.from)} → ${esc(worst.to)}</b>, ${Math.round(worst.r * 100)} % des sessions s’arrêtent là (${worst.loss}).`);
+
+    // Sections les plus / moins lues
+    const secs = ['hero', 'problem', 'evidence', 'how', 'product', 'security', 'access'].map(a => {
+      const seen = S.filter(s => s.areaMs('section', 'landing', a) > 0);
+      return { a, reach: seen.length / n, avg: seen.length ? sum(seen.map(s => s.areaMs('section', 'landing', a))) / seen.length : 0 };
+    });
+    const top = [...secs].sort((x, y) => y.avg - x.avg)[0];
+    if (top && top.avg > 0) add('info', '◎', `Section de la landing qui retient le plus : <b>${esc(area(top.a))}</b> (${fmtDur(top.avg)} en moyenne).`);
+    const low = secs.filter(x => x.reach < 0.5 && x.a !== 'hero');
+    if (low.length) add('warn', '!', `Moins d’une session sur deux voit : ${low.map(x => `<b>${esc(area(x.a))}</b> (${Math.round(x.reach * 100)} %)`).join(', ')}. Le contenu placé là est peu vu.`);
+
+    // Temps médian avant de passer au dashboard
+    const toForm = S.filter(s => s.submitted).map(s => new Date(s.evs.find(e => e.t === 'form_submit').ct).getTime() - s.t0);
+    if (toForm.length) add('info', '⏱', `Temps médian avant d’envoyer le formulaire : <b>${fmtDur(median(toForm))}</b>.`);
+
+    // Tour
+    if (ctx.dashS.length) {
+      const done = ctx.dashS.filter(s => s.tourDone).length;
+      const skips = countBy(ctx.dashS.filter(s => s.tourSkip), s => s.tourSkip);
+      add(done / ctx.dashS.length >= 0.6 ? 'good' : 'warn', '▶', `<b>${pct(done, ctx.dashS.length)} %</b> des sessions arrivées au dashboard terminent le tour guidé.${skips.length ? ` Abandon le plus fréquent : <b>étape ${skips[0][0]}</b> (${skips[0][1]} fois).` : ''}`);
+    }
+
+    // Assistant
+    const asst = countBy(S.flatMap(s => s.assistant.map(a => ({ a }))), x => x.a);
+    if (asst.length) add('good', '★', `Action de l’assistant la plus demandée : <b>« ${esc(asst[0][0])} »</b> (${asst[0][1]} clic(s)). C’est un bouton factice : ce clic mesure une attente réelle.`);
+
+    // Intention données
+    const cons = S.filter(s => s.consent).length, add_ = S.filter(s => s.addData).length;
+    if (ctx.dashS.length) add(add_ ? 'good' : 'warn', '⬆', `<b>${cons}</b> session(s) cochent le consentement et <b>${add_}</b> cliquent « Add my data », soit ${pct(add_, ctx.dashS.length)} % de celles qui voient le dashboard.`);
+
+    // Frictions
+    const dis = ctx.frRows.filter(r => r.t === 'disabled_click').reduce((a, r) => a + r.s.size, 0);
+    if (dis) add('warn', '⚠', `<b>${dis} session(s)</b> ont cliqué « Add my data » avant de cocher le consentement : la case à cocher passe inaperçue.`);
+    const dead = ctx.frRows.filter(r => r.t === 'dead_click')[0];
+    if (dead) add('warn', '?', `Clics sur un élément qui ne réagit pas : <b>${esc(area(dead.area))}</b> (${dead.n} fois). Les visiteurs s’attendent peut-être à pouvoir l’explorer.`);
+    const rage = ctx.frRows.filter(r => r.t === 'rage_click')[0];
+    if (rage) add('bad', '✕', `Clics répétés (frustration) sur <b>« ${esc(rage.label)} »</b> dans ${esc(area(rage.area))}.`);
+    if (ctx.opened.length && ctx.aband) add('bad', '✎', `${ctx.aband} session(s) sur ${ctx.opened.length} ont commencé à remplir le formulaire puis l’ont fermé.`);
+
+    // Retours
+    const back = P.filter(p => p.sessions.length > 1);
+    if (back.length) add('good', '↺', `<b>${back.length} personne(s)</b> sont revenues d’elles-mêmes : ${back.slice(0, 5).map(p => esc(p.tag || p.email || 'anonyme')).join(', ')}.`);
+
+    // Meilleurs profils
+    const hot = P.filter(p => p.score >= 6);
+    if (hot.length) add('good', '♥', `Profils les plus engagés (score ≥ 6) : ${hot.slice(0, 6).map(p => `<b>${esc(p.tag || p.email || 'anonyme')}</b> (${p.score})`).join(', ')}.`);
+
+    $('#insights').innerHTML = out.join('');
+  }
+
+  // ---------- Contrôles ----------
+  $('#period').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    periodDays = +b.dataset.p;
+    document.querySelectorAll('#period button').forEach(x => x.classList.toggle('on', x === b));
+    render();
+  });
+  $('#showTests').addEventListener('change', e => { showTests = e.target.checked; render(); });
+  $('#refresh').addEventListener('click', load);
+  $('#csv').addEventListener('click', () => {
+    const cols = ['created_at', 'founder_tag', 'session_id', 'visitor_id', 'event_type', 'page', 'target', 'duration_ms', 'props'];
+    const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+    const rows = RAW.map(e => [e.ct || e.at, e.f, e.s, e.v, e.t, e.p, e.g, e.d, JSON.stringify(e.x)].map(q).join(','));
+    const blob = new Blob([cols.join(',') + '\n' + rows.join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'bearing-events.csv'; a.click();
+  });
+  setInterval(() => { if (!$('#app').hidden && document.visibilityState === 'visible') load(); }, 60000);
+
+  load();
+})();
+</script>
+</body>
+</html>
