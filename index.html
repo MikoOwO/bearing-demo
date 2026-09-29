@@ -291,8 +291,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
 .connect-box .safety-copy{font-size:10.8px;color:#9faec2;line-height:1.5;margin-bottom:13px}
 .connect-box label{display:flex;gap:10px;align-items:flex-start;color:#e3e9f1;font-size:11.5px;line-height:1.5;font-weight:600}
 .connect-box input{margin-top:2px;width:16px;height:16px;accent-color:#e4572e;flex:none}
-.connect-box .btn{width:100%;margin-top:0}
-.connect-box .dpa-note{margin:9px 0 0;color:#c9d3e0;font-size:10.8px;line-height:1.5}
+.connect-box .btn{width:100%;margin-top:13px}
 .connect-box .dpa-link{border:0;background:none;padding:0;color:#ff8b4e;font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px}
 .connect-box .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
 .connect-box small{display:block;margin-top:9px;color:#8e9bad;font-size:10px;line-height:1.45}
@@ -588,8 +587,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
         <div class="connect-box">
           <div class="safety-title">Your data stays under your control</div>
           <div class="safety-copy">The connection flow is designed so you approve what is imported and what, if anything, is later shared with investors.</div>
-          <button class="btn btn-primary" id="addDataBtn">Add my data</button>
-          <p class="dpa-note">By clicking “Add my data”, you agree to our <button type="button" class="dpa-link" id="dpaLink">Data Processing Agreement</button>.</p>
+          <label><input type="checkbox" id="dataConsent"> <span>I have read and agree to the <button type="button" class="dpa-link" id="dpaLink">Data Processing Agreement</button>.</span></label>
+          <button class="btn btn-primary" id="addDataBtn" disabled>Add my data</button>
           <small>This demo stops before any spreadsheet, account credential or financial record is collected.</small>
         </div>
       </section>
@@ -795,8 +794,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
     if(target) target.scrollIntoView({behavior:'smooth',block:'center'});
   }));
 
-  const addData=document.getElementById('addDataBtn'), dataModal=document.getElementById('dataModal'), dpaModal=document.getElementById('dpaModal');
-  addData.addEventListener('click',()=>dataModal.classList.add('open'));
+  const consent=document.getElementById('dataConsent'), addData=document.getElementById('addDataBtn'), dataModal=document.getElementById('dataModal'), dpaModal=document.getElementById('dpaModal');
+  consent.addEventListener('change',()=>{addData.disabled=!consent.checked;});
+  addData.addEventListener('click',()=>{ if(!consent.checked) return; dataModal.classList.add('open'); });
   document.getElementById('dpaLink').addEventListener('click',()=>dpaModal.classList.add('open'));
   document.getElementById('closeDpaModal').addEventListener('click',()=>dpaModal.classList.remove('open'));
   dpaModal.addEventListener('click',e=>{if(e.target===dpaModal)dpaModal.classList.remove('open')});
