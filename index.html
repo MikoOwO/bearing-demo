@@ -291,7 +291,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
 .connect-box .safety-copy{font-size:10.8px;color:#9faec2;line-height:1.5;margin-bottom:13px}
 .connect-box label{display:flex;gap:10px;align-items:flex-start;color:#e3e9f1;font-size:11.5px;line-height:1.5;font-weight:600}
 .connect-box input{margin-top:2px;width:16px;height:16px;accent-color:#e4572e;flex:none}
-.connect-box .btn{width:100%;margin-top:13px}
+.connect-box .btn{width:100%;margin-top:0}
+.connect-box .dpa-note{margin:9px 0 0;color:#c9d3e0;font-size:10.8px;line-height:1.5}
+.connect-box .dpa-link{border:0;background:none;padding:0;color:#ff8b4e;font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px}
 .connect-box .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
 .connect-box small{display:block;margin-top:9px;color:#8e9bad;font-size:10px;line-height:1.45}
 
@@ -586,8 +588,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
         <div class="connect-box">
           <div class="safety-title">Your data stays under your control</div>
           <div class="safety-copy">The connection flow is designed so you approve what is imported and what, if anything, is later shared with investors.</div>
-          <label><input type="checkbox" id="dataConsent"> <span>I’m comfortable proceeding to a connection step that would use my company’s financial data to generate a Bearing analysis.</span></label>
-          <button class="btn btn-primary" id="addDataBtn" disabled>Add my data</button>
+          <button class="btn btn-primary" id="addDataBtn">Add my data</button>
+          <p class="dpa-note">By clicking “Add my data”, you agree to our <button type="button" class="dpa-link" id="dpaLink">Data Processing Agreement</button>.</p>
           <small>This demo stops before any spreadsheet, account credential or financial record is collected.</small>
         </div>
       </section>
@@ -603,6 +605,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
 
 <div class="data-modal" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle">
   <div class="data-dialog"><h2 id="dataModalTitle">Thank you.</h2><p>You’re on the early-access list. We’ll send you the connection details and next steps as soon as they’re ready. In the meantime, you can keep exploring the demo dashboard.</p><button class="btn btn-primary" id="closeDataModal">Back to dashboard</button></div>
+</div>
+
+<div class="data-modal" id="dpaModal" role="dialog" aria-modal="true" aria-labelledby="dpaModalTitle">
+  <div class="data-dialog"><h2 id="dpaModalTitle">Data Processing Agreement</h2><p>Bearing is in early development and this demo does not collect or process any financial data. The full Data Processing Agreement will be shared for your review before any real data connection is made.</p><button class="btn btn-primary" id="closeDpaModal">Close</button></div>
 </div>
 
 <div class="access-modal" id="accessModal" role="dialog" aria-modal="true" aria-labelledby="accessTitle" aria-hidden="true">
@@ -789,9 +795,11 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
     if(target) target.scrollIntoView({behavior:'smooth',block:'center'});
   }));
 
-  const consent=document.getElementById('dataConsent'), addData=document.getElementById('addDataBtn'), dataModal=document.getElementById('dataModal');
-  consent.addEventListener('change',()=>{addData.disabled=!consent.checked;});
-  addData.addEventListener('click',()=>{ if(!consent.checked) return; dataModal.classList.add('open'); });
+  const addData=document.getElementById('addDataBtn'), dataModal=document.getElementById('dataModal'), dpaModal=document.getElementById('dpaModal');
+  addData.addEventListener('click',()=>dataModal.classList.add('open'));
+  document.getElementById('dpaLink').addEventListener('click',()=>dpaModal.classList.add('open'));
+  document.getElementById('closeDpaModal').addEventListener('click',()=>dpaModal.classList.remove('open'));
+  dpaModal.addEventListener('click',e=>{if(e.target===dpaModal)dpaModal.classList.remove('open')});
   document.getElementById('closeDataModal').addEventListener('click',()=>dataModal.classList.remove('open'));
   dataModal.addEventListener('click',e=>{if(e.target===dataModal)dataModal.classList.remove('open')});
 

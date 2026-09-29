@@ -248,7 +248,7 @@
         else if (/finish/i.test(el.textContent)) track('tour_complete', { props: { step } });
       }
       if (el.id === 'restartTour') track('tour_restart');
-      if (el.id === 'addDataBtn' && !el.disabled) track('add_data_click');
+      if (el.id === 'addDataBtn' && !el.disabled) track('add_data_click', { props: { dpa_accepted: true } });
       track('click', { target: labelOf(el), props });
     } else {
       // Clic sur un élément non cliquable (KPI, graphique…) : signal de curiosité ou de confusion.
@@ -310,6 +310,7 @@
     touched.clear(); submitted = false;
   });
   watchModal('dataModal', 'add_data_thanks');
+  watchModal('dpaModal', 'dpa');
 
   // ---------- Tour guidé ----------
   const pop = document.getElementById('tourPop');

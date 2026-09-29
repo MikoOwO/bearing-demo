@@ -225,7 +225,7 @@ tr.excluded td{opacity:.55}
       'fields.title': 'Form: fields', 'fields.sub': 'sessions that opened the form', 'devices.title': 'Devices', 'refs.title': 'Source',
       'people.title': 'One row per person', 'people.sub': 'click a row → detailed journey',
       'people.excludeHint': 'Excluded profiles (tests, team) are removed from every figure. The list is shared by everyone with the link.',
-      'people.scoreNote': 'Interest score (0–9): form +2, consent +2, “Add my data” +2, tour completed +1, assistant action +1, returning +1, more than 3 active min +1.',
+      'people.scoreNote': 'Interest score (0–9): form +2, consent or DPA opened +2, “Add my data” +2, tour completed +1, assistant action +1, returning +1, more than 3 active min +1.',
       'excl.title': 'Excluded profiles', 'excl.sub': 'not counted anywhere', 'excl.none': 'No excluded profile.',
       excludeSel: 'Exclude selected ({0})', includeSel: 'Include again ({0})', excludeOne: 'Exclude from analysis', includeOne: 'Include again',
       'toast.excluded': '{0} profile(s) excluded', 'toast.included': '{0} profile(s) included again', 'toast.err': 'Could not save: {0}',
@@ -237,7 +237,7 @@ tr.excluded td{opacity:.55}
       'k.form': 'Form submitted', 'k.formSub': '{0} / {1} sessions', 'k.tour': 'Tour completed', 'k.tourSub': 'of the {0} that reached the dashboard',
       'k.add': '“Add my data”', 'k.addSub': '{0} person(s)', 'k.addTip': 'Strongest intent signal in the demo',
       'f.visit': 'Visit', 'f.scroll': 'Landing scrolled ≥ 50%', 'f.open': 'Form opened', 'f.submit': 'Form submitted → dashboard',
-      'f.tour': 'Guided tour completed', 'f.asst': 'Assistant action clicked', 'f.consent': 'Data consent checked', 'f.add': '“Add my data” clicked',
+      'f.tour': 'Guided tour completed', 'f.asst': 'Assistant action clicked', 'f.consent': 'Consent checked / DPA opened', 'f.add': '“Add my data” clicked',
       'f.tip': '{0}: {1} sessions ({2}% of visits)', 'f.tipDrop': ' · {0}% lost since the previous step',
       'a.tip': '{0}: {1} on average · seen in {2} session(s)',
       'tour.step': 'Step {0} seen by {1} / {2} · {3} on average · {4} drop-off(s) here', 'tour.done': 'Tour completed', 'tour.doneTip': 'Sessions that clicked “Finish walkthrough”',
@@ -247,7 +247,7 @@ tr.excluded td{opacity:.55}
       fr: { dead_click: 'No-effect click', rage_click: 'Repeated clicks', disabled_click: 'Disabled button' },
       fld: { email: 'Email filled', company: 'Company filled', role: 'Role picked', raise: 'Last raise picked', invalid: 'Validation error', abandon: 'Abandoned after typing' },
       'fld.abandonTip': '{0} session(s) filled then closed', direct: 'Direct / link',
-      b: { form: 'Form', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consent', add: 'Add my data', visits: '{0} visits', excluded: 'excluded' },
+      b: { form: 'Form', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consent', dpa: 'DPA opened', add: 'Add my data', visits: '{0} visits', excluded: 'excluded' },
       anon: 'Anonymous', anonVisitor: 'Anonymous visitor', raise: 'raise {0}', landing: 'Landing', dashboard: 'Dashboard',
       j: { sessions: '{0} session(s)', session: 'Session {0}', sessSub: '{0} active · {1} clicks · {2}', dash: 'dashboard', landOnly: 'landing only',
         active: 'active time', total: 'total duration', onLanding: 'on the landing', onDash: 'on the dashboard', steps: 'tour steps', clicks: 'clicks',
@@ -256,7 +256,7 @@ tr.excluded td{opacity:.55}
         how: 'How it works', product: 'Product', security: 'Security', access: '“Early access” block (bottom)', footer: 'Footer', nav: 'Navigation bar',
         'nav-links': 'Navigation bar', tourOverview: 'KPIs (runway, cash, MRR, burn)', cashPanel: 'Cash runway chart', tourAssumptions: 'Drifting assumptions',
         tourAssistant: 'Bearing assistant', scenarioPanel: 'Scenarios', tourData: '“Bring your own numbers”', access_form: 'Access form',
-        add_data_thanks: '“Thank you” modal (Add data)', accessModal: 'Access form', dataModal: '“Thank you” modal', tourPop: 'Tour bubble',
+        add_data_thanks: '“Thank you” modal (Add data)', dpa: 'DPA modal', accessModal: 'Access form', dataModal: '“Thank you” modal', tourPop: 'Tour bubble',
         'dash-global-top': 'Dashboard header', 'dash-sidebar': 'Side menu', step: 'Tour · step {0}' },
       tourTitles: { 1: 'Monthly snapshot', 2: 'What drives the gap', 3: 'The assistant explains', 4: 'Bring your own file' },
       consentBox: 'Consent checkbox ({0})', checked: 'checked', unchecked: 'unchecked',
@@ -280,7 +280,7 @@ tr.excluded td{opacity:.55}
         toForm: 'Median time before submitting the form: <b>{0}</b>.',
         tour: '<b>{0}%</b> of sessions that reach the dashboard complete the guided tour.', tourSkip: ' Most frequent drop-off: <b>step {0}</b> ({1} times).',
         asst: 'Most requested assistant action: <b>“{0}”</b> ({1} click(s)). It is a dummy button: this click measures real demand.',
-        data: '<b>{0}</b> session(s) check the consent and <b>{1}</b> click “Add my data”, i.e. {2}% of those who see the dashboard.',
+        data: '<b>{1}</b> session(s) click “Add my data” (agreeing to the DPA), i.e. {2}% of those who see the dashboard. <b>{0}</b> session(s) open the DPA.',
         disabled: '<b>{0} session(s)</b> clicked “Add my data” before checking the consent box: the checkbox goes unnoticed.',
         dead: 'Clicks on an element that does not react: <b>{0}</b> ({1} times). Visitors may expect to explore it.',
         rage: 'Repeated clicks (frustration) on <b>“{0}”</b> in {1}.',
@@ -304,7 +304,7 @@ tr.excluded td{opacity:.55}
       'fields.title': 'Formulaire : champs', 'fields.sub': 'sessions ayant ouvert le formulaire', 'devices.title': 'Appareils', 'refs.title': 'Provenance',
       'people.title': 'Une ligne par personne', 'people.sub': 'clic sur une ligne → parcours détaillé',
       'people.excludeHint': 'Les profils exclus (tests, équipe) sont retirés de tous les chiffres. La liste est partagée par tous ceux qui ont le lien.',
-      'people.scoreNote': 'Score d’intérêt (0–9) : formulaire +2, consentement +2, « Add my data » +2, tour terminé +1, action de l’assistant +1, retour +1, plus de 3 min actives +1.',
+      'people.scoreNote': 'Score d’intérêt (0–9) : formulaire +2, consentement ou DPA ouvert +2, « Add my data » +2, tour terminé +1, action de l’assistant +1, retour +1, plus de 3 min actives +1.',
       'excl.title': 'Profils exclus', 'excl.sub': 'comptés nulle part', 'excl.none': 'Aucun profil exclu.',
       excludeSel: 'Exclure la sélection ({0})', includeSel: 'Réintégrer ({0})', excludeOne: 'Exclure de l’analyse', includeOne: 'Réintégrer',
       'toast.excluded': '{0} profil(s) exclu(s)', 'toast.included': '{0} profil(s) réintégré(s)', 'toast.err': 'Enregistrement impossible : {0}',
@@ -316,7 +316,7 @@ tr.excluded td{opacity:.55}
       'k.form': 'Formulaire envoyé', 'k.formSub': '{0} / {1} sessions', 'k.tour': 'Tour terminé', 'k.tourSub': 'des {0} arrivées au dashboard',
       'k.add': '« Add my data »', 'k.addSub': '{0} personne(s)', 'k.addTip': 'Signal d’intention le plus fort de la démo',
       'f.visit': 'Visite', 'f.scroll': 'Landing scrollée ≥ 50 %', 'f.open': 'Formulaire ouvert', 'f.submit': 'Formulaire envoyé → dashboard',
-      'f.tour': 'Tour guidé terminé', 'f.asst': 'Action de l’assistant cliquée', 'f.consent': 'Consentement données coché', 'f.add': '« Add my data » cliqué',
+      'f.tour': 'Tour guidé terminé', 'f.asst': 'Action de l’assistant cliquée', 'f.consent': 'Consentement coché / DPA ouvert', 'f.add': '« Add my data » cliqué',
       'f.tip': '{0} : {1} sessions ({2} % des visites)', 'f.tipDrop': ' · {0} % perdus depuis l’étape précédente',
       'a.tip': '{0} : {1} en moyenne · vue par {2} session(s)',
       'tour.step': 'Étape {0} vue par {1} / {2} · {3} en moyenne · {4} abandon(s) ici', 'tour.done': 'Tour terminé', 'tour.doneTip': 'Sessions ayant cliqué « Finish walkthrough »',
@@ -326,7 +326,7 @@ tr.excluded td{opacity:.55}
       fr: { dead_click: 'Clic sans effet', rage_click: 'Clics répétés', disabled_click: 'Bouton désactivé' },
       fld: { email: 'Email rempli', company: 'Société remplie', role: 'Rôle choisi', raise: 'Dernière levée choisie', invalid: 'Erreur de validation', abandon: 'Abandon après saisie' },
       'fld.abandonTip': '{0} session(s) ont rempli puis fermé', direct: 'Direct / lien',
-      b: { form: 'Formulaire', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consentement', add: 'Add my data', visits: '{0} visites', excluded: 'exclu' },
+      b: { form: 'Formulaire', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consentement', dpa: 'DPA ouvert', add: 'Add my data', visits: '{0} visites', excluded: 'exclu' },
       anon: 'Anonyme', anonVisitor: 'Visiteur anonyme', raise: 'levée {0}', landing: 'Landing', dashboard: 'Dashboard',
       j: { sessions: '{0} session(s)', session: 'Session {0}', sessSub: '{0} actif · {1} clics · {2}', dash: 'dashboard', landOnly: 'landing seule',
         active: 'temps actif', total: 'durée totale', onLanding: 'sur la landing', onDash: 'sur le dashboard', steps: 'étapes du tour', clicks: 'clics',
@@ -335,7 +335,7 @@ tr.excluded td{opacity:.55}
         how: 'Comment ça marche', product: 'Produit', security: 'Sécurité', access: 'Bloc « early access » (bas)', footer: 'Pied de page', nav: 'Barre de navigation',
         'nav-links': 'Barre de navigation', tourOverview: 'KPIs (runway, cash, MRR, burn)', cashPanel: 'Graphique cash runway', tourAssumptions: 'Hypothèses qui dérivent',
         tourAssistant: 'Assistant Bearing', scenarioPanel: 'Scénarios', tourData: '« Bring your own numbers »', access_form: 'Formulaire d’accès',
-        add_data_thanks: 'Modale « Merci » (Add data)', accessModal: 'Formulaire d’accès', dataModal: 'Modale « Merci »', tourPop: 'Bulle du tour',
+        add_data_thanks: 'Modale « Merci » (Add data)', dpa: 'Modale DPA', accessModal: 'Formulaire d’accès', dataModal: 'Modale « Merci »', tourPop: 'Bulle du tour',
         'dash-global-top': 'En-tête dashboard', 'dash-sidebar': 'Menu latéral', step: 'Tour · étape {0}' },
       tourTitles: { 1: 'Snapshot mensuel', 2: 'Ce qui crée l’écart', 3: 'L’assistant explique', 4: 'Apporter son fichier' },
       consentBox: 'Case de consentement ({0})', checked: 'cochée', unchecked: 'décochée',
@@ -359,7 +359,7 @@ tr.excluded td{opacity:.55}
         toForm: 'Temps médian avant d’envoyer le formulaire : <b>{0}</b>.',
         tour: '<b>{0} %</b> des sessions arrivées au dashboard terminent le tour guidé.', tourSkip: ' Abandon le plus fréquent : <b>étape {0}</b> ({1} fois).',
         asst: 'Action de l’assistant la plus demandée : <b>« {0} »</b> ({1} clic(s)). C’est un bouton factice : ce clic mesure une attente réelle.',
-        data: '<b>{0}</b> session(s) cochent le consentement et <b>{1}</b> cliquent « Add my data », soit {2} % de celles qui voient le dashboard.',
+        data: '<b>{1}</b> session(s) cliquent « Add my data » (en acceptant le DPA), soit {2} % de celles qui voient le dashboard. <b>{0}</b> session(s) ouvrent le DPA.',
         disabled: '<b>{0} session(s)</b> ont cliqué « Add my data » avant de cocher le consentement : la case à cocher passe inaperçue.',
         dead: 'Clics sur un élément qui ne réagit pas : <b>{0}</b> ({1} fois). Les visiteurs s’attendent peut-être à pouvoir l’explorer.',
         rage: 'Clics répétés (frustration) sur <b>« {0} »</b> dans {1}.',
@@ -523,6 +523,7 @@ tr.excluded td{opacity:.55}
         tourSkip: evs.find(e => e.t === 'tour_skip')?.x?.step || null,
         assistant: evs.filter(e => e.t === 'click' && e.x && e.x.area === 'tourAssistant').map(e => cleanTarget(e.g)),
         consent: evs.some(e => e.t === 'consent_toggle' && e.x && e.x.checked),
+        dpa: evs.some(e => e.t === 'modal_open' && e.g === 'dpa'),
         addData: evs.some(e => e.t === 'add_data_click'),
         formAbandon: evs.some(e => e.t === 'form_abandon'),
       };
@@ -546,11 +547,11 @@ tr.excluded td{opacity:.55}
       email: f.email || null, company: f.company || null, role: f.role || null, raise: f.last_raise || null,
       first: ss[0].t0, last: Math.max(...ss.map(s => s.tEnd)),
       active: sum(ss.map(s => s.active)), clicks: sum(ss.map(s => s.clicks)),
-      submitted: any('submitted'), tourDone: any('tourDone'), consent: any('consent'), addData: any('addData'),
+      submitted: any('submitted'), tourDone: any('tourDone'), consent: any('consent'), dpa: any('dpa'), addData: any('addData'),
       assistant: ss.some(s => s.assistant.length), maxStep: Math.max(...ss.map(s => s.maxStep)),
       device: ss[0].start.device || '—', excluded: EXCLUDED.has(key),
     };
-    p.score = (p.submitted ? 2 : 0) + (p.consent ? 2 : 0) + (p.addData ? 2 : 0) + (p.tourDone ? 1 : 0)
+    p.score = (p.submitted ? 2 : 0) + (p.consent || p.dpa ? 2 : 0) + (p.addData ? 2 : 0) + (p.tourDone ? 1 : 0)
       + (p.assistant ? 1 : 0) + (ss.length > 1 ? 1 : 0) + (p.active >= 180000 ? 1 : 0);
     return p;
   }
@@ -599,7 +600,7 @@ tr.excluded td{opacity:.55}
       [T('f.submit'), S.filter(s => s.submitted || s.reachedDash).length],
       [T('f.tour'), S.filter(s => s.tourDone).length],
       [T('f.asst'), S.filter(s => s.assistant.length).length],
-      [T('f.consent'), S.filter(s => s.consent).length],
+      [T('f.consent'), S.filter(s => s.consent || s.dpa).length],
       [T('f.add'), S.filter(s => s.addData).length],
     ];
     bars($('#funnel'), steps.map(([l, c], i) => {
@@ -693,6 +694,7 @@ tr.excluded td{opacity:.55}
     else if (p.maxStep) b.push(`<span class="badge b-mute">${fill(L.tourN, [p.maxStep])}</span>`);
     if (p.assistant) b.push(`<span class="badge b-info">${L.asst}</span>`);
     if (p.consent) b.push(`<span class="badge b-good">${L.consent}</span>`);
+    if (p.dpa) b.push(`<span class="badge b-good">${L.dpa}</span>`);
     if (p.addData) b.push(`<span class="badge b-good">${L.add}</span>`);
     if (p.sessions.length > 1) b.push(`<span class="badge b-warn">${fill(L.visits, [p.sessions.length])}</span>`);
     if (p.excluded) b.push(`<span class="badge b-mute">${L.excluded}</span>`);
@@ -870,7 +872,7 @@ tr.excluded td{opacity:.55}
     const asst = countBy(S.flatMap(s => s.assistant.map(a => ({ a }))), x => x.a);
     if (asst.length) add('good', '★', fill(I.asst, [esc(asst[0][0]), asst[0][1]]));
 
-    const cons = S.filter(s => s.consent).length, addD = S.filter(s => s.addData).length;
+    const cons = S.filter(s => s.dpa).length, addD = S.filter(s => s.addData).length;
     if (ctx.dashS.length) add(addD ? 'good' : 'warn', '⬆', fill(I.data, [cons, addD, pct(addD, ctx.dashS.length)]));
 
     const dis = ctx.frRows.filter(r => r.t === 'disabled_click').reduce((a, r) => a + r.s.size, 0);
