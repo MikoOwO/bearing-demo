@@ -332,6 +332,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
 
 /* runway chart */
 .dash-chart{position:relative;overflow:hidden}
+.dash-main.touring .dash-content{padding-bottom:100vh}
 #cashPanel{display:flex;flex-direction:column}
 #cashPanel .dash-chart{height:auto;flex:1 1 auto;min-height:260px}
 .asm-slider input:focus-visible{outline:2px solid #9fc0ff;outline-offset:3px;border-radius:4px}
@@ -787,7 +788,7 @@ button.upload-preview:hover .upload-icon{background:#28446b;color:#fff}
     {id:'tourOverview', title:'Your monthly operating snapshot', text:'Runway, cash, revenue and burn stay visible against the plan you raised on. The numbers here are demo data.'},
     {id:'tourAssumptions', title:'See what is actually driving the gap', text:'Bearing breaks the model down into the assumptions behind it, so you can see exactly what is holding, drifting or breaking.'},
     {id:'tourAssistant', title:'Bearing explains what needs attention', text:'The assistant turns the variance into a concrete operating readout. This example is hardcoded for the demo, but shows the kind of guidance Bearing would generate from your numbers.'},
-    {id:'tourData', title:'Then bring your own spreadsheet', text:'When you are ready, you can proceed with company financial data. You review what is imported first, and nothing is shared with investors automatically.'}
+    {id:'tourData', anchor:'bottom', title:'Then bring your own spreadsheet', text:'When you are ready, you can proceed with company financial data. You review what is imported first, and nothing is shared with investors automatically.'}
   ];
   let tourIndex = 0;
   let activeTarget = null;
@@ -822,14 +823,20 @@ button.upload-preview:hover .upload-icon{background:#28446b;color:#fff}
     Object.assign(bottomS.style,{left:'0px',top:y2+'px',width:'100vw',height:Math.max(0,innerHeight-y2)+'px'});
     Object.assign(leftS.style,{left:'0px',top:y1+'px',width:x1+'px',height:Math.max(0,y2-y1)+'px'});
     Object.assign(rightS.style,{left:x2+'px',top:y1+'px',width:Math.max(0,innerWidth-x2)+'px',height:Math.max(0,y2-y1)+'px'});
-    const pw = Math.min(360, innerWidth-28), ph = pop.offsetHeight || 210;
-    let left = Math.min(Math.max(14, r.left), innerWidth-pw-14);
-    let top = r.bottom + 18;
-    if (top + ph > innerHeight - 14) top = r.top - ph - 18;
-    if (top < 14) top = Math.min(innerHeight-ph-14, Math.max(14, r.top + 24));
+    const pw = Math.min(360, innerWidth-28), ph = pop.offsetHeight || 210, gap = 18, m = 14;
+    const clampX = x => Math.min(Math.max(m, x), innerWidth-pw-m), clampY = y => Math.min(Math.max(m, y), innerHeight-ph-m);
+    let left, top;
+    // Never cover the highlighted element when there is room around it: below, above, right, left.
+    if (r.bottom + gap + ph <= innerHeight - m) { top = r.bottom + gap; left = clampX(r.left); }
+    else if (r.top - gap - ph >= m) { top = r.top - gap - ph; left = clampX(r.left); }
+    else if (innerWidth - r.right - gap - pw >= m) { left = r.right + gap; top = clampY(r.top); }
+    else if (r.left - gap - pw >= m) { left = r.left - gap - pw; top = clampY(r.top); }
+    // No room at all (element taller than the screen): dock at the bottom edge, the element's top stays readable.
+    else { left = clampX(r.left); top = tourSteps[tourIndex].anchor === 'bottom' ? m : innerHeight - ph - m; }
     pop.style.left = left+'px'; pop.style.top = top+'px';
   }
   function endTour(){
+    dashMain.classList.remove('touring');
     if(activeTarget) activeTarget.classList.remove('tour-target-active');
     activeTarget=null; pop.classList.remove('on'); shades.forEach(s=>s.classList.remove('on'));
   }
@@ -837,7 +844,22 @@ button.upload-preview:hover .upload-icon{background:#28446b;color:#fff}
     endTour(); tourIndex=i;
     const step=tourSteps[i], target=document.getElementById(step.id);
     if(!target) return;
-    target.scrollIntoView({behavior:'smooth',block:'center'});
+    // Scroll so the target and the bubble below it fit on screen together. Extra bottom space
+    // while touring lets even the last block move up; a target taller than the screen goes to the top.
+    dashMain.classList.add('touring');
+    const mr = dashMain.getBoundingClientRect(), tr = target.getBoundingClientRect();
+    // Measure the bubble with this step's text on an invisible, id-less copy (the tracker watches the real one).
+    const probe = pop.cloneNode(true);
+    probe.querySelectorAll('[id]').forEach(el => el.removeAttribute('id')); probe.removeAttribute('id');
+    probe.querySelector('h3').textContent = step.title; probe.querySelector('p').textContent = step.text;
+    Object.assign(probe.style, { display: 'block', visibility: 'hidden', left: '0px', top: '0px' });
+    document.body.appendChild(probe); const popH = probe.offsetHeight; probe.remove();
+    const need = target.offsetHeight + 18 + popH + 16;
+    const fits = need <= innerHeight - mr.top - 16;
+    const delta = fits ? tr.top - (mr.top + Math.max(16, (innerHeight - mr.top - need) / 2))
+      : step.anchor === 'bottom' ? tr.bottom - (innerHeight - 16)   // too tall: keep the call to action at the bottom in view
+      : tr.top - (mr.top + 16);                                     // too tall: keep the heading in view
+    dashMain.scrollTo({ top: dashMain.scrollTop + delta, behavior: 'smooth' });
     setTimeout(()=>{
       activeTarget=target; target.classList.add('tour-target-active');
       count.textContent=`${i+1} of ${tourSteps.length}`; title.textContent=step.title; ttext.textContent=step.text;
