@@ -40,6 +40,10 @@ enregistrés.
 | `tour_step` / `tour_complete` / `tour_skip` / `tour_restart` | progression dans le tour guidé |
 | `consent_toggle` / `add_data_click` | signaux d'intention les plus forts |
 | `copy_text` | texte copié par le visiteur |
+| `assumption_change` / `assumptions_reset` | hypothèse du plan modifiée (valeur avant / après, runway obtenu), un événement par réglage |
+| `chart_hover` | exploration du graphique de runway (durée, nombre de mois survolés) |
+| `upload_click` | clic ou dépôt de fichier sur l'import de tableur (seule l'extension est notée, le fichier n'est jamais lu) |
+| `dpa_open` | ouverture du Data Processing Agreement |
 | `idle`, `tab_hidden`, `tab_visible`, `page_leave`, `page_reload` | engagement réel |
 
 ## Dashboard d'analyse (équipe uniquement)

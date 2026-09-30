@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bearing — Plan vs actual for founders</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#182033">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -325,6 +329,53 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
   .dash-app{grid-template-columns:1fr}.dash-sidebar{display:none}.dash-topbar{padding:0 14px}.dash-content{width:calc(100% - 24px);padding-top:22px}.dash-title-row{align-items:flex-start}.dash-kpis{grid-template-columns:1fr 1fr;gap:8px}.dkpi{padding:14px}.dkpi .v{font-size:22px}.dash-grid,.dash-bottom-grid{grid-template-columns:1fr}.safe-points{grid-template-columns:1fr}.tour-restart{display:none}
 }
 
+
+/* runway chart */
+.dash-chart{position:relative;overflow:hidden}
+#cashPanel{display:flex;flex-direction:column}
+#cashPanel .dash-chart{height:auto;flex:1 1 auto;min-height:260px}
+.asm-slider input:focus-visible{outline:2px solid #9fc0ff;outline-offset:3px;border-radius:4px}
+button.upload-preview.dragging{border-color:#ff8b4e;border-style:solid;background:#22385a}
+.dash-chart svg{touch-action:pan-y;cursor:crosshair}
+.chart-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;font-weight:700;color:#6c7688}
+.chart-legend span{display:inline-flex;align-items:center;gap:6px}
+.chart-legend i{display:inline-block;width:18px;height:0;border-top:2.5px solid #e4572e}
+.chart-legend i.plan{border-top:2.5px dashed #a9b1bd}
+.chart-legend i.base{border-top:2px dashed #f0b39f}
+.chart-legend .base-key[hidden]{display:none}
+.chart-tip{position:absolute;pointer-events:none;background:#182033;color:#fff;border-radius:4px;padding:8px 10px;font-size:11px;line-height:1.5;min-width:150px;box-shadow:0 6px 18px rgba(24,32,51,.18);opacity:0;transition:opacity .08s;z-index:2}
+.chart-tip b{display:block;font-size:11.5px;margin-bottom:2px}
+.chart-tip .row{display:flex;justify-content:space-between;gap:14px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chart-tip .row span:first-child{font-family:var(--sans);color:#aab5c6;font-weight:600}
+/* editable assumptions */
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.asm-reset{border:1px solid #d7dde5;background:#fff;border-radius:3px;padding:5px 8px;color:#556174;font-size:10.5px;font-weight:800;white-space:nowrap}
+.asm-reset:hover{background:#f5f7fa}.asm-reset[hidden]{display:none}
+.asm-row{padding:11px 0 12px;border-bottom:1px solid #edf0f3}
+.asm-row:last-child{border-bottom:0}
+.asm-top{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center}
+.asm-top b{font-size:12.5px}.asm-top small{display:block;color:#8892a3;font-size:10.5px;margin-top:2px}
+.asm-val{font:600 13px/1 var(--mono);color:var(--ink);min-width:62px;text-align:right}
+.asm-slider{position:relative;margin-top:8px;height:18px}
+.asm-slider input{position:absolute;inset:0;width:100%;margin:0;accent-color:#e4572e;cursor:pointer;background:transparent}
+.asm-plan{position:absolute;top:1px;width:2px;height:16px;background:#a9b1bd;border-radius:1px;pointer-events:none;transform:translateX(-1px)}
+.signal.ahead{background:#e8f5ee;color:#1f7a50}
+.risk-chip.ok{background:#e8f5ee;color:#1f7a50;border-color:#bfe3cf}
+.scenario-val{transition:color .15s}
+/* upload */
+button.upload-preview{width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer;transition:border-color .15s,background .15s}
+button.upload-preview:hover,button.upload-preview:focus-visible{border-color:#9fc0ff;border-style:solid;background:#1d3150;outline:none}
+button.upload-preview:hover .upload-icon{background:#28446b;color:#fff}
+.upload-browse{margin-left:auto;flex:none;border:1px solid #3f5a82;border-radius:3px;padding:6px 9px;font-size:10.5px;font-weight:800;color:#d8e4f5}
+/* DPA */
+.dpa-dialog{width:min(600px,100%);max-height:min(80vh,720px);overflow:auto;text-align:left}
+.dpa-dialog .dpa-meta{margin:2px 0 14px;color:#798397;font-size:11.5px;font-weight:700}
+.dpa-dialog h3{margin:14px 0 4px;font-size:13px;letter-spacing:-.01em}
+.dpa-dialog p,.dpa-dialog li{font-size:12.5px;line-height:1.6;color:#4e5a6d}
+.dpa-dialog p{margin:0}
+.dpa-dialog ul{margin:4px 0 0;padding-left:18px}
+.dpa-dialog .dpa-foot{margin-top:16px;padding-top:12px;border-top:1px solid #edf0f3;font-size:11.5px;color:#798397}
+.dpa-dialog .btn{margin-top:14px}
 </style>
 </head>
 <body>
@@ -533,7 +584,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
       </div>
 
       <section class="dash-kpis" id="tourOverview">
-        <article class="dkpi"><div class="k">Runway</div><div class="v">7.7 mo</div><div class="d bad">3.3 months below plan</div></article>
+        <article class="dkpi"><div class="k">Runway</div><div class="v" id="kpiRunway">7.7 mo</div><div class="d bad" id="kpiRunwayDelta">3.3 months below plan</div></article>
         <article class="dkpi"><div class="k">Cash</div><div class="v">CHF 1.12m</div><div class="d bad">19% below plan</div></article>
         <article class="dkpi"><div class="k">MRR</div><div class="v">CHF 86k</div><div class="d bad">12% below plan</div></article>
         <article class="dkpi"><div class="k">Net burn</div><div class="v">CHF 145k</div><div class="d good">4% better than plan</div></article>
@@ -542,24 +593,13 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
       <div class="dash-grid">
         <section class="dash-panel" id="cashPanel">
           <h2>Cash runway</h2><p class="sub">Actual cash against the plan used for the raise</p>
-          <div class="dash-chart"><svg viewBox="0 0 760 250" role="img" aria-label="Dummy cash runway chart">
-            <g stroke="#edf0f3"><line x1="0" y1="40" x2="760" y2="40"/><line x1="0" y1="100" x2="760" y2="100"/><line x1="0" y1="160" x2="760" y2="160"/><line x1="0" y1="220" x2="760" y2="220"/></g>
-            <path d="M16 26 C160 44 310 72 470 130 S650 198 740 212" fill="none" stroke="#a9b1bd" stroke-width="2.5" stroke-dasharray="8 7"/>
-            <path d="M16 26 C118 44 232 79 350 125 S450 181 492 220" fill="none" stroke="#e4572e" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="350" cy="125" r="6" fill="#e4572e" stroke="#fff" stroke-width="3"/>
-            <line x1="350" y1="18" x2="350" y2="224" stroke="#d9dee5" stroke-dasharray="4 5"/>
-            <text x="360" y="118" fill="#303a4d" font-size="12" font-weight="700">Today</text><text x="736" y="204" text-anchor="end" fill="#778196" font-size="11" font-weight="700">Plan: month 20</text><text x="486" y="210" text-anchor="end" fill="#b72c2c" font-size="11" font-weight="700">Actual: month 17</text>
-          </svg></div>
+          <div class="dash-chart" id="runwayChart" data-interactive><svg id="runwaySvg" viewBox="0 0 760 250" role="img" aria-label="Cash runway: plan against actual and projection"></svg><div class="chart-tip" id="chartTip" role="status"></div></div>
+          <div class="chart-legend"><span><i class="plan"></i>Plan</span><span><i></i>Actual &amp; projection</span><span class="base-key" id="baseKey" hidden><i class="base"></i>Current trajectory</span></div>
         </section>
 
         <section class="dash-panel" id="tourAssumptions">
-          <h2>What is driving the gap</h2><p class="sub">The assumptions from your plan, checked against actuals</p>
-          <div class="assumption-list">
-            <div class="assumption-row"><span><b>Monthly churn</b><small>3.9% actual · 1.5% plan</small></span><span class="signal red">Breaking</span></div>
-            <div class="assumption-row"><span><b>New customers</b><small>6 / month · 9 planned</small></span><span class="signal red">Breaking</span></div>
-            <div class="assumption-row"><span><b>Team size</b><small>18 actual · 17 planned</small></span><span class="signal amber">Drifting</span></div>
-            <div class="assumption-row"><span><b>Average price</b><small>CHF 1,840 · CHF 1,790 planned</small></span><span class="signal green">On plan</span></div>
-          </div>
+          <div class="panel-head"><div><h2>What is driving the gap</h2><p class="sub">The assumptions from your plan, checked against actuals. Adjust them to see the impact.</p></div><button type="button" class="asm-reset" id="asmReset" hidden>Reset to actuals</button></div>
+          <div class="assumption-list" id="assumptionList"></div>
         </section>
       </div>
 
@@ -574,14 +614,14 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
           <div class="assistant-actions"><button>Show the numbers</button><button>Test another scenario</button><button>Draft investor update</button></div>
         </section>
 
-        <section class="dash-panel"><h2>Scenario check</h2><p class="sub">How the current plan changes under a few operating assumptions</p><div class="assumption-list"><div class="assumption-row"><span><b>Current trajectory</b><small>At current burn and churn</small></span><span class="mono">7.7 mo</span></div><div class="assumption-row"><span><b>Churn returns to plan</b><small>1.5% monthly churn</small></span><span class="mono" style="color:#1f7a50">9.1 mo</span></div><div class="assumption-row"><span><b>Delay two hires</b><small>90-day delay</small></span><span class="mono" style="color:#1f7a50">8.8 mo</span></div></div></section>
+        <section class="dash-panel"><h2>Scenario check</h2><p class="sub">How the current plan changes under a few operating assumptions</p><div class="assumption-list"><div class="assumption-row"><span><b>Current trajectory</b><small>At current burn and churn</small></span><span class="mono scenario-val" id="scnCurrent">7.7 mo</span></div><div class="assumption-row"><span><b>Churn returns to plan</b><small>1.5% monthly churn</small></span><span class="mono scenario-val" id="scnChurn" style="color:#1f7a50">9.1 mo</span></div><div class="assumption-row"><span><b>Delay two hires</b><small>90-day delay</small></span><span class="mono scenario-val" id="scnHires" style="color:#1f7a50">8.8 mo</span></div></div></section>
       </div>
 
       <section class="data-card" id="tourData">
         <div class="data-copy">
           <h2>Bring your own numbers</h2>
           <p>Start with any Excel, CSV or Google Sheets export. Bearing is designed to map the file automatically, identify cash, burn, revenue and the assumptions behind your forecast, then ask you to confirm what it found.</p>
-          <div class="upload-preview"><span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 15v4h14v-4"/></svg></span><div><b>Spreadsheet, CSV or exported Google Sheet</b><small>No file is collected in this demo. This is the point where the real connection flow would begin.</small></div></div>
+          <button type="button" class="upload-preview" id="uploadPreview"><span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 15v4h14v-4"/></svg></span><div><b>Spreadsheet, CSV or exported Google Sheet</b><small>Drop a file here or browse · .xlsx, .csv, Google Sheets</small></div><span class="upload-browse">Browse files</span></button>
           <div class="safe-points"><span>Review imported fields before analysis</span><span>No automatic investor sharing</span><span>Disconnect or remove a source</span><span>See exactly what Bearing uses</span></div>
         </div>
         <div class="connect-box">
@@ -589,7 +629,6 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
           <div class="safety-copy">The connection flow is designed so you approve what is imported and what, if anything, is later shared with investors.</div>
           <label><input type="checkbox" id="dataConsent"> <span>I have read and agree to the <button type="button" class="dpa-link" id="dpaLink">Data Processing Agreement</button>.</span></label>
           <button class="btn btn-primary" id="addDataBtn" disabled>Add my data</button>
-          <small>This demo stops before any spreadsheet, account credential or financial record is collected.</small>
         </div>
       </section>
     </div>
@@ -607,7 +646,34 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
 </div>
 
 <div class="data-modal" id="dpaModal" role="dialog" aria-modal="true" aria-labelledby="dpaModalTitle">
-  <div class="data-dialog"><h2 id="dpaModalTitle">Data Processing Agreement</h2><p>Bearing is in early development and this demo does not collect or process any financial data. The full Data Processing Agreement will be shared for your review before any real data connection is made.</p><button class="btn btn-primary" id="closeDpaModal">Close</button></div>
+  <div class="data-dialog dpa-dialog">
+    <h2 id="dpaModalTitle">Data Processing Agreement</h2>
+    <div class="dpa-meta">Summary of key terms · Version 1.0 · September 2026</div>
+    <h3>1. Roles</h3>
+    <p>Your company remains the controller of the financial data you connect to Bearing. Bearing acts as a processor and handles that data only to deliver the service you have requested, and only on your documented instructions.</p>
+    <h3>2. Scope of processing</h3>
+    <p>Bearing processes the files and fields you choose to import: financial statements, forecasts, operating metrics and the assumptions behind your plan, together with the account details of the users you invite. Every imported field is shown to you for review before any analysis is run.</p>
+    <h3>3. Purpose limitation</h3>
+    <ul>
+      <li>Your data is used solely to produce your plan-versus-actual analysis, scenarios and reports.</li>
+      <li>It is never sold, and it is never shared with investors or any third party without an explicit action from you.</li>
+      <li>It is not used to train AI models.</li>
+    </ul>
+    <h3>4. Confidentiality and security</h3>
+    <p>Access is restricted to authorised personnel bound by confidentiality obligations. Data is encrypted in transit and at rest, and access to customer data is logged.</p>
+    <h3>5. Sub-processors</h3>
+    <p>Bearing relies only on sub-processors bound by data protection terms equivalent to this agreement. The current list is available on request, and you are notified in advance of any change.</p>
+    <h3>6. Retention and deletion</h3>
+    <p>You can disconnect a source or delete an import at any time. On disconnection or at the end of the agreement, the related data is deleted or returned to you, at your choice.</p>
+    <h3>7. Your rights and our assistance</h3>
+    <p>You can access and export your data at any time. Bearing assists you in responding to data subject requests and notifies you without undue delay of any personal data breach affecting your data.</p>
+    <div class="dpa-foot">This agreement is structured around Article 28 GDPR and the Swiss Federal Act on Data Protection. The full agreement is countersigned with your company before your first data connection.</div>
+    <button class="btn btn-primary" id="closeDpaModal">Close</button>
+  </div>
+</div>
+
+<div class="data-modal" id="uploadModal" role="dialog" aria-modal="true" aria-labelledby="uploadModalTitle">
+  <div class="data-dialog"><h2 id="uploadModalTitle">Spreadsheet import</h2><p>File import is being enabled for early-access workspaces in stages. Your workspace has been added to the next rollout wave, and we will email you as soon as you can import your own model.</p><button class="btn btn-primary" id="closeUploadModal">Got it</button></div>
 </div>
 
 <div class="access-modal" id="accessModal" role="dialog" aria-modal="true" aria-labelledby="accessTitle" aria-hidden="true">
@@ -732,7 +798,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
   const next = document.getElementById('tourNext');
   const shades = ['shadeTop','shadeLeft','shadeRight','shadeBottom'].map(id=>document.getElementById(id));
   const assistantTextEl = document.getElementById('assistantText');
-  const assistantFull = 'Churn is 3.9% against 1.5% planned, while new customers are 33% below target. At the current trajectory, runway falls below 8 months. To move back toward the plan, you need either customer growth closer to 9 per month or roughly CHF 22k less monthly burn. Review churn before adding more headcount.';
+  let assistantFull = 'Churn is 3.9% against 1.5% planned, while new customers are 33% below target. At the current trajectory, runway falls below 8 months. To move back toward the plan, you need either customer growth closer to 9 per month or roughly CHF 22k less monthly burn. Review churn before adding more headcount.';
   let assistantTimer = null;
   function playAssistantDemo(){
     if (!assistantTextEl) return;
@@ -802,6 +868,261 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px;color:var(--muted);f
   dpaModal.addEventListener('click',e=>{if(e.target===dpaModal)dpaModal.classList.remove('open')});
   document.getElementById('closeDataModal').addEventListener('click',()=>dataModal.classList.remove('open'));
   dataModal.addEventListener('click',e=>{if(e.target===dataModal)dataModal.classList.remove('open')});
+
+  // ---------- Runway model (sample company, computed in the browser) ----------
+  const emitTrack = (type, target, props, duration) =>
+    document.dispatchEvent(new CustomEvent('bearing:track', { detail: { type, target, props, duration } }));
+
+  const TODAY = 9;                     // months since the raise
+  const RAISE_CASH = 2400000;
+  const COST_PER_HEAD = 11000;         // loaded monthly cost
+  const MODEL = {
+    actual: { cash: 1120000, mrr: 86000, other: 33000, hiresPerMonth: 0.661 },
+    plan:   { cash: 1382716, mrr: 97727, other: 61727, hiresPerMonth: 0.813, churn: 0.015, newCustomers: 9, team: 17, price: 1790 },
+  };
+  const ASSUMPTIONS = [
+    { key: 'churn', label: 'Monthly churn', min: 0, max: 8, step: 0.1, actual: 3.9, plan: 1.5, fmt: v => v.toFixed(1) + '%', worseWhen: 'higher' },
+    { key: 'newCustomers', label: 'New customers', min: 0, max: 20, step: 1, actual: 6, plan: 9, fmt: v => v + ' / month', worseWhen: 'lower' },
+    { key: 'team', label: 'Team size', min: 10, max: 30, step: 1, actual: 18, plan: 17, fmt: v => v + ' people', worseWhen: 'higher' },
+    { key: 'price', label: 'Average price', min: 1000, max: 3000, step: 10, actual: 1840, plan: 1790, fmt: v => 'CHF ' + v.toLocaleString('en-US'), worseWhen: 'lower' },
+  ];
+  const planLabel = { churn: '1.5%', newCustomers: '9 / month', team: '17', price: 'CHF 1,790' };
+  const state = Object.fromEntries(ASSUMPTIONS.map(a => [a.key, a.actual]));
+  const actualState = { ...state };
+
+  // Monthly projection from today. Returns cash points and the runway in months.
+  function project(v, base, teamOffset = () => 0) {
+    let cash = base.cash, customers = base.mrr / (base === MODEL.plan ? MODEL.plan.price : actualState.price);
+    const churn = v.churn / 100, pts = [{ m: TODAY, cash }];
+    let runway = Infinity;
+    for (let t = 0; t < 60; t++) {
+      const team = v.team + base.hiresPerMonth * t + teamOffset(t);
+      const burn = team * COST_PER_HEAD + base.other - customers * v.price;
+      if (burn > 0 && cash - burn < 0) { runway = t + cash / burn; pts.push({ m: TODAY + runway, cash: 0 }); break; }
+      cash -= burn; customers = customers * (1 - churn) + v.newCustomers;
+      pts.push({ m: TODAY + t + 1, cash });
+    }
+    return { pts, runway };
+  }
+  const planInputs = { churn: MODEL.plan.churn * 100, newCustomers: MODEL.plan.newCustomers, team: MODEL.plan.team, price: MODEL.plan.price };
+  const planProj = project(planInputs, MODEL.plan);
+  const PLAN_RUNWAY = planProj.runway;                     // ≈ 11 months left → plan ends at month 20
+
+  const history = (end, curve) => Array.from({ length: TODAY * 2 + 1 }, (_, i) => {
+    const m = i / 2; return { m, cash: RAISE_CASH - (RAISE_CASH - end) * Math.pow(m / TODAY, curve) };
+  });
+  const planHistory = history(MODEL.plan.cash, 1.08);
+  const actualHistory = history(MODEL.actual.cash, 1.18);
+
+  // ---------- Chart ----------
+  const svg = document.getElementById('runwaySvg'), chartBox = document.getElementById('runwayChart'), chartTip = document.getElementById('chartTip');
+  const X0 = 58, Y0 = 14, MAXM = 24, MAXC = 2500000;
+  let W = 760, H = 250, X1 = 744, Y1 = 214;
+  const sx = m => X0 + (Math.min(m, MAXM) / MAXM) * (X1 - X0);
+  const sy = c => Y1 - (Math.max(0, c) / MAXC) * (Y1 - Y0);
+  const money = c => c <= 0 ? 'CHF 0' : c >= 1e6 ? 'CHF ' + (c / 1e6).toFixed(2) + 'm' : 'CHF ' + Math.round(c / 1000) + 'k';
+  const fmtMonths = r => r === Infinity ? '24+ mo' : r.toFixed(1) + ' mo';
+  const clip = pts => { const out = []; for (const p of pts) { if (p.m > MAXM) { const prev = out[out.length - 1]; if (prev) out.push({ m: MAXM, cash: prev.cash + (p.cash - prev.cash) * (MAXM - prev.m) / (p.m - prev.m) }); break; } out.push(p); } return out; };
+  const path = pts => clip(pts).map((p, i) => (i ? 'L' : 'M') + sx(p.m).toFixed(1) + ' ' + sy(p.cash).toFixed(1)).join(' ');
+  const cashAt = (pts, m) => {
+    if (m <= pts[0].m) return pts[0].cash;
+    for (let i = 1; i < pts.length; i++) if (m <= pts[i].m) { const a = pts[i - 1], b = pts[i]; return a.cash + (b.cash - a.cash) * (m - a.m) / (b.m - a.m); }
+    return pts[pts.length - 1].cash <= 0 ? 0 : null;
+  };
+
+  let current = null, baseline = project(actualState, MODEL.actual);
+  const modified = () => ASSUMPTIONS.some(a => state[a.key] !== actualState[a.key]);
+
+  function drawChart() {
+    const size = svg.getBoundingClientRect();
+    if (size.width > 0 && size.height > 0) { W = Math.max(300, Math.round(size.width)); H = Math.max(220, Math.round(size.height)); }
+    X1 = W - 16; Y1 = H - 34;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const planPts = planHistory.concat(planProj.pts.slice(1));
+    const ends = [{ r: PLAN_RUNWAY, label: 'Plan', color: '#778196' }, { r: current.runway, label: 'Actual', color: '#b72c2c' }];
+    const grid = [0, 0.5, 1, 1.5, 2].map(v => v * 1e6);
+    let h = '';
+    h += grid.map(c => `<line x1="${X0}" y1="${sy(c)}" x2="${X1}" y2="${sy(c)}" stroke="#edf0f3"/><text x="${X0 - 8}" y="${sy(c) + 4}" text-anchor="end" fill="#98a1b0" font-size="10" font-family="IBM Plex Mono, monospace">${c ? (c / 1e6) + 'm' : '0'}</text>`).join('');
+    h += (W < 520 ? [0, 12, 24] : [0, 6, 12, 18, 24]).map(m => `<text x="${sx(m)}" y="${Y1 + 22}" text-anchor="${m === 0 ? 'start' : m === 24 ? 'end' : 'middle'}" fill="#98a1b0" font-size="10" font-weight="700">${m === 0 ? 'Raise' : 'Month ' + m}</text>`).join('');
+    h += `<line x1="${sx(TODAY)}" y1="${Y0 + 4}" x2="${sx(TODAY)}" y2="${Y1}" stroke="#d9dee5" stroke-dasharray="4 5"/>`;
+    h += `<path d="${path(planPts)}" fill="none" stroke="#a9b1bd" stroke-width="2.5" stroke-dasharray="8 7"/>`;
+    if (modified()) h += `<path d="${path(baseline.pts)}" fill="none" stroke="#f0b39f" stroke-width="2" stroke-dasharray="5 5"/>`;
+    h += `<path d="${path(actualHistory.concat(current.pts.slice(1)))}" fill="none" stroke="#e4572e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+    h += `<circle cx="${sx(TODAY)}" cy="${sy(MODEL.actual.cash)}" r="6" fill="#e4572e" stroke="#fff" stroke-width="3"/>`;
+    h += `<text x="${sx(TODAY) + 10}" y="${sy(MODEL.actual.cash) - 10}" fill="#303a4d" font-size="12" font-weight="700" stroke="#fff" stroke-width="4" paint-order="stroke">Today</text>`;
+    // End-of-cash markers: the later one is labelled on its right, the earlier one on its left.
+    const halo = 'stroke="#fff" stroke-width="4" stroke-linejoin="round" paint-order="stroke"';
+    const sorted = ends.map(e => ({ ...e, m: TODAY + e.r })).sort((a, b) => a.m - b.m);
+    sorted.forEach((e, i) => {
+      const later = i === sorted.length - 1, onChart = e.m <= MAXM, x = onChart ? sx(e.m) : X1;
+      const txt = onChart ? `${e.label}: month ${Math.round(e.m)}` : `${e.label}: beyond month 24`;
+      if (onChart) h += `<circle cx="${x}" cy="${Y1}" r="4" fill="${e.color}"/>`;
+      const fitsRight = x + 100 < X1;
+      const [tx, anchor, ty] = later && onChart && fitsRight ? [x + 8, 'start', Y1 - 8]
+        : !onChart ? [X1, 'end', Y1 - 10 - (sorted.filter(z => z.m > MAXM).indexOf(e)) * 16]
+        : [x - 8, 'end', Y1 - 10 - (later ? 16 : 0)];
+      h += `<text x="${tx}" y="${ty}" text-anchor="${anchor}" fill="${e.color}" font-size="11" font-weight="700" ${halo}>${txt}</text>`;
+    });
+    h += `<g id="chartHover" style="display:none"><line id="hvLine" y1="${Y0}" y2="${Y1}" stroke="#182033" stroke-opacity=".35"/><circle id="hvPlan" r="4.5" fill="#a9b1bd" stroke="#fff" stroke-width="2"/><circle id="hvAct" r="5" fill="#e4572e" stroke="#fff" stroke-width="2"/></g>`;
+    h += `<rect x="${X0}" y="0" width="${X1 - X0}" height="${Y1 + 8}" fill="transparent" id="hvZone"/>`;
+    svg.innerHTML = h;
+    document.getElementById('baseKey').hidden = !modified();
+  }
+
+  // Hover: crosshair + tooltip, snapped to half months.
+  let hoverStart = 0, hoverMonths = new Set();
+  function onMove(e) {
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const m = Math.round(Math.max(0, Math.min(MAXM, (loc.x - X0) / (X1 - X0) * MAXM)) * 2) / 2;
+    hoverMonths.add(m);
+    const planPts = planHistory.concat(planProj.pts.slice(1));
+    const act = m <= TODAY ? cashAt(actualHistory, m) : cashAt(current.pts, m);
+    const pl = cashAt(planPts, m);
+    const g = document.getElementById('chartHover'); g.style.display = '';
+    const x = sx(m);
+    document.getElementById('hvLine').setAttribute('x1', x); document.getElementById('hvLine').setAttribute('x2', x);
+    const hp = document.getElementById('hvPlan'), ha = document.getElementById('hvAct');
+    hp.setAttribute('cx', x); hp.setAttribute('cy', sy(pl ?? 0)); hp.style.display = pl == null ? 'none' : '';
+    ha.setAttribute('cx', x); ha.setAttribute('cy', sy(act ?? 0)); ha.style.display = act == null ? 'none' : '';
+    const title = m === 0 ? 'Raise' : m === TODAY ? 'Today · month 9' : 'Month ' + m;
+    const actLabel = m < TODAY ? 'Actual' : m === TODAY ? 'Actual' : 'Projected';
+    const gap = act != null && pl != null && m > 0 ? act - pl : null;
+    chartTip.innerHTML = `<b>${title}</b><div class="row"><span>Plan</span><span>${pl == null ? '—' : pl <= 0 ? 'Out of cash' : money(pl)}</span></div>`
+      + `<div class="row"><span>${actLabel}</span><span>${act == null ? '—' : act <= 0 ? 'Out of cash' : money(act)}</span></div>`
+      + (gap != null && pl > 0 && act > 0 ? `<div class="row"><span>Gap</span><span>${gap < 0 ? '−' : '+'}${money(Math.abs(gap))}</span></div>` : '');
+    const box = chartBox.getBoundingClientRect(), svgBox = svg.getBoundingClientRect();
+    const px = svgBox.left - box.left + (x / W) * svgBox.width;
+    chartTip.style.opacity = 1;
+    const tw = chartTip.offsetWidth;
+    chartTip.style.left = (px + 14 + tw > box.width ? px - tw - 14 : px + 14) + 'px';
+    chartTip.style.top = '8px';
+  }
+  svg.addEventListener('pointerenter', () => { hoverStart = performance.now(); hoverMonths = new Set(); });
+  svg.addEventListener('pointermove', onMove);
+  svg.addEventListener('pointerleave', () => {
+    chartTip.style.opacity = 0; chartTip.style.left = '0px';
+    const g = document.getElementById('chartHover'); if (g) g.style.display = 'none';
+    const ms = performance.now() - hoverStart;
+    if (ms > 600 && hoverMonths.size) emitTrack('chart_hover', 'cashPanel', { months_inspected: hoverMonths.size }, ms);
+  });
+
+  // ---------- Assumptions ----------
+  const list = document.getElementById('assumptionList'), resetBtn = document.getElementById('asmReset');
+  function signalOf(a, v) {
+    const dev = (v - a.plan) / a.plan, adverse = a.worseWhen === 'higher' ? dev : -dev;
+    if (adverse > 0.15) return ['red', 'Breaking'];
+    if (adverse > 0.03) return ['amber', 'Drifting'];
+    if (adverse < -0.03) return ['ahead', 'Ahead of plan'];
+    return ['green', 'On plan'];
+  }
+  list.innerHTML = ASSUMPTIONS.map(a => `
+    <div class="asm-row" data-key="${a.key}">
+      <div class="asm-top"><span><b>${a.label}</b><small>Plan ${planLabel[a.key]} · actual ${a.fmt(a.actual)}</small></span><span class="asm-val" id="asmVal-${a.key}"></span><span class="signal" id="asmSig-${a.key}"></span></div>
+      <div class="asm-slider"><span class="asm-plan" style="left:${(a.plan - a.min) / (a.max - a.min) * 100}%" title="Plan"></span>
+        <input type="range" id="asm-${a.key}" data-assumption="${a.key}" min="${a.min}" max="${a.max}" step="${a.step}" value="${a.actual}" aria-label="${a.label}"></div>
+    </div>`).join('');
+
+  const assistantTitle = document.querySelector('#tourAssistant .assistant-message b');
+  const riskChip = document.querySelector('#tourAssistant .risk-chip');
+  const riskChipIcon = riskChip.querySelector('svg').outerHTML;
+  const originalAssistant = { title: assistantTitle.textContent, text: assistantFull };
+
+  function writeAssistant() {
+    if (!modified()) {
+      assistantTitle.textContent = originalAssistant.title; assistantFull = originalAssistant.text;
+      riskChip.className = 'risk-chip'; riskChip.innerHTML = riskChipIcon + 'At risk';
+    } else {
+      const r = current.runway, gap = r - PLAN_RUNWAY;
+      const levers = ASSUMPTIONS.map(a => ({ a, gain: project({ ...state, [a.key]: a.plan }, MODEL.actual).runway - r }))
+        .filter(x => x.gain > 0.2).sort((x, y) => y.gain - x.gain);
+      const nextBurn = state.team * COST_PER_HEAD + MODEL.actual.other - (MODEL.actual.mrr / actualState.price) * state.price;
+      let title, chip;
+      if (r === Infinity) { title = 'The business reaches break-even before cash runs out.'; chip = ['ok', 'On track']; }
+      else if (gap < -1) { title = 'Runway is moving away from the plan.'; chip = ['', 'At risk']; }
+      else if (gap <= 1) { title = 'Runway is back in line with the plan.'; chip = ['ok', 'On track']; }
+      else { title = 'Runway is ahead of the plan.'; chip = ['ok', 'Ahead']; }
+      let text = `With churn at ${state.churn.toFixed(1)}%, ${state.newCustomers} new customers a month, a team of ${state.team} and an average price of CHF ${state.price.toLocaleString('en-US')}, `;
+      text += r === Infinity ? 'revenue overtakes costs before cash runs out. ' : `cash lasts ${r.toFixed(1)} months, until month ${Math.round(TODAY + r)} (plan: month ${Math.round(TODAY + PLAN_RUNWAY)}). `;
+      text += `Net burn next month would be ${nextBurn <= 0 ? 'negative, the company is cash-flow positive' : 'CHF ' + Math.round(nextBurn / 1000) + 'k'}. `;
+      if (levers.length && r !== Infinity) text += `The biggest remaining lever is ${levers[0].a.label.toLowerCase()}: bringing it back to plan adds ${levers[0].gain === Infinity ? 'enough runway to reach break-even' : levers[0].gain.toFixed(1) + ' months'}.`;
+      else if (r !== Infinity) text += 'Every assumption is at or ahead of plan; the remaining gap comes from the lower cash position today.';
+      assistantTitle.textContent = title; assistantFull = text;
+      riskChip.className = 'risk-chip' + (chip[0] ? ' ' + chip[0] : ''); riskChip.innerHTML = riskChipIcon + chip[1];
+    }
+    if (!assistantTimer || assistantTextEl.querySelector('.assistant-cursor') == null) assistantTextEl.textContent = assistantFull;
+  }
+
+  function recompute() {
+    current = project(state, MODEL.actual);
+    ASSUMPTIONS.forEach(a => {
+      document.getElementById('asmVal-' + a.key).textContent = a.fmt(state[a.key]);
+      const [cls, txt] = signalOf(a, state[a.key]);
+      const sig = document.getElementById('asmSig-' + a.key); sig.className = 'signal ' + cls; sig.textContent = txt;
+    });
+    const r = current.runway, gap = r - PLAN_RUNWAY;
+    document.getElementById('kpiRunway').textContent = fmtMonths(r);
+    const d = document.getElementById('kpiRunwayDelta');
+    d.textContent = r === Infinity ? 'Break-even before cash runs out' : Math.abs(gap) < 0.05 ? 'In line with plan' : `${Math.abs(gap).toFixed(1)} months ${gap < 0 ? 'below' : 'above'} plan`;
+    d.className = 'd ' + (gap < -0.05 ? 'bad' : 'good');
+    const scn = [['scnCurrent', r], ['scnChurn', project({ ...state, churn: 1.5 }, MODEL.actual).runway], ['scnHires', project(state, MODEL.actual, t => (t < 3 ? -2 : 0)).runway]];
+    scn.forEach(([id, v], i) => { const el = document.getElementById(id); el.textContent = fmtMonths(v); el.style.color = i && v > r + 0.05 ? '#1f7a50' : ''; });
+    resetBtn.hidden = !modified();
+    drawChart();
+    writeAssistant();
+  }
+
+  list.addEventListener('input', e => {
+    const key = e.target.dataset.assumption; if (!key) return;
+    state[key] = parseFloat(e.target.value);
+    recompute();
+  });
+  const committed = { ...actualState }, pending = {};
+  function commitChange(key) {
+    const p = pending[key]; if (!p) return;
+    clearTimeout(p.timer); delete pending[key];
+    if (state[key] === committed[key]) return;
+    const a = ASSUMPTIONS.find(x => x.key === key);
+    emitTrack('assumption_change', key, { name: a.label, from: committed[key], value: state[key], actual: a.actual, plan: a.plan, runway: current.runway === Infinity ? null : +current.runway.toFixed(1) });
+    committed[key] = state[key];
+  }
+  list.addEventListener('change', e => {
+    const key = e.target.dataset.assumption; if (!key) return;
+    const p = pending[key] || (pending[key] = {});
+    clearTimeout(p.timer); p.timer = setTimeout(() => commitChange(key), 1200);
+  });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') Object.keys(pending).forEach(commitChange); });
+  resetBtn.addEventListener('click', () => {
+    Object.keys(pending).forEach(commitChange);
+    ASSUMPTIONS.forEach(a => { state[a.key] = a.actual; committed[a.key] = a.actual; document.getElementById('asm-' + a.key).value = a.actual; });
+    recompute();
+    emitTrack('assumptions_reset', null, {});
+  });
+  document.querySelector('#tourAssistant .assistant-actions button:nth-child(2)').addEventListener('click', () => {
+    document.getElementById('tourAssumptions').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  recompute();
+  if ('ResizeObserver' in window) { let raf = 0; new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(drawChart); }).observe(chartBox); }
+
+  // ---------- Spreadsheet import & DPA ----------
+  const uploadModal = document.getElementById('uploadModal');
+  const uploadBox = document.getElementById('uploadPreview');
+  uploadBox.addEventListener('click', () => { uploadModal.classList.add('open'); emitTrack('upload_click', 'uploadPreview', { via: 'click' }); });
+  // A dropped file is never read or sent: only the fact that someone tried is recorded.
+  window.addEventListener('dragover', e => e.preventDefault());
+  window.addEventListener('drop', e => e.preventDefault());
+  uploadBox.addEventListener('dragenter', () => uploadBox.classList.add('dragging'));
+  uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('dragging'));
+  uploadBox.addEventListener('drop', e => {
+    uploadBox.classList.remove('dragging');
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    const ext = f && /\.([a-z0-9]{1,5})$/i.test(f.name) ? f.name.split('.').pop().toLowerCase() : null;
+    uploadModal.classList.add('open');
+    emitTrack('upload_click', 'uploadPreview', { via: 'drop', file_type: ext });
+  });
+  document.getElementById('closeUploadModal').addEventListener('click', () => uploadModal.classList.remove('open'));
+  uploadModal.addEventListener('click', e => { if (e.target === uploadModal) uploadModal.classList.remove('open'); });
+  document.getElementById('dpaLink').addEventListener('click', () => emitTrack('dpa_open', 'dpaLink', {}));
 
   accessForm.addEventListener('submit', e => {
     e.preventDefault();

@@ -6,6 +6,8 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Bearing Insights</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <style>
 :root{
   --bg:#f6f7f9; --surface:#ffffff; --surface-2:#f1f3f6; --line:#e3e7ec;
@@ -171,6 +173,7 @@ tr.excluded td{opacity:.55}
 
     <div class="section-title" data-i18n="s.interactions"></div>
     <div class="grid g-2">
+      <div class="card"><div class="card-h"><h2 data-i18n="eng.title"></h2><small data-i18n="eng.sub"></small></div><div class="bars" id="engagement"></div></div>
       <div class="card"><div class="card-h"><h2 data-i18n="clicks.title"></h2><small data-i18n="clicks.sub"></small></div><div class="tbl-wrap"><table id="clicks"></table></div></div>
       <div class="card"><div class="card-h"><h2 data-i18n="friction.title"></h2><small data-i18n="friction.sub"></small></div><div class="tbl-wrap"><table id="friction"></table></div></div>
     </div>
@@ -220,7 +223,7 @@ tr.excluded td{opacity:.55}
       avgReach: 'average across sessions that saw it · % reached',
       'landingTime.title': 'Landing: time per section', 'dashTime.title': 'Dashboard: time per area',
       'tour.title': 'Guided tour', 'tour.sub': '% of sessions that reached the dashboard · avg time', 'scroll.title': 'Scroll depth',
-      'clicks.title': 'Clicked elements', 'clicks.sub': 'clicks · sessions', 'friction.title': 'Friction', 'friction.sub': 'clicks with no effect, repeated, or on a disabled button',
+      'eng.title': 'Product engagement', 'eng.sub': '% of sessions that reached the dashboard', eng: { model: 'Adjusted an assumption', chart: 'Explored the runway chart', asst: 'Clicked an assistant action', upload: 'Clicked spreadsheet import', dpa: 'Opened the DPA', reset: 'Reset the assumptions' }, 'clicks.title': 'Clicked elements', 'clicks.sub': 'clicks · sessions', 'friction.title': 'Friction', 'friction.sub': 'clicks with no effect, repeated, or on a disabled button',
       'cta.title': 'CTA that opened the form', 'roles.title': 'Declared role', 'raises.title': 'Last raise',
       'fields.title': 'Form: fields', 'fields.sub': 'sessions that opened the form', 'devices.title': 'Devices', 'refs.title': 'Source',
       'people.title': 'One row per person', 'people.sub': 'click a row → detailed journey',
@@ -247,7 +250,7 @@ tr.excluded td{opacity:.55}
       fr: { dead_click: 'No-effect click', rage_click: 'Repeated clicks', disabled_click: 'Disabled button' },
       fld: { email: 'Email filled', company: 'Company filled', role: 'Role picked', raise: 'Last raise picked', invalid: 'Validation error', abandon: 'Abandoned after typing' },
       'fld.abandonTip': '{0} session(s) filled then closed', direct: 'Direct / link',
-      b: { form: 'Form', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consent', dpa: 'DPA opened', add: 'Add my data', visits: '{0} visits', excluded: 'excluded' },
+      b: { form: 'Form', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consent', dpa: 'DPA opened', add: 'Add my data', visits: '{0} visits', excluded: 'excluded', model: 'Model edited', upload: 'Import' },
       anon: 'Anonymous', anonVisitor: 'Anonymous visitor', raise: 'raise {0}', landing: 'Landing', dashboard: 'Dashboard',
       j: { sessions: '{0} session(s)', session: 'Session {0}', sessSub: '{0} active · {1} clicks · {2}', dash: 'dashboard', landOnly: 'landing only',
         active: 'active time', total: 'total duration', onLanding: 'on the landing', onDash: 'on the dashboard', steps: 'tour steps', clicks: 'clicks',
@@ -257,7 +260,7 @@ tr.excluded td{opacity:.55}
         'nav-links': 'Navigation bar', tourOverview: 'KPIs (runway, cash, MRR, burn)', cashPanel: 'Cash runway chart', tourAssumptions: 'Drifting assumptions',
         tourAssistant: 'Bearing assistant', scenarioPanel: 'Scenarios', tourData: '“Bring your own numbers”', access_form: 'Access form',
         add_data_thanks: '“Thank you” modal (Add data)', dpa: 'DPA modal', accessModal: 'Access form', dataModal: '“Thank you” modal', tourPop: 'Tour bubble',
-        'dash-global-top': 'Dashboard header', 'dash-sidebar': 'Side menu', step: 'Tour · step {0}' },
+        'dash-global-top': 'Dashboard header', 'dash-sidebar': 'Side menu', upload_info: 'Spreadsheet import (modal)', uploadModal: 'Spreadsheet import (modal)', dpaModal: 'Data Processing Agreement', runwayChart: 'Cash runway chart', step: 'Tour · step {0}' },
       tourTitles: { 1: 'Monthly snapshot', 2: 'What drives the gap', 3: 'The assistant explains', 4: 'Bring your own file' },
       consentBox: 'Consent checkbox ({0})', checked: 'checked', unchecked: 'unchecked',
       ev: {
@@ -270,7 +273,7 @@ tr.excluded td{opacity:.55}
         form_submit: '<b>Submits the form</b>', tour_step: 'Guided tour · step {0}/4', tour_complete: '<b>Completes the guided tour</b>',
         tour_skip: '<b>Leaves the tour</b> at step {0}/4', tour_restart: 'Restarts the guided tour', consent_on: '<b>Checks the data consent</b>',
         consent_off: 'Unchecks the data consent', add_data: '<b>Clicks “Add my data”</b>', add_data_sub: 'intent to connect their data',
-        copy_text: 'Copies text', idle: 'Idle for 1 min (timer paused)', tab_hidden: 'Leaves the tab', tab_visible: 'Comes back to the tab', page_leave: 'Closes the page',
+        copy_text: 'Copies text', idle: 'Idle for 1 min (timer paused)', tab_hidden: 'Leaves the tab', tab_visible: 'Comes back to the tab', page_leave: 'Closes the page', assumption_change: 'Changes <b>{0}</b> to {1}', assumption_sub: 'plan {0} · actual {1} → runway {2}', assumptions_reset: 'Resets the assumptions to actuals', chart_hover: 'Explores the runway chart', chart_hover_sub: '{0} · {1} points inspected', upload_click: '<b>Clicks the spreadsheet import</b>', upload_sub: 'wants to import their own model', dpa_open: 'Opens the Data Processing Agreement',
       },
       ins: {
         count: '<b>{0} session(s)</b> from <b>{1} person(s)</b>.', small: ' Very small sample: a single session can move a percentage by 10 points or more.',
@@ -285,7 +288,7 @@ tr.excluded td{opacity:.55}
         dead: 'Clicks on an element that does not react: <b>{0}</b> ({1} times). Visitors may expect to explore it.',
         rage: 'Repeated clicks (frustration) on <b>“{0}”</b> in {1}.',
         abandon: '{0} of {1} session(s) started filling the form and then closed it.',
-        back: '<b>{0} person(s)</b> came back on their own: {1}.', hot: 'Most engaged profiles (score ≥ 6): {0}.',
+        back: '<b>{0} person(s)</b> came back on their own: {1}.', hot: 'Most engaged profiles (score ≥ 6): {0}.', model: '<b>{0}%</b> of dashboard sessions adjusted the plan assumptions ({1} changes). Most adjusted: <b>{2}</b>.', chart: '<b>{0}%</b> of dashboard sessions explored the runway chart, {1} on average.', upload: '<b>{0} session(s)</b> clicked the spreadsheet import: direct demand to plug in their own model.', dpa: 'Of the {0} session(s) that opened the Data Processing Agreement, <b>{1}</b> read it before ticking the checkbox.',
       },
     },
     fr: {
@@ -299,7 +302,7 @@ tr.excluded td{opacity:.55}
       avgReach: 'moyenne des sessions qui l’ont vue · % atteinte',
       'landingTime.title': 'Landing : temps par section', 'dashTime.title': 'Dashboard : temps par zone',
       'tour.title': 'Tour guidé', 'tour.sub': '% des sessions arrivées au dashboard · temps moyen', 'scroll.title': 'Profondeur de scroll',
-      'clicks.title': 'Éléments cliqués', 'clicks.sub': 'clics · sessions', 'friction.title': 'Frictions', 'friction.sub': 'clics sans effet, répétés ou sur bouton désactivé',
+      'eng.title': 'Engagement produit', 'eng.sub': '% des sessions arrivées au dashboard', eng: { model: 'A modifié une hypothèse', chart: 'A exploré le graphique de runway', asst: 'A cliqué une action de l\u2019assistant', upload: 'A cliqué l\u2019import de fichier', dpa: 'A ouvert le DPA', reset: 'A remis les hypothèses à zéro' }, 'clicks.title': 'Éléments cliqués', 'clicks.sub': 'clics · sessions', 'friction.title': 'Frictions', 'friction.sub': 'clics sans effet, répétés ou sur bouton désactivé',
       'cta.title': 'CTA qui ouvre le formulaire', 'roles.title': 'Rôle déclaré', 'raises.title': 'Dernière levée',
       'fields.title': 'Formulaire : champs', 'fields.sub': 'sessions ayant ouvert le formulaire', 'devices.title': 'Appareils', 'refs.title': 'Provenance',
       'people.title': 'Une ligne par personne', 'people.sub': 'clic sur une ligne → parcours détaillé',
@@ -326,7 +329,7 @@ tr.excluded td{opacity:.55}
       fr: { dead_click: 'Clic sans effet', rage_click: 'Clics répétés', disabled_click: 'Bouton désactivé' },
       fld: { email: 'Email rempli', company: 'Société remplie', role: 'Rôle choisi', raise: 'Dernière levée choisie', invalid: 'Erreur de validation', abandon: 'Abandon après saisie' },
       'fld.abandonTip': '{0} session(s) ont rempli puis fermé', direct: 'Direct / lien',
-      b: { form: 'Formulaire', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consentement', dpa: 'DPA ouvert', add: 'Add my data', visits: '{0} visites', excluded: 'exclu' },
+      b: { form: 'Formulaire', tour: 'Tour ✓', tourN: 'Tour {0}/4', asst: 'Assistant', consent: 'Consentement', dpa: 'DPA ouvert', add: 'Add my data', visits: '{0} visites', excluded: 'exclu', model: 'Modèle modifié', upload: 'Import' },
       anon: 'Anonyme', anonVisitor: 'Visiteur anonyme', raise: 'levée {0}', landing: 'Landing', dashboard: 'Dashboard',
       j: { sessions: '{0} session(s)', session: 'Session {0}', sessSub: '{0} actif · {1} clics · {2}', dash: 'dashboard', landOnly: 'landing seule',
         active: 'temps actif', total: 'durée totale', onLanding: 'sur la landing', onDash: 'sur le dashboard', steps: 'étapes du tour', clicks: 'clics',
@@ -336,7 +339,7 @@ tr.excluded td{opacity:.55}
         'nav-links': 'Barre de navigation', tourOverview: 'KPIs (runway, cash, MRR, burn)', cashPanel: 'Graphique cash runway', tourAssumptions: 'Hypothèses qui dérivent',
         tourAssistant: 'Assistant Bearing', scenarioPanel: 'Scénarios', tourData: '« Bring your own numbers »', access_form: 'Formulaire d’accès',
         add_data_thanks: 'Modale « Merci » (Add data)', dpa: 'Modale DPA', accessModal: 'Formulaire d’accès', dataModal: 'Modale « Merci »', tourPop: 'Bulle du tour',
-        'dash-global-top': 'En-tête dashboard', 'dash-sidebar': 'Menu latéral', step: 'Tour · étape {0}' },
+        'dash-global-top': 'En-tête dashboard', 'dash-sidebar': 'Menu latéral', upload_info: 'Import de fichier (modale)', uploadModal: 'Import de fichier (modale)', dpaModal: 'Data Processing Agreement', runwayChart: 'Graphique cash runway', step: 'Tour · étape {0}' },
       tourTitles: { 1: 'Snapshot mensuel', 2: 'Ce qui crée l’écart', 3: 'L’assistant explique', 4: 'Apporter son fichier' },
       consentBox: 'Case de consentement ({0})', checked: 'cochée', unchecked: 'décochée',
       ev: {
@@ -349,7 +352,7 @@ tr.excluded td{opacity:.55}
         form_submit: '<b>Envoie le formulaire</b>', tour_step: 'Tour guidé · étape {0}/4', tour_complete: '<b>Termine le tour guidé</b>',
         tour_skip: '<b>Quitte le tour</b> à l’étape {0}/4', tour_restart: 'Relance le tour guidé', consent_on: '<b>Coche le consentement données</b>',
         consent_off: 'Décoche le consentement données', add_data: '<b>Clique « Add my data »</b>', add_data_sub: 'intention de connecter ses données',
-        copy_text: 'Copie du texte', idle: 'Inactif depuis 1 min (chrono en pause)', tab_hidden: 'Quitte l’onglet', tab_visible: 'Revient sur l’onglet', page_leave: 'Ferme la page',
+        copy_text: 'Copie du texte', idle: 'Inactif depuis 1 min (chrono en pause)', tab_hidden: 'Quitte l’onglet', tab_visible: 'Revient sur l’onglet', page_leave: 'Ferme la page', assumption_change: 'Passe <b>{0}</b> à {1}', assumption_sub: 'plan {0} · réel {1} → runway {2}', assumptions_reset: 'Remet les hypothèses aux valeurs réelles', chart_hover: 'Explore le graphique de runway', chart_hover_sub: '{0} · {1} points consultés', upload_click: '<b>Clique sur l\u2019import de fichier</b>', upload_sub: 'veut importer son propre modèle', dpa_open: 'Ouvre le Data Processing Agreement',
       },
       ins: {
         count: '<b>{0} session(s)</b> de <b>{1} personne(s)</b>.', small: ' Échantillon encore très faible : une seule session peut faire bouger un pourcentage de 10 points ou plus.',
@@ -364,7 +367,7 @@ tr.excluded td{opacity:.55}
         dead: 'Clics sur un élément qui ne réagit pas : <b>{0}</b> ({1} fois). Les visiteurs s’attendent peut-être à pouvoir l’explorer.',
         rage: 'Clics répétés (frustration) sur <b>« {0} »</b> dans {1}.',
         abandon: '{0} session(s) sur {1} ont commencé à remplir le formulaire puis l’ont fermé.',
-        back: '<b>{0} personne(s)</b> sont revenues d’elles-mêmes : {1}.', hot: 'Profils les plus engagés (score ≥ 6) : {0}.',
+        back: '<b>{0} personne(s)</b> sont revenues d’elles-mêmes : {1}.', hot: 'Profils les plus engagés (score ≥ 6) : {0}.', model: '<b>{0} %</b> des sessions au dashboard ont modifié les hypothèses du plan ({1} modifications). La plus modifiée : <b>{2}</b>.', chart: '<b>{0} %</b> des sessions au dashboard ont exploré le graphique de runway, {1} en moyenne.', upload: '<b>{0} session(s)</b> ont cliqué sur l\u2019import de fichier : demande directe pour brancher leur propre modèle.', dpa: 'Sur les {0} session(s) qui ont ouvert le Data Processing Agreement, <b>{1}</b> l\u2019ont lu avant de cocher la case.',
       },
     },
   };
@@ -526,6 +529,11 @@ tr.excluded td{opacity:.55}
         dpa: evs.some(e => e.t === 'modal_open' && e.g === 'dpa'),
         addData: evs.some(e => e.t === 'add_data_click'),
         formAbandon: evs.some(e => e.t === 'form_abandon'),
+        edits: evs.filter(e => e.t === 'assumption_change'),
+        reset: evs.some(e => e.t === 'assumptions_reset'),
+        chartMs: sum(evs.filter(e => e.t === 'chart_hover').map(e => e.d)),
+        upload: evs.some(e => e.t === 'upload_click'),
+        dpaBeforeConsent: (() => { const d = evs.findIndex(e => e.t === 'modal_open' && e.g === 'dpa'), c = evs.findIndex(e => e.t === 'consent_toggle' && e.x && e.x.checked); return d >= 0 && (c < 0 || d < c); })(),
       };
       // Clé stable d'une personne : lien perso > email > navigateur.
       s.person = s.tag || (s.knownForm && s.knownForm.email) || ('anon-' + v.slice(0, 6));
@@ -550,6 +558,7 @@ tr.excluded td{opacity:.55}
       submitted: any('submitted'), tourDone: any('tourDone'), consent: any('consent'), dpa: any('dpa'), addData: any('addData'),
       assistant: ss.some(s => s.assistant.length), maxStep: Math.max(...ss.map(s => s.maxStep)),
       device: ss[0].start.device || '—', excluded: EXCLUDED.has(key),
+      edited: ss.some(s => s.edits.length), upload: any('upload'),
     };
     p.score = (p.submitted ? 2 : 0) + (p.consent ? 2 : 0) + (p.dpa ? 1 : 0) + (p.addData ? 2 : 0) + (p.tourDone ? 1 : 0)
       + (p.assistant ? 1 : 0) + (ss.length > 1 ? 1 : 0) + (p.active >= 180000 ? 1 : 0);
@@ -634,6 +643,18 @@ tr.excluded td{opacity:.55}
       .concat([25, 50, 75, 100].map(d => ({ label: T('sc.dash', d), value: dashS.filter(s => s.scrollDash >= d).length, html: pc(pct(dashS.filter(s => s.scrollDash >= d).length, dashS.length)) }))),
     { max: Math.max(n, 1) });
 
+    // Engagement produit
+    const E = get('eng'), dn = dashS.length;
+    const engRow = (label, c) => ({ label, value: c, html: `${c} <small>${pc(pct(c, dn))}</small>`, tip: `${label}: ${c} / ${dn}` });
+    bars($('#engagement'), dn ? [
+      engRow(E.model, dashS.filter(s => s.edits.length).length),
+      engRow(E.chart, dashS.filter(s => s.chartMs > 0).length),
+      engRow(E.asst, dashS.filter(s => s.assistant.length).length),
+      engRow(E.upload, dashS.filter(s => s.upload).length),
+      engRow(E.dpa, dashS.filter(s => s.dpa).length),
+      engRow(E.reset, dashS.filter(s => s.reset).length),
+    ] : [], { max: Math.max(dn, 1) });
+
     // Clics
     const th = get('th');
     const allE = S.flatMap(s => s.evs);
@@ -696,6 +717,8 @@ tr.excluded td{opacity:.55}
     if (p.consent) b.push(`<span class="badge b-good">${L.consent}</span>`);
     if (p.dpa) b.push(`<span class="badge b-good">${L.dpa}</span>`);
     if (p.addData) b.push(`<span class="badge b-good">${L.add}</span>`);
+    if (p.edited) b.push(`<span class="badge b-info">${L.model}</span>`);
+    if (p.upload) b.push(`<span class="badge b-good">${L.upload}</span>`);
     if (p.sessions.length > 1) b.push(`<span class="badge b-warn">${fill(L.visits, [p.sessions.length])}</span>`);
     if (p.excluded) b.push(`<span class="badge b-mute">${L.excluded}</span>`);
     return b.join('');
@@ -785,6 +808,11 @@ tr.excluded td{opacity:.55}
       case 'tab_hidden': return [E.tab_hidden, '', ''];
       case 'tab_visible': return [E.tab_visible, '', ''];
       case 'page_leave': return [E.page_leave, '', 'bad'];
+      case 'assumption_change': return [fill(E.assumption_change, [esc(x.name || e.g), esc(x.value)]), fill(E.assumption_sub, [esc(x.plan), esc(x.actual), x.runway == null ? '24+ mo' : esc(x.runway) + ' mo']), 'key'];
+      case 'assumptions_reset': return [E.assumptions_reset, '', ''];
+      case 'chart_hover': return [E.chart_hover, fill(E.chart_hover_sub, [fmtDur(e.d), esc(x.months_inspected ?? '?')]), 'key'];
+      case 'upload_click': return [E.upload_click, E.upload_sub, 'good'];
+      case 'dpa_open': return [E.dpa_open, '', 'key'];
       default: return [esc(e.t), esc(e.g || ''), ''];
     }
   }
@@ -882,6 +910,20 @@ tr.excluded td{opacity:.55}
     const rage = ctx.frRows.filter(r => r.t === 'rage_click')[0];
     if (rage) add('bad', '✕', fill(I.rage, [esc(rage.label), esc(area(rage.area))]));
     if (ctx.opened.length && ctx.aband) add('bad', '✎', fill(I.abandon, [ctx.aband, ctx.opened.length]));
+
+    if (ctx.dashS.length) {
+      const editors = ctx.dashS.filter(s => s.edits.length);
+      if (editors.length) {
+        const top = countBy(editors.flatMap(s => s.edits), e => e.x?.name || e.g)[0];
+        add('good', '⚙', fill(I.model, [pct(editors.length, ctx.dashS.length), sum(editors.map(s => s.edits.length)), esc(top ? top[0] : '—')]));
+      }
+      const explorers = ctx.dashS.filter(s => s.chartMs > 0);
+      if (explorers.length) add('info', '∿', fill(I.chart, [pct(explorers.length, ctx.dashS.length), fmtDur(sum(explorers.map(s => s.chartMs)) / explorers.length)]));
+    }
+    const up = S.filter(s => s.upload).length;
+    if (up) add('good', '⇪', fill(I.upload, [up]));
+    const dpaS = S.filter(s => s.dpa);
+    if (dpaS.length) add('info', '§', fill(I.dpa, [dpaS.length, dpaS.filter(s => s.dpaBeforeConsent).length]));
 
     const back = P.filter(p => p.sessions.length > 1);
     if (back.length) add('good', '↺', fill(I.back, [back.length, back.slice(0, 5).map(p => esc(personName(p))).join(', ')]));

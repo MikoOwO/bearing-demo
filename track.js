@@ -207,7 +207,7 @@
   });
 
   // ---------- Clics ----------
-  const INTERACTIVE = 'button, a, input, select, textarea, label, summary, [role="button"], [data-dash-target], [data-scroll], [data-access]';
+  const INTERACTIVE = 'button, a, input, select, textarea, label, summary, [role="button"], [data-dash-target], [data-scroll], [data-access], [data-interactive]';
   const labelOf = el => {
     const txt = (el.getAttribute('aria-label') || el.textContent || (el.tagName === 'INPUT' && /checkbox|radio/.test(el.type) ? (el.checked ? 'checked' : 'unchecked') : el.value) || '').replace(/\s+/g, ' ').trim().slice(0, 60);
     return el.id ? (txt ? el.id + ' · ' + txt : el.id) : (txt || el.tagName.toLowerCase());
@@ -310,6 +310,15 @@
     touched.clear(); submitted = false;
   });
   watchModal('dataModal', 'add_data_thanks');
+  watchModal('uploadModal', 'upload_info');
+
+  // ---------- Événements émis par la démo (modèle, graphe, import, DPA) ----------
+  const DEMO_EVENTS = new Set(['assumption_change', 'assumptions_reset', 'chart_hover', 'upload_click', 'dpa_open']);
+  document.addEventListener('bearing:track', e => {
+    const d = e.detail || {};
+    if (!DEMO_EVENTS.has(d.type)) return;
+    track(d.type, { target: d.target, props: d.props || {}, duration_ms: d.duration });
+  });
   watchModal('dpaModal', 'dpa');
 
   // ---------- Tour guidé ----------
